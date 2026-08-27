@@ -1,0 +1,11 @@
+﻿{
+  "name": "moneyplughub-frontend",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron src/main.js"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
+  }
+}

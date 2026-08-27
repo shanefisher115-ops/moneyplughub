@@ -1,0 +1,41 @@
+﻿{
+    "Signals":  [
+                    "ReferralShareDrop",
+                    "ReferralClickDrop",
+                    "ReferralLandingMismatch",
+                    "ReferralRewardFail",
+                    "ReferralFunnelBreak",
+                    "ReferralSpike",
+                    "ReferralStability",
+                    "ReferralDecay",
+                    "FinancialTrustSpike",
+                    "SubscriptionSpike",
+                    "HighTicketLead",
+                    "ClientBookedEvent",
+                    "AffiliateTierUpgrade",
+                    "MultiTierEvent",
+                    "OverrideCommissionEvent",
+                    "CollectiveFormed",
+                    "CollectiveReferralSpike",
+                    "CollectiveLoopBreak"
+                ],
+    "EngineName":  "MoneyPlugHub Referral Engine",
+    "RiskTiers":  [
+                      "Stable",
+                      "Fragile",
+                      "Volatile",
+                      "Critical"
+                  ],
+    "Version":  "1.0.0",
+    "Programs":  [
+                     "MPR-001",
+                     "MPR-002",
+                     "MPR-003",
+                     "MPR-004",
+                     "MPR-005",
+                     "MPR-006",
+                     "MPR-007",
+                     "MPR-008",
+                     "MPR-009"
+                 ]
+}

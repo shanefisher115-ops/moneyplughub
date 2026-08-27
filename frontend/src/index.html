@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MoneyPlugHub Dashboard</title>
+</head>
+<body>
+  <h1>MoneyPlugHub Referral Dashboard</h1>
+  <pre id="programs"></pre>
+  <script>
+    fetch('http://localhost:5050/referral/programs')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('programs').textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById('programs').textContent = 'Error: ' + err;
+      });
+  </script>
+</body>
+</html>
