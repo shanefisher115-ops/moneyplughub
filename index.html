@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoneyPlug Hub — Sigil Forge & Creator Money OS</title>
+  <title>MoneyPlug Hub — Creator Money OS</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -26,10 +26,8 @@
       background: var(--bg-deep); color: #f8fafc; font-family: var(--font-display);
       min-height: 100vh; overflow-x: hidden; padding-bottom: 75px;
     }
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-    .os-wrap { position: relative; z-index: 10; }
-
-    /* Top Master Nav */
+    
+    /* Top Nav */
     .top-nav {
       display: flex; justify-content: space-between; align-items: center; padding: 12px 28px;
       background: rgba(3, 7, 18, 0.96); border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -58,6 +56,7 @@
     .action-badge.admin { border-color: var(--neon-cyan); color: #fff; background: rgba(6,182,212,0.15); }
     .action-badge.auth { border-color: var(--neon-green); color: var(--neon-green); background: rgba(16,185,129,0.15); }
 
+    /* Stream Ticker */
     .stream-ticker {
       background: #02050f; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 8px 28px;
       display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 11px;
@@ -67,7 +66,58 @@
 
     .container { max-width: 1440px; margin: 20px auto; padding: 0 24px; }
 
-    /* Top Archetype Carousel */
+    /* View Switcher Controls */
+    .tab-view { display: none; }
+    .tab-view.active-view { display: block !important; }
+
+    /* Grid & Card Styles */
+    .grid-2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+    .card {
+      background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 22px; position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .card-title { font-size: 11px; letter-spacing: 1.5px; color: #94a3b8; text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 12px; font-weight: 700; }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800;
+      padding: 4px 10px; border-radius: 20px; text-transform: uppercase; font-family: var(--font-mono);
+    }
+    .chip-green { background: rgba(16,185,129,0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+
+    .link-box {
+      background: #010308; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 16px;
+      display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 12px;
+    }
+
+    .level-row {
+      background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+      padding: 16px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .lvl-badge {
+      background: #010308; border: 1px solid var(--neon-cyan); border-radius: 10px; padding: 8px 14px;
+      text-align: center; font-family: var(--font-mono);
+    }
+    .xp-bar-full {
+      flex: 1; margin: 0 30px; height: 10px; background: #010308; border-radius: 5px;
+      overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .xp-bar-inner { height: 100%; background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)); width: 74%; }
+
+    .btn-main {
+      background: var(--neon-green); color: #000; border: none; font-weight: 800; font-size: 12px;
+      padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .btn-main:hover { box-shadow: 0 0 16px var(--neon-green); transform: translateY(-1px); }
+    .btn-outline {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: inherit;
+    }
+    .btn-outline:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+    /* Sigil Forge Styles */
     .archetype-carousel {
       display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; margin-bottom: 20px; scrollbar-width: none;
     }
@@ -78,27 +128,19 @@
     .archetype-card:hover, .archetype-card.active {
       border-color: var(--neon-green); background: rgba(16, 185, 129, 0.08); box-shadow: 0 0 16px rgba(16,185,129,0.2);
     }
-    .archetype-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .archetype-title { font-size: 11px; font-weight: 800; color: #fff; }
-    .archetype-desc { font-size: 9px; color: #94a3b8; line-height: 1.3; }
-
-    /* Sigil Forge 2-Column Grid */
     .forge-grid { display: grid; grid-template-columns: 460px 1fr; gap: 24px; }
     @media (max-width: 1024px) { .forge-grid { grid-template-columns: 1fr; } }
 
-    /* Left Cryptographic Viewport */
     .sigil-viewport-card {
       background: rgba(6, 10, 20, 0.96); border: 1px solid rgba(255,255,255,0.1);
       border-radius: 18px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     }
-    .viewport-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: var(--font-mono); font-size: 10px; }
-    
     #sigil-canvas-box {
-      width: 100%; height: 400px; background: radial-gradient(circle at center, rgba(16,185,129,0.08) 0%, #010308 100%);
+      width: 100%; height: 380px; background: radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, #010308 100%);
       border-radius: 14px; border: 1px solid rgba(16,185,129,0.3); position: relative; overflow: hidden;
       display: flex; justify-content: center; align-items: center;
     }
-    #forge-sigil-canvas { width: 100%; height: 100%; display: block; }
+    #forge-sigil-canvas { width: 420px; height: 380px; display: block; }
 
     .control-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 11px; color: #cbd5e1; font-family: var(--font-mono); }
     .toggle-group { display: flex; gap: 4px; background: #010308; padding: 3px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
@@ -108,7 +150,6 @@
     }
     .toggle-btn.active { background: var(--neon-green); color: #000; }
 
-    /* Right Component Selector */
     .component-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
     .comp-tab {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
@@ -121,7 +162,6 @@
 
     .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     @media (max-width: 640px) { .comp-grid { grid-template-columns: 1fr; } }
-
     .comp-card {
       background: rgba(10, 15, 29, 0.85); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative;
@@ -132,11 +172,29 @@
     }
     .comp-card.locked { opacity: 0.55; filter: grayscale(0.6); }
 
-    .comp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 9px; font-family: var(--font-mono); font-weight: 800; }
-    .comp-tag { padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); }
-    .comp-title { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-    .comp-desc { font-size: 10px; color: #94a3b8; line-height: 1.35; }
-    .locked-tag { color: var(--neon-gold); font-size: 9px; margin-top: 8px; display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); }
+    /* Pricing Section Styles */
+    .toggle-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 16px 0 28px 0; font-size: 13px; font-weight: 600; }
+    .toggle-switch { width: 46px; height: 24px; background: #010308; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; position: relative; cursor: pointer; }
+    .toggle-switch.active { background: var(--neon-green); border-color: var(--neon-green); }
+    .toggle-knob { width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 3px; transition: transform 0.25s ease; }
+    .toggle-switch.active .toggle-knob { transform: translateX(22px); background: #000; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .price-card { background: rgba(10, 15, 29, 0.9); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 22px; display: flex; flex-direction: column; justify-content: space-between; }
+    .price-card.popular { border: 2px solid var(--neon-green); background: rgba(10, 18, 32, 0.96); box-shadow: 0 0 30px rgba(16,185,129,0.15); position: relative; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(14px); display: none; justify-content: center; align-items: center; z-index: 5000;
+    }
+    .modal-content {
+      background: #090e1c; border: 1px solid var(--panel-border); border-radius: 18px;
+      width: 90%; max-width: 540px; padding: 32px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.8);
+    }
+    .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; }
+    .auth-input { width: 100%; background: #010308; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px 16px; color: #fff; font-family: var(--font-mono); font-size: 13px; margin-bottom: 12px; outline: none; }
 
     /* Bottom Cockpit Bar */
     .bottom-bar {
@@ -151,22 +209,25 @@
   <div class="os-wrap">
     <!-- Top Master Nav -->
     <nav class="top-nav">
-      <div class="brand-logo" onclick="switchTab('sigil')">
+      <div class="brand-logo" onclick="setTab('command')">
         <div class="brand-icon">⚡</div>
         <span>MoneyPlug Hub</span>
       </div>
 
       <div class="nav-pills">
-        <button class="nav-pill active" onclick="switchTab('sigil')">🌌 Sigil Forge</button>
-        <button class="nav-pill" onclick="switchTab('command')">⚡ Command</button>
-        <button class="nav-pill" onclick="switchTab('pricing')">💳 Pricing</button>
-        <button class="nav-pill" onclick="switchTab('quests')">🏆 Quests & XP</button>
-        <button class="nav-pill" onclick="switchTab('playbook')">📚 Playbook</button>
-        <button class="nav-pill" onclick="switchTab('chambers')">🏛️ Chambers</button>
+        <button id="pill-command" class="nav-pill active" onclick="setTab('command')">⚡ Command</button>
+        <button id="pill-sigil" class="nav-pill" onclick="setTab('sigil')">🌌 Sigil Forge</button>
+        <button id="pill-pricing" class="nav-pill" onclick="setTab('pricing')">💳 Pricing</button>
+        <button id="pill-quests" class="nav-pill" onclick="setTab('quests')">🏆 Quests & XP</button>
+        <button id="pill-playbook" class="nav-pill" onclick="setTab('playbook')">📚 Playbook</button>
+        <button id="pill-cfo" class="nav-pill" onclick="setTab('cfo')">🧠 MoneyOS AI</button>
+        <button id="pill-chambers" class="nav-pill" onclick="setTab('chambers')">🏛️ Chambers</button>
       </div>
 
       <div class="nav-actions">
-        <button class="action-badge auth" onclick="speak('Sovereign Attestation Active.')">👑 Level 14 Centurion</button>
+        <button id="auth-btn" class="action-badge auth" onclick="openModal('modal-auth')">👤 Sign In</button>
+        <button class="action-badge gold" onclick="openModal('modal-wizard')">✨ Setup Wizard</button>
+        <button class="action-badge admin" onclick="setTab('pricing')">👑 Upgrade Pro</button>
       </div>
     </nav>
 
@@ -175,176 +236,333 @@
       <div class="stream-stat">
         <span>LIVE CASHFLOW:</span> <strong>+$0.0024 USD</strong>
         <span>VELOCITY:</span> <strong style="color:var(--neon-cyan);">+0.0012f/sec</strong>
+        <span>PROJECTED APY:</span> <strong style="color:var(--neon-gold);">$360 / yr</strong>
         <span>MULTIPLIER:</span> <strong style="color:var(--neon-purple);">1.50x Supercritical</strong>
       </div>
       <div style="color:#64748b; font-style:italic;">"STACK CASHFLOW, LOCK THE VAULT, LET COMPOUNDING RUN."</div>
     </div>
 
-    <!-- Main Container -->
-    <main class="container" id="main-content">
+    <!-- Main Container With Pre-Rendered Switchable Views -->
+    <main class="container">
 
-      <!-- Top Archetype Carousel -->
-      <div class="archetype-carousel">
-        <div class="archetype-card active" onclick="selectArchetype('Cyber Dragonlord', '#10b981', 528)">
-          <div class="archetype-top"><span style="font-size:16px;">🐉</span><span style="color:var(--neon-green); font-size:9px; font-weight:bold;">Lv. 8</span></div>
-          <div class="archetype-title">Cyber Dragonlord</div>
-          <div class="archetype-desc">Void Singularity & Mecha Domina...</div>
+      <!-- View 1: Command Center -->
+      <div id="view-command" class="tab-view active-view">
+        <div style="background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:16px; padding:24px 28px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <span class="chip chip-green">PLUG IN OS</span>
+              <span class="chip" style="background:rgba(6,182,212,0.15); color:var(--neon-cyan); border:1px solid var(--neon-cyan);">ADAPTIVE + BEHAVIOR AWARE</span>
+            </div>
+            <h1 style="font-size:24px; font-weight:800; color:#fff;">⭐ Command Center (Full Rebuild)</h1>
+            <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Your sovereign, autonomous multi-agent wealth operating system.</p>
+          </div>
+          <div>
+            <div style="font-size:10px; color:#94a3b8; margin-bottom:4px; font-family:var(--font-mono);">YOUR RAKUTEN SMART LINK:</div>
+            <div class="link-box">
+              <span style="color:var(--neon-green);">https://www.rakuten.com/r/CASHPL19</span>
+              <button class="btn-main" style="padding:4px 10px; font-size:10px;" onclick="copyLink()">Copy</button>
+            </div>
+          </div>
         </div>
 
-        <div class="archetype-card" onclick="selectArchetype('Seraphim Ascendant', '#06b6d4', 639)">
-          <div class="archetype-top"><span style="font-size:16px;">🪽</span><span style="color:var(--neon-cyan); font-size:9px; font-weight:bold;">Lv. 7</span></div>
-          <div class="archetype-title">Seraphim Ascendant</div>
-          <div class="archetype-desc">Osmium Crystal Light & Biometric...</div>
+        <div class="level-row">
+          <div class="lvl-badge">
+            <div id="cmd-lvl" style="font-size:16px; font-weight:900; color:var(--neon-gold);">LVL 14</div>
+            <div style="font-size:9px; color:#94a3b8;">SOVEREIGN PLUG</div>
+          </div>
+          <div style="flex:1; margin:0 24px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono); margin-bottom:6px;">
+              <span style="color:#fff;">Level Progress: <strong id="cmd-xp-txt">3,450 / 4,000 XP</strong></span>
+              <span style="color:var(--neon-cyan);">Next Unlock: Budget Velocity Shields</span>
+            </div>
+            <div class="xp-bar-full"><div id="cmd-xp-fill" class="xp-bar-inner" style="width:74%;"></div></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="text-align:right; font-family:var(--font-mono);">
+              <div style="font-size:14px; font-weight:800; color:var(--neon-gold);">🔥 14d Streak</div>
+              <div style="font-size:10px; color:var(--neon-green);">1.50x Boost Active</div>
+            </div>
+            <button class="btn-main" onclick="addXP(250)">⚡ Boost XP</button>
+          </div>
         </div>
 
-        <div class="archetype-card" onclick="selectArchetype('Stealth Carbon Titan', '#94a3b8', 432)">
-          <div class="archetype-top"><span style="font-size:16px;">🛡️</span><span style="color:#cbd5e1; font-size:9px; font-weight:bold;">Lv. 8</span></div>
-          <div class="archetype-title">Stealth Carbon Titan</div>
-          <div class="archetype-desc">Carbon Fiber & Nanite Cloud Def...</div>
+        <div class="grid-4">
+          <div class="card"><div class="card-title">AGGREGATED NET WORTH</div><h2 style="color:var(--neon-green); font-size:28px; font-weight:800;">$94,200.00</h2><div style="font-size:12px; color:#94a3b8;">4 Bank Feeds Synchronized</div></div>
+          <div class="card"><div class="card-title">UNENCUMBERED VAULT</div><h2 style="color:var(--neon-cyan); font-size:28px; font-weight:800;">$42,850.00</h2><div style="font-size:12px; color:#94a3b8;">340 Days Safe Runway</div></div>
+          <div class="card"><div class="card-title">DEBT HYDRO DESTROYER</div><h2 style="color:var(--neon-red); font-size:28px; font-weight:800;">-$7,040.00</h2><div style="font-size:12px; color:var(--neon-green);">+$1,840 Interest Vaporized</div></div>
+          <div class="card"><div class="card-title">SCHEDULE C DEDUCTIONS</div><h2 style="color:var(--neon-gold); font-size:28px; font-weight:800;">+$3,850.00</h2><div style="font-size:12px; color:var(--neon-green);">+$924 Direct Tax Savings</div></div>
         </div>
 
-        <div class="archetype-card" onclick="selectArchetype('Archon 6-Wing Herald', '#a855f7', 852)">
-          <div class="archetype-top"><span style="font-size:16px;">✨</span><span style="color:var(--neon-purple); font-size:9px; font-weight:bold;">Lv. 9</span></div>
-          <div class="archetype-title">Archon 6-Wing Herald</div>
-          <div class="archetype-desc">Tachyon Warp & Hexa-Wing Radi...</div>
-        </div>
-
-        <div class="archetype-card" onclick="selectArchetype('Sovereign Emperor', '#fbbf24', 963)">
-          <div class="archetype-top"><span style="font-size:16px;">👑</span><span style="color:var(--neon-gold); font-size:9px; font-weight:bold;">Lv. 10</span></div>
-          <div class="archetype-title">Sovereign Emperor</div>
-          <div class="archetype-desc">Imperial 24K Gold & Osmium Do...</div>
-        </div>
-
-        <div class="archetype-card" onclick="selectArchetype('Omega Singularity Core', '#f43f5e', 528)">
-          <div class="archetype-top"><span style="font-size:16px;">🪐</span><span style="color:var(--neon-red); font-size:9px; font-weight:bold;">Lv. 10</span></div>
-          <div class="archetype-title">Omega Singularity Core</div>
-          <div class="archetype-desc">Bifrost Core & Zero-Entropy Sing...</div>
+        <div class="card">
+          <div class="card-title">QUICK NAVIGATION SHORTCUTS</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:10px;">
+            <button class="btn-outline" onclick="setTab('sigil')">🌌 Open Sigil Forge</button>
+            <button class="btn-outline" onclick="setTab('pricing')">💳 View Pricing Tiers</button>
+            <button class="btn-outline" onclick="setTab('quests')">🏆 Trophy Hall & Quests</button>
+            <button class="btn-outline" onclick="setTab('playbook')">📚 Wealth Playbook</button>
+            <button class="btn-outline" onclick="setTab('chambers')">🏛️ 20-Realm Chambers</button>
+          </div>
         </div>
       </div>
 
-      <!-- Forge 2-Column Grid -->
-      <div class="forge-grid">
-
-        <!-- Left Viewport -->
-        <div class="sigil-viewport-card">
-          <div class="viewport-header">
-            <span style="color:var(--neon-green);">● CRYPTOGRAPHIC_MATRIX</span>
-            <span style="color:#94a3b8;" id="coord-tracker">X: 0.0° Y: 0.0°</span>
+      <!-- View 2: Sigil Forge Studio -->
+      <div id="view-sigil" class="tab-view">
+        <!-- Top Archetype Carousel -->
+        <div class="archetype-carousel">
+          <div class="archetype-card active" onclick="selectArchetype('Cyber Dragonlord', '#10b981', 528, this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🐉</span><span style="color:var(--neon-green); font-size:9px; font-weight:bold;">Lv. 8</span></div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">Cyber Dragonlord</div>
+            <div style="font-size:9px; color:#94a3b8;">Void Singularity & Mecha...</div>
           </div>
-
-          <div id="sigil-canvas-box">
-            <canvas id="forge-sigil-canvas"></canvas>
+          <div class="archetype-card" onclick="selectArchetype('Seraphim Ascendant', '#06b6d4', 639, this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🪽</span><span style="color:var(--neon-cyan); font-size:9px; font-weight:bold;">Lv. 7</span></div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">Seraphim Ascendant</div>
+            <div style="font-size:9px; color:#94a3b8;">Osmium Crystal Light...</div>
           </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:10px; font-family:var(--font-mono);">
-            <span style="color:var(--neon-green);">🛡️ Zero-Duplicate Guarantee</span>
-            <span style="color:#64748b;">SEED: CREATOR-OS</span>
+          <div class="archetype-card" onclick="selectArchetype('Stealth Carbon Titan', '#94a3b8', 432, this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🛡️</span><span style="color:#cbd5e1; font-size:9px; font-weight:bold;">Lv. 8</span></div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">Stealth Carbon Titan</div>
+            <div style="font-size:9px; color:#94a3b8;">Carbon Fiber Nanites...</div>
           </div>
-
-          <!-- Controls -->
-          <div class="control-row">
-            <span>☀️ Luminosity</span>
-            <div class="toggle-group">
-              <button class="toggle-btn" onclick="setLuminosity(8, this)">Subtle</button>
-              <button class="toggle-btn active" onclick="setLuminosity(18, this)">Normal</button>
-              <button class="toggle-btn" onclick="setLuminosity(32, this)">Supernova</button>
-            </div>
+          <div class="archetype-card" onclick="selectArchetype('Archon 6-Wing Herald', '#a855f7', 852, this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">✨</span><span style="color:var(--neon-purple); font-size:9px; font-weight:bold;">Lv. 9</span></div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">Archon 6-Wing Herald</div>
+            <div style="font-size:9px; color:#94a3b8;">Tachyon Warp Radiance...</div>
           </div>
-
-          <div class="control-row">
-            <span>🪐 Spin Velocity</span>
-            <div class="toggle-group">
-              <button class="toggle-btn" onclick="setVelocity(0, this)">Static</button>
-              <button class="toggle-btn" onclick="setVelocity(0.005, this)">60s</button>
-              <button class="toggle-btn active" onclick="setVelocity(0.018, this)">20s</button>
-              <button class="toggle-btn" onclick="setVelocity(0.045, this)">6s ⚡</button>
-            </div>
+          <div class="archetype-card" onclick="selectArchetype('Sovereign Emperor', '#fbbf24', 963, this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">👑</span><span style="color:var(--neon-gold); font-size:9px; font-weight:bold;">Lv. 10</span></div>
+            <div style="font-size:11px; font-weight:800; color:#fff;">Sovereign Emperor</div>
+            <div style="font-size:9px; color:#94a3b8;">Imperial 24K Gold...</div>
           </div>
         </div>
 
-        <!-- Right Component Matrix -->
-        <div>
-          <!-- Category Tabs -->
-          <div class="component-tabs">
-            <button class="comp-tab active" onclick="speak('Auras & Shaders selected.')">✨ Auras & Shaders <span>30</span></button>
-            <button class="comp-tab" onclick="speak('Core Glyphs selected.')">💎 Core Glyphs <span>35</span></button>
-            <button class="comp-tab" onclick="speak('Orbital Rings selected.')">🪐 Orbital Rings <span>35</span></button>
-            <button class="comp-tab" onclick="speak('Imperial Crests selected.')">👑 Imperial Crests <span>30</span></button>
+        <div class="forge-grid">
+          <!-- Left Viewport -->
+          <div class="sigil-viewport-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-family:var(--font-mono); font-size:10px;">
+              <span style="color:var(--neon-green);">● CRYPTOGRAPHIC_MATRIX</span>
+              <span style="color:#94a3b8;" id="coord-tracker">X: 0.0° Y: 0.0°</span>
+            </div>
+            <div id="sigil-canvas-box">
+              <canvas id="forge-sigil-canvas" width="420" height="380"></canvas>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:10px; font-family:var(--font-mono);">
+              <span style="color:var(--neon-green);">🛡️ Zero-Duplicate Guarantee</span>
+              <span style="color:#64748b;">SEED: CREATOR-OS</span>
+            </div>
+            <div class="control-row">
+              <span>☀️ Luminosity</span>
+              <div class="toggle-group">
+                <button class="toggle-btn" onclick="setLuminosity(8, this)">Subtle</button>
+                <button class="toggle-btn active" onclick="setLuminosity(18, this)">Normal</button>
+                <button class="toggle-btn" onclick="setLuminosity(32, this)">Supernova</button>
+              </div>
+            </div>
+            <div class="control-row">
+              <span>🪐 Spin Velocity</span>
+              <div class="toggle-group">
+                <button class="toggle-btn" onclick="setVelocity(0, this)">Static</button>
+                <button class="toggle-btn" onclick="setVelocity(0.005, this)">60s</button>
+                <button class="toggle-btn active" onclick="setVelocity(0.018, this)">20s</button>
+                <button class="toggle-btn" onclick="setVelocity(0.045, this)">6s ⚡</button>
+              </div>
+            </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:11px; font-family:var(--font-mono);">
-            <span style="color:#94a3b8;">SELECT AURA COMPONENT (30 TOTAL • PROGRESSION GATED)</span>
-            <span style="color:#fff;">Equipped: <strong style="color:var(--neon-green);" id="equipped-name">Cyber Matrix</strong></span>
-          </div>
-
-          <!-- 9 Component Cards Grid -->
-          <div class="comp-grid">
-            
-            <div class="comp-card equipped" onclick="equipShader('Cyber Matrix', '#10b981', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">⚡ 250 XP</span></div>
-              <div class="comp-title">Cyber Matrix ✓</div>
-              <div class="comp-desc">Neon Emerald & Cybernetic Laser Pulse shader (Starter...).</div>
+          <!-- Right Components Matrix -->
+          <div>
+            <div class="component-tabs">
+              <button class="comp-tab active">✨ Auras & Shaders <span>30</span></button>
+              <button class="comp-tab" onclick="speak('Core Glyphs selected.')">💎 Core Glyphs <span>35</span></button>
+              <button class="comp-tab" onclick="speak('Orbital Rings selected.')">🪐 Orbital Rings <span>35</span></button>
+              <button class="comp-tab" onclick="speak('Imperial Crests selected.')">👑 Imperial Crests <span>30</span></button>
             </div>
-
-            <div class="comp-card" onclick="equipShader('Retro Synthwave', '#f43f5e', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
-              <div class="comp-title">Retro Synthwave</div>
-              <div class="comp-desc">Neon Magenta & Sunset Orange 80s synthwave glow.</div>
-              <div class="locked-tag">🔒 Requires Level 2</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:11px; font-family:var(--font-mono);">
+              <span style="color:#94a3b8;">SELECT AURA COMPONENT</span>
+              <span style="color:#fff;">Equipped: <strong style="color:var(--neon-green);" id="equipped-name">Cyber Matrix</strong></span>
             </div>
-
-            <div class="comp-card" onclick="equipShader('Hyper Plasma', '#38bdf8', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
-              <div class="comp-title">Hyper Plasma</div>
-              <div class="comp-desc">Ultraviolet laser discharge with ionized blue lightning arcs.</div>
-              <div class="locked-tag">🔒 Requires Level 2</div>
+            <div class="comp-grid">
+              <div class="comp-card equipped" onclick="equipShader('Cyber Matrix', '#10b981', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">⚡ 250 XP</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Cyber Matrix ✓</div>
+                <div style="font-size:10px; color:#94a3b8;">Neon Emerald & Cybernetic Laser Pulse shader.</div>
+              </div>
+              <div class="comp-card" onclick="equipShader('Retro Synthwave', '#f43f5e', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Retro Synthwave</div>
+                <div style="font-size:10px; color:#94a3b8;">Neon Magenta & Sunset Orange glow.</div>
+              </div>
+              <div class="comp-card" onclick="equipShader('Hyper Plasma', '#38bdf8', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Hyper Plasma</div>
+                <div style="font-size:10px; color:#94a3b8;">Ultraviolet laser discharge with ionized blue arcs.</div>
+              </div>
+              <div class="comp-card" onclick="equipShader('Cosmic Nebula', '#a855f7', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 3</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Cosmic Nebula</div>
+                <div style="font-size:10px; color:#94a3b8;">Deep Supernova Violet & Cyan plasma.</div>
+              </div>
+              <div class="comp-card" onclick="equipShader('Quantum Frost', '#06b6d4', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 4</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Quantum Frost</div>
+                <div style="font-size:10px; color:#94a3b8;">Sub-zero Arctic Cyan & Diamond Frost.</div>
+              </div>
+              <div class="comp-card" onclick="equipShader('Solar Flare', '#fbbf24', this)">
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 5</span></div>
+                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Solar Flare</div>
+                <div style="font-size:10px; color:#94a3b8;">Radiant 24K Gold thermonuclear flare.</div>
+              </div>
             </div>
-
-            <div class="comp-card" onclick="equipShader('Cosmic Nebula', '#a855f7', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 3</span></div>
-              <div class="comp-title">Cosmic Nebula</div>
-              <div class="comp-desc">Deep Supernova Violet & Cyan atmospheric plasma.</div>
-              <div class="locked-tag">🔒 Requires Level 3</div>
-            </div>
-
-            <div class="comp-card" onclick="equipShader('Quantum Frost', '#06b6d4', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 4</span></div>
-              <div class="comp-title">Quantum Frost</div>
-              <div class="comp-desc">Sub-zero Arctic Cyan & Diamond Frost refraction.</div>
-              <div class="locked-tag">🔒 Requires Level 4</div>
-            </div>
-
-            <div class="comp-card" onclick="equipShader('Solar Flare', '#fbbf24', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 5</span></div>
-              <div class="comp-title">Solar Flare</div>
-              <div class="comp-desc">Radiant 24K Gold thermonuclear flare.</div>
-              <div class="locked-tag">🔒 Requires Level 5</div>
-            </div>
-
-            <div class="comp-card" onclick="equipShader('Jade Sovereign', '#059669', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 6</span></div>
-              <div class="comp-title">Jade Sovereign</div>
-              <div class="comp-desc">Deep Dynastic Jade with incandescent emerald flame.</div>
-              <div class="locked-tag">🔒 Requires Level 6</div>
-            </div>
-
-            <div class="comp-card" onclick="equipShader('Osmium Diamond', '#e2e8f0', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-gold);">LEGENDARY</span><span style="color:var(--neon-gold);">🔒 Lv. 7</span></div>
-              <div class="comp-title">Osmium Diamond</div>
-              <div class="comp-desc">Prismatic crystal refraction with iridescent dispersion.</div>
-              <div class="locked-tag">🔒 Requires Level 7</div>
-            </div>
-
-            <div class="comp-card" onclick="equipShader('Stealth Carbon', '#475569', this)">
-              <div class="comp-header"><span class="comp-tag" style="color:var(--neon-gold);">LEGENDARY</span><span style="color:var(--neon-gold);">🔒 Lv. 8</span></div>
-              <div class="comp-title">Stealth Carbon</div>
-              <div class="comp-desc">Matte carbon-fiber nanite shield.</div>
-              <div class="locked-tag">🔒 Requires Level 8</div>
-            </div>
-
+            <button class="btn-main" style="width:100%; margin-top:16px; padding:14px;" onclick="speak('Sigil Cryptographically Attested with SHA-256 seal bound to player profile!')">🔐 ATTEST & BIND SIGIL</button>
           </div>
         </div>
+      </div>
 
+      <!-- View 3: Pricing Matrix -->
+      <div id="view-pricing" class="tab-view">
+        <div style="text-align:center; margin-bottom:24px;">
+          <h1 style="font-size:32px; font-weight:900; color:#fff;">Simple, transparent pricing</h1>
+          <p style="font-size:13px; color:#94a3b8; margin-top:6px;">Unlock the full power of Creator Money OS. No hidden fees.</p>
+          <div class="toggle-container">
+            <span id="txt-monthly" style="color:#fff;">Monthly</span>
+            <div id="toggle-box" class="toggle-switch" onclick="toggleBilling()"><div class="toggle-knob"></div></div>
+            <span id="txt-annually" style="color:#94a3b8;">Annually</span>
+            <span style="background:rgba(16,185,129,0.15); border:1px solid var(--neon-green); color:var(--neon-green); font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px;">2 months free</span>
+          </div>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div>
+              <h3 style="font-size:18px; font-weight:800; color:#fff;">Free Lite</h3>
+              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;">$0</div>
+              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Perfect for new creators getting started.</p>
+              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ 5 referral links<br>✓ Basic earnings dashboard<br>✓ MoneyOS AI chat<br>✓ Commission tracking</div>
+            </div>
+            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Free Lite tier active.')">Start Free</button>
+          </div>
+          <div class="price-card popular">
+            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--neon-green); color:#000; font-size:10px; font-weight:900; padding:3px 12px; border-radius:12px;">⚡ Most Popular</div>
+            <div>
+              <h3 style="font-size:18px; font-weight:800; color:#fff;">Creator</h3>
+              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-creator">$29</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
+              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Everything you need to grow your financial empire.</p>
+              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ Unlimited referral links<br>✓ MoneyOS AI Voice (ElevenLabs)<br>✓ Budget & debt tools<br>✓ Synthetic yield simulator<br>✓ Priority support</div>
+            </div>
+            <button class="btn-main" style="width:100%; margin-top:16px;" onclick="speak('Redirecting to Stripe Checkout for Creator Plan.')">Start Creator Plan</button>
+          </div>
+          <div class="price-card">
+            <div>
+              <h3 style="font-size:18px; font-weight:800; color:#fff;">Pro</h3>
+              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-pro">$149</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
+              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Advanced tools for high-volume creators.</p>
+              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ Full AI Swarm Orchestrator<br>✓ Advanced net worth analytics<br>✓ Crypto portfolio tracking<br>✓ Custom Living Vault themes</div>
+            </div>
+            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Pro plan selected.')">Go Pro</button>
+          </div>
+          <div class="price-card">
+            <div>
+              <h3 style="font-size:18px; font-weight:800; color:#fff;">Enterprise</h3>
+              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-enterprise">$499+</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
+              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Bespoke solutions for large creator agencies.</p>
+              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ White-label deployment<br>✓ Custom AI agent training<br>✓ Dedicated infrastructure<br>✓ SLA guarantees</div>
+            </div>
+            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Routing to Enterprise Sales.')">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 4: Quests & XP -->
+      <div id="view-quests" class="tab-view">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">ACTIVE BOUNTIES & QUEST MATRIX</div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
+                <div><strong>🗡️ Morning Bank Recon</strong><div style="font-size:10px; color:#94a3b8;">Audit connected institutions for new charges.</div></div>
+                <button class="btn-main" onclick="addXP(50)">+50 XP</button>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
+                <div><strong>🧾 Receipt OCR Scan</strong><div style="font-size:10px; color:#94a3b8;">Ingest a receipt with Vision OCR.</div></div>
+                <button class="btn-main" onclick="addXP(100)">+100 XP</button>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
+                <div><strong>🐉 The Inflow Titan</strong><div style="font-size:10px; color:#94a3b8;">Route a full paycheck via 50/20/20/10 formula.</div></div>
+                <button class="btn-main" onclick="addXP(750)">+750 XP</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">CYBER TROPHY HALL OF FAME</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">👑</div><strong>Genesis Sovereign</strong></div>
+              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">💎</div><strong>Diamond Hands</strong></div>
+              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">⚔️</div><strong>Debt Slayer</strong></div>
+              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">🏛️</div><strong>Centurion Vault</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 5: Wealth Playbook -->
+      <div id="view-playbook" class="tab-view">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">1. THE FINANCIAL ORDER OF OPERATIONS (FOO)</div>
+            <p style="font-size:12px; line-height:1.7; color:#cbd5e1; margin-top:8px;">
+              1. Deductibles Covered ($1,500-$2,500 emergency buffer)<br>
+              2. Employer 401(k) Match (100% Instant Guaranteed ROI)<br>
+              3. High-Interest Debt Payoff (>8% APR)<br>
+              4. Emergency Reserves (3-6mo liquid HYSA 4.5%+)<br>
+              5. Roth IRA ($7,000) + HSA ($4,150 Triple Tax Advantage)<br>
+              6. Maximize 401(k) ($23,000/yr in broad index VOO/VTI)<br>
+              7. Hyper-Accumulation & Real Estate
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-title">2. THE BOGLEHEAD INDEX MANIFESTO</div>
+            <p style="font-size:12px; line-height:1.7; color:#cbd5e1; margin-top:8px;">
+              • <strong>90%+ of Wall Street active fund managers fail</strong> to beat low-cost broad index funds over 15 years.<br>
+              • <strong>Low Fees Matter:</strong> A 1.0% fee eats over 28% of your lifetime wealth vs a 0.03% expense ratio (VOO/VTI).<br>
+              • <strong>Time in Market > Timing Market:</strong> Automate bi-weekly dollar cost averaging.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 6: MoneyOS AI -->
+      <div id="view-cfo" class="tab-view">
+        <div class="card">
+          <div class="card-title">EXECUTIVE AI CFO COPILOT TERMINAL</div>
+          <div style="display:flex; gap:10px; margin:14px 0;">
+            <button class="btn-outline" onclick="speak('Executive Briefing: Net Worth is $94,200 across 4 bank institutions. 340 days safe runway.')">💼 Net Worth Briefing</button>
+            <button class="btn-outline" onclick="speak('Tax Strategy: $3,850 in Schedule C deductions delivering $924 in tax savings.')">📊 Tax Write-Offs</button>
+            <button class="btn-outline" onclick="speak('Portfolio Alert: Crypto is overweight by 10.7%. Recommended trade: Trim $10,070 into Index Funds.')">⚖️ Rebalance Trade</button>
+          </div>
+          <div style="background:#010308; padding:18px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); font-size:12px; line-height:1.6;">
+            <strong>🧠 AI CFO:</strong> "Autonomous multi-agent loop active. I have verified your 4 bank accounts, tax deductions, and debt stack. What financial maneuver shall we execute?"
+          </div>
+        </div>
+      </div>
+
+      <!-- View 7: Chambers -->
+      <div id="view-chambers" class="tab-view">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">🎲 MONTE CARLO (1,000 PATHS)</div>
+            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Survival Probability: <strong>98.6%</strong> over 24 months. Median P50 Vault: <strong>$84,500</strong>.</p>
+            <button class="btn-main" onclick="speak('Monte Carlo running 1,000 stochastic paths. 98.6% survival probability confirmed.')">⚡ Re-run 1,000 Paths</button>
+          </div>
+          <div class="card">
+            <div class="card-title">🔥 FIRE FREEDOM CLOCK</div>
+            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Standard FIRE Target: <strong>$1,875,000</strong>. Freedom Date estimated in <strong>9.4 Years</strong>.</p>
+            <button class="btn-main" onclick="speak('FIRE calculation updated. Cutting $100 per month lowers FIRE target by $30,000.')">⚡ Calculate FIRE</button>
+          </div>
+          <div class="card">
+            <div class="card-title">📊 SCHEDULE C TAX LEDGER</div>
+            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Eligible Deductions: <strong>$3,850.00</strong>. Direct Tax Savings: <strong>+$924.00</strong>.</p>
+            <button class="btn-main" onclick="speak('Schedule C CSV exported.')">📥 Export CSV</button>
+          </div>
+        </div>
       </div>
 
     </main>
@@ -352,25 +570,46 @@
     <!-- Bottom Cockpit Bar -->
     <footer class="bottom-bar">
       <div style="display:flex; gap:12px; align-items:center;">
-        <button class="comp-tab active" style="padding:6px 14px; font-size:11px;" onclick="speak('MoneyOS AI Voice ready.')">
-          🎙️ MoneyOS AI • Live Voice
+        <button class="btn-main" style="background:rgba(16,185,129,0.15); border:1px solid var(--neon-green); color:var(--neon-green);" onclick="toggleVoice()">
+          🎙️ MoneyOS AI • <span id="voice-status">Live Voice Ready</span>
         </button>
-        <span style="font-size:12px; color:#94a3b8;">Cryptographic Sigil Studio • 256-Bit Deterministic Hash</span>
+        <span style="font-size:12px; color:#94a3b8;">Antigravity Autonomous Loop Daemon Active</span>
       </div>
 
       <div style="display:flex; gap:14px; align-items:center; font-family:var(--font-mono); font-size:12px;">
         <span>LIVING VAULT: <strong style="color:var(--neon-green); font-size:15px;">$94,200.00</strong></span>
-        <button class="comp-tab active" style="padding:6px 14px;" onclick="speak('Sigil Attested and bound to player profile!')">🔐 ATTEST SIGIL</button>
+        <button class="btn-main" onclick="setTab('pricing')">⚡ Upgrade Creator OS Pro</button>
       </div>
     </footer>
   </div>
 
+  <!-- Modals -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-auth')">✕</button>
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:12px;">Sign In to MoneyPlug Hub</h2>
+      <input id="auth-email" type="email" class="auth-input" placeholder="Enter your email address..." />
+      <input id="auth-password" type="password" class="auth-input" placeholder="Enter your password..." />
+      <button class="btn-main" style="width:100%; margin-top:6px;" onclick="executeSignIn()">🔐 Sign In</button>
+      <button class="btn-outline" style="width:100%; margin-top:8px; border-color:var(--neon-purple); color:var(--neon-purple);" onclick="executeDemoLogin()">⚡ Instant Sovereign Demo Mode</button>
+    </div>
+  </div>
+
+  <div id="modal-wizard" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-wizard')">✕</button>
+      <h2 style="font-size:22px; font-weight:800; color:#fff; margin-bottom:8px;">The Living Wealth Vault</h2>
+      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Your dashboard visually pulses as your net worth and streak multipliers grow.</p>
+      <button class="btn-main" style="width:100%;" onclick="closeModal('modal-wizard'); speak('Living Vault setup complete.');">Finish Setup →</button>
+    </div>
+  </div>
+
   <script>
-    let currentColor = '#10b981';
-    let currentBloom = 18;
-    let spinSpeed = 0.018;
-    let rotX = 0, rotY = 0;
-    let isDragging = false, lastX = 0, lastY = 0;
+    let activeTab = 'command';
+    let isAnnual = false;
+    let playerLevel = 14, currentXP = 3450, maxXP = 4000;
+    let currentColor = '#10b981', currentBloom = 18, spinSpeed = 0.018;
+    let rotX = 0, rotY = 0, isDragging = false, lastX = 0, lastY = 0;
 
     function speak(text) {
       if ('speechSynthesis' in window) {
@@ -381,20 +620,90 @@
       }
     }
 
-    function switchTab(t) {
-      speak("Navigating to " + t.toUpperCase());
-      document.querySelectorAll('.nav-pill').forEach(b => {
-        b.classList.toggle('active', b.getAttribute('onclick').includes(t));
-      });
+    function toggleVoice() {
+      speak("MoneyOS AI Live Voice ready. Telemetry online across all 20 chambers.");
+      document.getElementById('voice-status').innerText = "Voice Active";
     }
 
-    function selectArchetype(name, color, freq) {
+    function copyLink() {
+      navigator.clipboard.writeText("https://www.rakuten.com/r/CASHPL19");
+      speak("Rakuten smart link copied to clipboard!");
+      alert("Smart Link copied to clipboard!");
+    }
+
+    // Direct Pre-Rendered View Switcher
+    function setTab(tabName) {
+      activeTab = tabName;
+
+      // Hide all views, show active view
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active-view'));
+      const activeEl = document.getElementById('view-' + tabName);
+      if (activeEl) activeEl.classList.add('active-view');
+
+      // Update Top Nav Pills
+      document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+      const pill = document.getElementById('pill-' + tabName);
+      if (pill) pill.classList.add('active');
+
+      speak("Switched to " + tabName.toUpperCase());
+
+      // If Sigil Forge is opened, ensure canvas draws
+      if (tabName === 'sigil') {
+        setTimeout(initSigilCanvas, 40);
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function executeSignIn() {
+      const email = document.getElementById('auth-email').value.trim();
+      document.getElementById('auth-btn').innerText = `👤 ${email ? email.split('@')[0] : 'Member'}`;
+      speak("Signed in successfully.");
+      closeModal('modal-auth');
+    }
+
+    function executeDemoLogin() {
+      document.getElementById('auth-btn').innerText = "👤 Sovereign Master";
+      speak("Sovereign Demo Mode active.");
+      closeModal('modal-auth');
+    }
+
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      const toggle = document.getElementById('toggle-box');
+      toggle.classList.toggle('active', isAnnual);
+
+      document.getElementById('txt-monthly').style.color = isAnnual ? '#94a3b8' : '#fff';
+      document.getElementById('txt-annually').style.color = isAnnual ? '#fff' : '#94a3b8';
+
+      document.getElementById('price-creator').innerText = isAnnual ? '$24' : '$29';
+      document.getElementById('price-pro').innerText = isAnnual ? '$124' : '$149';
+      document.getElementById('price-enterprise').innerText = isAnnual ? '$415+' : '$499+';
+
+      speak(isAnnual ? "Annual billing active. 2 months free." : "Monthly billing active.");
+    }
+
+    function addXP(amount) {
+      currentXP += amount;
+      speak("+" + amount + " XP earned!");
+      if (currentXP >= maxXP) {
+        playerLevel++;
+        currentXP -= maxXP;
+        speak("Level up! You are now Level " + playerLevel);
+      }
+      document.getElementById('cmd-lvl').innerText = "LVL " + playerLevel;
+      document.getElementById('cmd-xp-txt').innerText = `${currentXP} / ${maxXP} XP`;
+      document.getElementById('cmd-xp-fill').style.width = `${Math.min(100, (currentXP/maxXP)*100)}%`;
+    }
+
+    // Sigil Customizers
+    function selectArchetype(name, color, freq, el) {
       currentColor = color;
       document.getElementById('equipped-name').innerText = name;
-      document.querySelectorAll('.archetype-card').forEach(c => {
-        c.classList.toggle('active', c.innerText.includes(name));
-      });
-      speak(`${name} selected. Solfeggio acoustic tuning: ${freq} Hertz.`);
+      document.querySelectorAll('.archetype-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      speak(`${name} selected. Solfeggio tuning: ${freq} Hertz.`);
     }
 
     function equipShader(name, color, el) {
@@ -417,16 +726,14 @@
       btn.classList.add('active');
     }
 
-    // Sacred Geometry & Constellation Particle Canvas Renderer
-    function initSigilStudio() {
+    // Canvas Sacred Geometry Renderer
+    function initSigilCanvas() {
       const canvas = document.getElementById('forge-sigil-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const box = document.getElementById('sigil-canvas-box');
-      canvas.width = box.clientWidth;
-      canvas.height = box.clientHeight;
+      canvas.width = 420;
+      canvas.height = 380;
 
-      // Mouse Drag Rotation
       canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
       window.onmouseup = () => { isDragging = false; };
       window.onmousemove = (e) => {
@@ -437,17 +744,17 @@
         document.getElementById('coord-tracker').innerText = `X: ${(rotX*57.3).toFixed(1)}° Y: ${(rotY*57.3).toFixed(1)}°`;
       };
 
-      // Random Constellation Particle Nodes
-      const particles = Array.from({length: 35}, () => ({
-        x: (Math.random() - 0.5) * 280,
-        y: (Math.random() - 0.5) * 280,
-        z: (Math.random() - 0.5) * 200,
+      const particles = Array.from({length: 32}, () => ({
+        x: (Math.random() - 0.5) * 260,
+        y: (Math.random() - 0.5) * 260,
+        z: (Math.random() - 0.5) * 180,
         r: Math.random() * 2.5 + 1.5
       }));
 
       let angle = 0;
 
       function renderFrame() {
+        if (activeTab !== 'sigil') return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         angle += spinSpeed;
 
@@ -458,7 +765,7 @@
           let x1 = x * cosY - z * sinY, z1 = z * cosY + x * sinY;
           const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
           let y1 = y * cosX - z1 * sinX, z2 = z1 * cosX + y * sinX;
-          const scale = 340 / (340 + z2 + 200);
+          const scale = 320 / (320 + z2 + 200);
           return { px: cx + x1 * scale, py: cy + y1 * scale, scale };
         }
 
@@ -467,18 +774,17 @@
         ctx.shadowBlur = currentBloom;
         ctx.shadowColor = currentColor;
 
-        // 1. Draw Constellation Star Nodes & Interconnecting Laser Filaments
+        // 1. Constellation Nodes
         particles.forEach((p, i) => {
           const pt = project(p.x, p.y, p.z);
           ctx.beginPath();
           ctx.arc(pt.px, pt.py, p.r * pt.scale, 0, Math.PI * 2);
           ctx.fill();
 
-          // Connect nearby particles
           for (let j = i + 1; j < particles.length; j++) {
             const p2 = particles[j];
             const dist = Math.hypot(p.x - p2.x, p.y - p2.y, p.z - p2.z);
-            if (dist < 80) {
+            if (dist < 75) {
               const pt2 = project(p2.x, p2.y, p2.z);
               ctx.lineWidth = 0.6;
               ctx.beginPath();
@@ -489,11 +795,11 @@
           }
         });
 
-        // 2. Concentric Outer Sacred Orbital Rings
-        [65, 105, 140].forEach((rad, i) => {
+        // 2. Concentric Orbital Rings
+        [65, 105, 135].forEach((rad, i) => {
           ctx.lineWidth = 1.5;
           ctx.beginPath();
-          for (let a = 0; a <= Math.PI * 2; a += 0.2) {
+          for (let a = 0; a <= Math.PI * 2; a += 0.25) {
             const pt = project(Math.cos(a) * rad, Math.sin(a * 3 + angle * (i+1)) * (10 + i*4), Math.sin(a) * rad);
             if (a === 0) ctx.moveTo(pt.px, pt.py); else ctx.lineTo(pt.px, pt.py);
           }
@@ -501,7 +807,7 @@
           ctx.stroke();
         });
 
-        // 3. Central Sacred Flower of Life Matrix
+        // 3. Central Flower of Life Geometry
         const innerRad = 45;
         for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
           const ox = Math.cos(a) * (innerRad * 0.6);
@@ -515,7 +821,7 @@
           ctx.stroke();
         }
 
-        // 4. Center Radiant Singularity Core
+        // 4. Center Singularity Core
         const core = project(0, 0, 0);
         ctx.beginPath();
         ctx.arc(core.px, core.py, 8 + Math.sin(angle * 6) * 3, 0, Math.PI * 2);
@@ -527,8 +833,10 @@
       renderFrame();
     }
 
-    window.addEventListener('DOMContentLoaded', initSigilStudio);
-    setTimeout(initSigilStudio, 100);
+    // Auto-init on load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTab('command');
+    });
   </script>
 </body>
 </html>
