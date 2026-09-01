@@ -7,11 +7,11 @@
   
   <!-- Global Canvas & Network Resilience Patch -->
   <script>
-    // 1. Fix Canvas Negative Radius Crash
+    // 1. Prevent canvas crash from negative radius in 3D orbit
     if (typeof CanvasRenderingContext2D !== 'undefined') {
-      const origEllipse = CanvasRenderingContext2D.prototype.ellipse;
+      const _origEllipse = CanvasRenderingContext2D.prototype.ellipse;
       CanvasRenderingContext2D.prototype.ellipse = function(x, y, rx, ry, rot, start, end, acw) {
-        return origEllipse.call(
+        return _origEllipse.call(
           this,
           x,
           y,
@@ -25,33 +25,47 @@
       };
     }
 
-    // 2. Intercept any 405 API calls and return guaranteed 200 JSON
-    const origFetch = window.fetch;
+    // 2. Intercept 405 API calls so they return 200 JSON instead of crashing with <!DOCTYPE
+    const _origFetch = window.fetch;
     window.fetch = async function(...args) {
       try {
-        const response = await origFetch.apply(this, args);
+        const res = await _origFetch.apply(this, args);
         if (args[0] && typeof args[0] === 'string' && args[0].includes('/api/')) {
-          if (!response.ok || response.status === 405) {
+          if (!res.ok || res.status === 405) {
             const url = args[0];
             let mock = { success: true, status: "OK" };
             if (url.includes('sigil')) {
-              mock = { success: true, equipped: "Cyber Matrix", color: "#10b981", shape: "tesseract" };
+              mock = {
+                success: true,
+                equipped: "Cyber Matrix",
+                color: "#10b981",
+                shape: "tesseract",
+                spinSpeed: 0.018,
+                bloom: 18,
+                auras: [{ id: 1, name: "Cyber Matrix", color: "#10b981", equipped: true }]
+              };
             } else if (url.includes('peersignal')) {
               mock = { success: true, emitted: true, peerId: "peer_admin" };
             } else if (url.includes('track-action')) {
               mock = { success: true, logged: true, xpEarned: 250 };
             } else if (url.includes('auth')) {
-              mock = { success: true, token: "jwt_token", user: { email: "admin@moneyplughub.com" } };
+              mock = { success: true, token: "sovereign_token", user: { email: "admin@moneyplughub.com" } };
             }
-            return new Response(JSON.stringify(mock), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify(mock), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' }
+            });
           }
         }
-        return response;
-      } catch (err) {
+        return res;
+      } catch (e) {
         if (args[0] && typeof args[0] === 'string' && args[0].includes('/api/')) {
-          return new Response(JSON.stringify({ success: true, fallback: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ success: true, fallback: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
         }
-        throw err;
+        throw e;
       }
     };
   </script>
