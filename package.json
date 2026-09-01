@@ -1,0 +1,12 @@
+﻿{
+  "name": "moneyplughub",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}

@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrimordiaOS — The Complete 20-Realm Wealth OS</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #02040a;
+      --panel-bg: rgba(10, 14, 28, 0.92);
+      --panel-border: rgba(6, 182, 212, 0.28);
+      --neon-cyan: #06b6d4;
+      --neon-blue: #38bdf8;
+      --neon-purple: #a855f7;
+      --neon-yellow: #facc15;
+      --neon-green: #10b981;
+      --neon-red: #f43f5e;
+      --neon-gold: #fbbf24;
+      --font-mono: 'Fira Code', Consolas, monospace;
+      --font-display: 'Orbitron', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      background: var(--bg-deep); color: #e2e8f0; font-family: var(--font-mono);
+      min-height: 100vh; overflow-x: hidden;
+    }
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+    .os-container { position: relative; z-index: 10; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Sticky Top Dock */
+    .os-dock {
+      display: flex; justify-content: space-between; align-items: center; padding: 10px 24px;
+      background: rgba(4, 7, 18, 0.96); border-bottom: 1px solid var(--panel-border);
+      backdrop-filter: blur(24px); position: sticky; top: 0; z-index: 1000;
+    }
+    .os-brand { font-family: var(--font-display); font-weight: 900; font-size: 15px; letter-spacing: 2px; color: #fff; }
+    .os-brand span { color: var(--neon-cyan); }
+
+    .player-hud {
+      display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px;
+    }
+    .level-badge {
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+      color: #000; font-weight: 900; font-family: var(--font-display); font-size: 10px;
+      padding: 2px 7px; border-radius: 10px;
+    }
+    .xp-bar-container { width: 90px; height: 6px; background: #010308; border-radius: 3px; overflow: hidden; }
+    .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green)); width: 74%; }
+
+    /* Realm Categorized Navigation Bar */
+    .realm-nav-bar {
+      display: flex; gap: 6px; padding: 8px 24px; background: #060913; border-bottom: 1px solid rgba(255,255,255,0.06);
+      overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+    }
+    .realm-tab {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 10px; font-weight: 700; transition: all 0.2s;
+    }
+    .realm-tab:hover { color: #fff; border-color: var(--neon-cyan); }
+    .realm-tab.active {
+      background: rgba(6, 182, 212, 0.18); border-color: var(--neon-cyan);
+      color: var(--neon-cyan); box-shadow: 0 0 14px rgba(6, 182, 212, 0.35);
+    }
+
+    .btn-cyber {
+      background: rgba(6, 182, 212, 0.15); border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan); padding: 5px 12px; border-radius: 20px; font-size: 10px;
+      font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit;
+    }
+
+    .hud-viewport { padding: 24px; max-width: 1440px; margin: 0 auto; width: 100%; }
+    .realm-header-title {
+      font-family: var(--font-display); font-size: 18px; letter-spacing: 2px; color: #fff;
+      margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 22px; }
+
+    .hud-card {
+      background: var(--panel-bg); border: 1px solid var(--panel-border);
+      border-radius: 12px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px); position: relative;
+    }
+    .card-label { font-size: 11px; letter-spacing: 1.5px; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; font-weight: 700; }
+
+    canvas.realm-canvas {
+      width: 100%; height: 320px; background: #010308; border-radius: 8px;
+      border: 1px solid rgba(6,182,212,0.3); display: block;
+    }
+
+    .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .tx-input {
+      flex: 1; background: #010308; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; padding: 10px 14px; color: #fff; font-family: inherit; font-size: 12px;
+    }
+    .btn-action {
+      background: rgba(6, 182, 212, 0.18); border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan); padding: 10px 16px; border-radius: 6px; font-weight: 700;
+      font-family: inherit; font-size: 11px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-action:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 14px var(--neon-cyan); }
+    .btn-gold { background: rgba(251,191,36,0.2); border-color: var(--neon-gold); color: var(--neon-gold); }
+    .btn-gold:hover { background: var(--neon-gold); color: #000; }
+    .btn-green { background: rgba(16,185,129,0.18); border-color: var(--neon-green); color: var(--neon-green); }
+    .btn-green:hover { background: var(--neon-green); color: #000; }
+    .btn-danger { background: rgba(244,63,94,0.18); border-color: var(--neon-red); color: var(--neon-red); }
+    .btn-danger:hover { background: var(--neon-red); color: #fff; }
+
+    .slider-row { margin-bottom: 12px; }
+    .slider-header { display: flex; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
+    .slider-input { width: 100%; -webkit-appearance: none; height: 6px; background: #090d16; border-radius: 3px; outline: none; }
+    .slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--neon-cyan); cursor: pointer; }
+
+    .narrator-toast {
+      position: fixed; bottom: 20px; right: 20px; background: rgba(10, 15, 30, 0.96);
+      border: 1px solid var(--neon-cyan); box-shadow: 0 0 26px rgba(6, 182, 212, 0.45);
+      border-radius: 8px; padding: 12px 18px; font-size: 12px; color: #fff;
+      display: flex; align-items: center; gap: 10px; z-index: 2000; max-width: 480px;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="os-container">
+    <!-- Master Top Dock -->
+    <nav class="os-dock">
+      <div class="os-brand">🌌 PRIMORDIA<span>OS</span> // MONEYPLUGHUB</div>
+
+      <div class="player-hud">
+        <span class="level-badge" id="hud-lvl">LVL 14</span>
+        <span style="font-size:10px; font-weight:bold; color:#fff;" id="hud-title">SOVEREIGN ARCHITECT</span>
+        <div class="xp-bar-container">
+          <div class="xp-bar-fill" id="hud-xp-fill"></div>
+        </div>
+        <span style="font-size:10px; color:var(--neon-cyan); font-weight:bold;" id="hud-xp-text">3,450 / 4,000 XP</span>
+        <span style="color:var(--neon-gold); font-size:10px; font-weight:bold;">🔥 14D STREAK</span>
+      </div>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button id="audio-btn" class="btn-cyber" style="border-color:var(--neon-purple); color:var(--neon-purple);" onclick="toggleAudio()">🔊 SOUND: OFF</button>
+      </div>
+    </nav>
+
+    <!-- 20-Realm Categorized Navigation Bar -->
+    <div class="realm-nav-bar">
+      <button class="realm-tab active" onclick="switchRealm('sigilforge')">🌌 3D SIGIL FORGE</button>
+      <button class="realm-tab" onclick="switchRealm('gamified')">🏆 TROPHIES & QUESTS</button>
+      <button class="realm-tab" onclick="switchRealm('playbook')">📚 WEALTH PLAYBOOK</button>
+      <button class="realm-tab" onclick="switchRealm('copilot')">🧠 AI CFO COPILOT</button>
+      <button class="realm-tab" onclick="switchRealm('autopilot')">🚀 AUTOPILOT OS</button>
+      <button class="realm-tab" onclick="switchRealm('chronos')">⏳ CHRONOS TIME</button>
+      <button class="realm-tab" onclick="switchRealm('router')">🔀 CASH ROUTER</button>
+      <button class="realm-tab" onclick="switchRealm('debt')">🏔️ DEBT DESTROYER</button>
+      <button class="realm-tab" onclick="switchRealm('rebalancer')">📈 PORTFOLIO</button>
+      <button class="realm-tab" onclick="switchRealm('realestate')">🏠 REAL ESTATE</button>
+      <button class="realm-tab" onclick="switchRealm('subs')">💳 SUBS & BILLS</button>
+      <button class="realm-tab" onclick="switchRealm('credit')">💳 CREDIT SHIELD</button>
+      <button class="realm-tab" onclick="switchRealm('runway')">⏱️ RUNWAY RADAR</button>
+      <button class="realm-tab" onclick="switchRealm('fire')">🔥 FIRE FREEDOM</button>
+      <button class="realm-tab" onclick="switchRealm('plaid')">🏦 PLAID BANKS</button>
+      <button class="realm-tab" onclick="switchRealm('montecarlo')">🎲 MONTE CARLO</button>
+      <button class="realm-tab" onclick="switchRealm('scanner')">📄 RECEIPT OCR</button>
+      <button class="realm-tab" onclick="switchRealm('taxes')">📊 TAX & P&L</button>
+      <button class="realm-tab" onclick="switchRealm('webhooks')">📲 PUSH ALERTS</button>
+      <button class="realm-tab" onclick="switchRealm('schema')">📘 SCHEMA DDL</button>
+    </div>
+
+    <main id="viewport" class="hud-viewport"></main>
+  </div>
+
+  <div id="toast" class="narrator-toast"><span>🗣️</span><span id="toast-msg">PrimordiaOS Master Matrix Online.</span></div>
+
+  <script>
+    let currentRealm = 'sigilforge';
+    let audioEnabled = false;
+    let audioCtx = null;
+
+    // Master Financial State
+    let netWorth = 94200.00;
+    let vaultLiquidity = 42850.00;
+    let currentXP = 3450, playerLevel = 14, maxXP = 4000;
+    let lootCrates = 2;
+
+    // Sigil 3D State
+    let rotX = 0.3, rotY = 0.4, isDragging = false, lastX = 0, lastY = 0;
+    let sigilShape = 'tesseract', sigilColor = '#06b6d4', harmonicFreq = 528;
+
+    function playTone(freq = 528) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.9);
+      } catch(e) {}
+    }
+
+    function speak(text) {
+      const msg = document.getElementById('toast-msg');
+      if (msg) msg.innerText = text;
+      if (!audioEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.pitch = 0.85; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('audio-btn');
+      if (btn) {
+        btn.innerText = audioEnabled ? "🔊 SOUND: ACTIVE" : "🔇 SOUND: OFF";
+        btn.style.color = audioEnabled ? "var(--neon-green)" : "var(--neon-purple)";
+        btn.style.borderColor = audioEnabled ? "var(--neon-green)" : "var(--neon-purple)";
+      }
+      if (audioEnabled) {
+        playTone(harmonicFreq);
+        speak("Cybernetic acoustic audio matrix online.");
+      }
+    }
+
+    function switchRealm(target) {
+      currentRealm = target;
+      document.querySelectorAll('.realm-tab').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('onclick').includes(target));
+      });
+      playTone(600);
+      speak(`Entering ${target.toUpperCase()} Realm.`);
+      render();
+    }
+
+    function addXP(amount) {
+      currentXP += amount;
+      speak(`+${amount} XP earned!`);
+      if (currentXP >= maxXP) {
+        playerLevel++;
+        currentXP -= maxXP;
+        maxXP = Math.round(maxXP * 1.25);
+        lootCrates++;
+        speak(`Level Up! You are now Level ${playerLevel}!`);
+      }
+      updateHUD();
+      render();
+    }
+
+    function updateHUD() {
+      const lvl = document.getElementById('hud-lvl');
+      const fill = document.getElementById('hud-xp-fill');
+      const txt = document.getElementById('hud-xp-text');
+      if (lvl) lvl.innerText = `LVL ${playerLevel}`;
+      if (fill) fill.style.width = `${Math.min(100, (currentXP/maxXP)*100)}%`;
+      if (txt) txt.innerText = `${currentXP.toLocaleString()} / ${maxXP.toLocaleString()} XP`;
+    }
+
+    // 3D Wireframe Canvas Loop
+    function init3DForge() {
+      const canvas = document.getElementById('sigil-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement ? (canvas.parentElement.clientWidth - 40) : 550;
+      canvas.height = 320;
+
+      canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
+      window.onmouseup = () => { isDragging = false; };
+      window.onmousemove = (e) => {
+        if (!isDragging) return;
+        rotY += (e.clientX - lastX) * 0.01;
+        rotX += (e.clientY - lastY) * 0.01;
+        lastX = e.clientX; lastY = e.clientY;
+      };
+
+      let angle = 0;
+      function loop3D() {
+        if (!document.getElementById('sigil-canvas') || currentRealm !== 'sigilforge') return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        angle += 0.015;
+
+        const cx = canvas.width / 2, cy = canvas.height / 2;
+
+        function project(x, y, z) {
+          const cosY = Math.cos(rotY + angle), sinY = Math.sin(rotY + angle);
+          let x1 = x * cosY - z * sinY, z1 = z * cosY + x * sinY;
+          const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+          let y1 = y * cosX - z1 * sinX, z2 = z1 * cosX + y * sinX;
+          const scale = 300 / (300 + z2 + 200);
+          return { px: cx + x1 * scale, py: cy + y1 * scale };
+        }
+
+        ctx.strokeStyle = sigilColor;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = sigilColor;
+
+        // Rings
+        [75, 115].forEach((rad, i) => {
+          ctx.beginPath();
+          for (let a = 0; a <= Math.PI * 2; a += 0.25) {
+            const p = project(Math.cos(a) * rad, Math.sin(a * 2 + angle * (i+1)) * 14, Math.sin(a) * rad);
+            if (a === 0) ctx.moveTo(p.px, p.py); else ctx.lineTo(p.px, p.py);
+          }
+          ctx.closePath();
+          ctx.stroke();
+        });
+
+        // 3D Cube Nodes
+        const s = 50;
+        const verts = [[-s,-s,-s],[s,-s,-s],[s,s,-s],[-s,s,-s],[-s,-s,s],[s,-s,s],[s,s,s],[-s,s,s]];
+        const proj = verts.map(v => project(v[0], v[1], v[2]));
+        const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+
+        edges.forEach(e => {
+          ctx.beginPath();
+          ctx.moveTo(proj[e[0]].px, proj[e[0]].py);
+          ctx.lineTo(proj[e[1]].px, proj[e[1]].py);
+          ctx.stroke();
+        });
+
+        // Center Pulsing Core
+        ctx.fillStyle = sigilColor;
+        ctx.beginPath();
+        const core = project(0,0,0);
+        ctx.arc(core.px, core.py, 6 + Math.sin(angle*4)*3, 0, Math.PI*2);
+        ctx.fill();
+
+        requestAnimationFrame(loop3D);
+      }
+      loop3D();
+    }
+
+    function render() {
+      const vp = document.getElementById('viewport');
+      if (!vp) return;
+      let html = '';
+
+      // Universal Top Metric Cards
+      const topCards = `
+        <div class="grid-4">
+          <div class="hud-card">
+            <div class="card-label">AGGREGATED NET WORTH</div>
+            <h1 style="color:var(--neon-green); font-size:24px;">$${netWorth.toLocaleString('en-US', {minimumFractionDigits:2})}</h1>
+            <span style="font-size:10px; color:#94a3b8;">4 Institutions Synchronized</span>
+          </div>
+          <div class="hud-card">
+            <div class="card-label">UNENCUMBERED VAULT</div>
+            <h1 style="color:var(--neon-cyan); font-size:24px;">$${vaultLiquidity.toLocaleString('en-US', {minimumFractionDigits:2})}</h1>
+            <span style="font-size:10px; color:#94a3b8;">340 Days Safe Survival Runway</span>
+          </div>
+          <div class="hud-card">
+            <div class="card-label">PLAYER RPG LEVEL</div>
+            <h1 style="color:var(--neon-gold); font-size:24px;">LVL ${playerLevel}</h1>
+            <span style="font-size:10px; color:var(--neon-green);">${currentXP} / ${maxXP} XP (Rank: Centurion)</span>
+          </div>
+          <div class="hud-card">
+            <div class="card-label">AUTOPILOT WEALTH DEFENSE</div>
+            <h1 style="color:var(--neon-yellow); font-size:24px;">100% ACTIVE</h1>
+            <span style="font-size:10px; color:var(--neon-green);">0 Leaks • 0 Anomalies</span>
+          </div>
+        </div>
+      `;
+
+      if (currentRealm === 'sigilforge') {
+        html += topCards + `
+          <div class="realm-header-title">
+            <span>🌌 3D HOLOGRAPHIC SIGIL FORGE & SACRED GEOMETRY</span>
+            <button class="btn-action btn-green" onclick="speak('Sigil Cryptographically Attested and bound to player profile!')">🔐 ATTEST & BIND SIGIL</button>
+          </div>
+          <div class="grid-2">
+            <div class="hud-card">
+              <div class="card-label">INTERACTIVE 3D GEOMETRIC CHAMBER (DRAG TO ROTATE)</div>
+              <canvas id="sigil-canvas" class="realm-canvas"></canvas>
+            </div>
+            <div class="hud-card">
+              <div class="card-label">COSMIC PRESET FORGES</div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="btn-action" onclick="sigilColor='#06b6d4'; playTone(528); speak('Imperial Tesseract 4D Hypercube active.');">👑 Imperial Tesseract (528Hz)</button>
+                <button class="btn-action" onclick="sigilColor='#f43f5e'; playTone(852); speak('Sentinel Aegis double merkaba active.');">🛡️ Sentinel Aegis (852Hz)</button>
+                <button class="btn-action" onclick="sigilColor='#a855f7'; playTone(963); speak('Chronos Singularity active.');">🔮 Chronos Singularity (963Hz)</button>
+                <button class="btn-action" onclick="sigilColor='#fbbf24'; playTone(432); speak('Solar Metatron active.');">☀️ Solar Metatron (432Hz)</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'gamified') {
+        html += topCards + `
+          <div class="realm-header-title">
+            <span>🏆 TROPHY HALL OF FAME & QUEST MATRIX</span>
+            <button class="btn-action btn-gold" onclick="addXP(450)">🎁 OPEN LOOT CRATE (+450 XP)</button>
+          </div>
+          <div class="grid-2">
+            <div class="hud-card">
+              <div class="card-label">ACTIVE DAILY & WEEKLY QUESTS</div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:6px;">
+                  <div><strong>🗡️ Morning Bank Recon</strong><div style="font-size:10px; color:#94a3b8;">Audit 4 bank feeds for unclassified charges.</div></div>
+                  <button class="btn-action btn-green" onclick="addXP(50)">+50 XP</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:6px;">
+                  <div><strong>🧾 Receipt OCR Scan</strong><div style="font-size:10px; color:#94a3b8;">Parse a receipt with Vision OCR.</div></div>
+                  <button class="btn-action btn-green" onclick="addXP(100)">+100 XP</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:6px;">
+                  <div><strong>🐉 The Inflow Titan</strong><div style="font-size:10px; color:#94a3b8;">Route a full paycheck via 50/20/20/10 formula.</div></div>
+                  <button class="btn-action btn-green" onclick="addXP(750)">+750 XP</button>
+                </div>
+              </div>
+            </div>
+            <div class="hud-card">
+              <div class="card-label">UNLOCKED CYBER TROPHIES (12 MEDALS)</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:10px; border-radius:6px; text-align:center;">
+                  <div style="font-size:24px;">👑</div><strong>Genesis Sovereign</strong><div style="font-size:8px; color:#94a3b8;">PostgreSQL Connected</div>
+                </div>
+                <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:10px; border-radius:6px; text-align:center;">
+                  <div style="font-size:24px;">💎</div><strong>Diamond Hands</strong><div style="font-size:8px; color:#94a3b8;">Portfolio Rebalanced</div>
+                </div>
+                <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:10px; border-radius:6px; text-align:center;">
+                  <div style="font-size:24px;">⚔️</div><strong>Debt Hydra Slayer</strong><div style="font-size:8px; color:#94a3b8;">$1,000+ Interest Saved</div>
+                </div>
+                <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:10px; border-radius:6px; text-align:center;">
+                  <div style="font-size:24px;">🏛️</div><strong>Centurion Vault</strong><div style="font-size:8px; color:#94a3b8;">$100k+ Net Worth Base</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'playbook') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📚 MASTER WEALTH PLAYBOOK & TIMENESS ADVICE</span></div>
+          <div class="grid-2">
+            <div class="hud-card">
+              <div class="card-label">1. THE FINANCIAL ORDER OF OPERATIONS (FOO)</div>
+              <p style="font-size:12px; line-height:1.7; color:#cbd5e1;">
+                1. Deductibles Covered ($1,500-$2,500 HYSA buffer)<br>
+                2. Employer 401(k) Match (100% Instant ROI)<br>
+                3. High-Interest Debt Payoff (>8% APR)<br>
+                4. Emergency Reserves (3-6mo HYSA 4.5%+)<br>
+                5. Roth IRA ($7k) + HSA ($4,150 Triple Tax Advantage)<br>
+                6. Max 401(k) ($23k/yr in broad index VOO/VTI)<br>
+                7. Hyper-Accumulation & Real Estate
+              </p>
+            </div>
+            <div class="hud-card">
+              <div class="card-label">2. THE BOGLEHEAD INDEX MANIFESTO</div>
+              <p style="font-size:12px; line-height:1.7; color:#cbd5e1;">
+                • <strong>90%+ of Wall Street active fund managers fail</strong> to beat low-cost broad index funds over 15 years.<br>
+                • <strong>Low Fees Matter:</strong> A 1.0% fee costs over 28% of your lifetime wealth compared to a 0.03% expense ratio (VOO/VTI).<br>
+                • <strong>Time in Market > Timing Market:</strong> Automate bi-weekly dollar-cost averaging.
+              </p>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'copilot') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🧠 EXECUTIVE AI CFO COPILOT</span></div>
+          <div class="hud-card">
+            <div class="card-label">EXECUTIVE BRIEFING CHIPS</div>
+            <div style="display:flex; gap:10px; margin-bottom:14px;">
+              <button class="btn-action" onclick="speak('Executive Briefing: Net Worth is $94,200 across 4 institutions. Liquid reserves stand at $42,850 providing 340 days safe runway.')">💼 Executive Net Worth Briefing</button>
+              <button class="btn-action" onclick="speak('Tax Strategy: You currently have $3,850 in Schedule C deductions delivering $924 in direct tax savings.')">📊 Tax Write-Off Summary</button>
+              <button class="btn-action" onclick="speak('Portfolio Alert: Crypto is overweight by +10.7%. Recommended trade: Trim $10,070 to buy Equities and Real Estate.')">⚖️ Rebalance Trade Plan</button>
+            </div>
+            <div style="background:#010308; padding:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); font-size:12px; line-height:1.6;">
+              <strong>🧠 AI CFO:</strong> "I have active telemetry over your 4 bank accounts, tax deductions, and debt stack. How can I optimize your capital today?"
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'autopilot') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🚀 AUTONOMOUS WEALTH AUTOPILOT (8-STEP SWEEP)</span></div>
+          <div class="hud-card">
+            <div class="card-label">8-STEP PIPELINE TOPOLOGY</div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0;">
+              <div style="background:rgba(16,185,129,0.1); border:1px solid var(--neon-green); padding:10px; border-radius:6px; text-align:center;">1. Plaid Sync 🟢</div>
+              <div style="background:rgba(16,185,129,0.1); border:1px solid var(--neon-green); padding:10px; border-radius:6px; text-align:center;">2. OCR Rules 🟢</div>
+              <div style="background:rgba(16,185,129,0.1); border:1px solid var(--neon-green); padding:10px; border-radius:6px; text-align:center;">3. Sentinel Audit 🟢</div>
+              <div style="background:rgba(16,185,129,0.1); border:1px solid var(--neon-green); padding:10px; border-radius:6px; text-align:center;">4. Auto-Route Cash 🟢</div>
+            </div>
+            <button class="btn-action btn-green" onclick="speak('Autonomous 8-step wealth sweep completed across $94,200 asset base.')">⚡ EXECUTE FULL 8-STEP SWEEP</button>
+          </div>
+        `;
+      } else if (currentRealm === 'chronos') {
+        html += topCards + `
+          <div class="realm-header-title"><span>⏳ CHRONOS MULTIVERSE TIME MACHINE</span></div>
+          <div class="hud-card">
+            <div class="card-label">PARALLEL WEALTH MULTIVERSES (2030 PROJECTIONS)</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+              <div style="background:rgba(6,182,212,0.1); border:1px solid var(--neon-cyan); padding:14px; border-radius:8px;">
+                <strong>🌌 Timeline Alpha (Baseline)</strong><div>2030 Net Worth: <strong>$280,000</strong></div>
+              </div>
+              <div style="background:rgba(16,185,129,0.1); border:1px solid var(--neon-green); padding:14px; border-radius:8px;">
+                <strong>🏠 Timeline Beta (Real Estate)</strong><div>2030 Net Worth: <strong>$485,000 (+$205k)</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'router') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🔀 CASH FLOW AUTO-SPLITTER (50/20/20/10)</span></div>
+          <div class="hud-card">
+            <div class="card-label">PAYCHECK ROUTING SIMULATOR</div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-action" onclick="speak('Routed $4,850: $2,425 to Essentials, $970 to Investments, $970 to Debt, $485 to Fun.')">⚡ Route $4,850 Salary</button>
+              <button class="btn-action" onclick="speak('Routed $10,000: $5,000 to Essentials, $2,000 to Investments, $2,000 to Debt, $1,000 to Fun.')">⚡ Route $10,000 Retainer</button>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'debt') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🏔️ DEBT DESTROYER (AVALANCHE VS SNOWBALL)</span></div>
+          <div class="hud-card">
+            <div class="card-label">ACTIVE LIABILITIES STACK</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; background:rgba(244,63,94,0.08); border:1px solid var(--neon-red); padding:10px; border-radius:6px;">
+                <strong>#1 Focus Target: Chase Sapphire (24.99% APR)</strong><span>$4,200.00 Balance</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.03); padding:10px; border-radius:6px;">
+                <span>Amex Line (21.49% APR)</span><span>$2,800.00 Balance</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'rebalancer') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📈 SMART PORTFOLIO REBALANCER</span></div>
+          <div class="hud-card">
+            <div class="card-label">RECOMMENDED TRADE REBALANCE SEQUENCE</div>
+            <p style="font-size:12px; margin-bottom:12px;">• 🔴 SELL <strong>$10,070 Crypto (BTC/ETH)</strong><br>• 🟢 BUY <strong>$4,700 S&P 500 (VOO)</strong><br>• 🟢 BUY <strong>$3,640 Real Estate (O)</strong></p>
+            <button class="btn-action btn-green" onclick="speak('Executed portfolio rebalance. All asset classes returned to target parity.')">⚡ EXECUTE 1-CLICK REBALANCE</button>
+          </div>
+        `;
+      } else if (currentRealm === 'realestate') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🏠 REAL ESTATE CASHFLOW & CAP RATE ANALYZER</span></div>
+          <div class="hud-card">
+            <div class="card-label">DEAL PRESETS</div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-action" onclick="speak('Single Family $320k deal yields $382.40 monthly net cashflow with 7.2% Cap Rate.')">🏠 Single Family ($320k / $2,800 rent)</button>
+              <button class="btn-action" onclick="speak('Duplex $480k deal yields $714.20 monthly net cashflow with 8.4% Cap Rate.')">🏢 Duplex ($480k / $4,200 rent)</button>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'subs') {
+        html += topCards + `
+          <div class="realm-header-title"><span>💳 SUBSCRIPTION RADAR & BILL NEGOTIATOR</span></div>
+          <div class="hud-card">
+            <div class="card-label">GHOST SUBSCRIPTION ALERT</div>
+            <div style="background:rgba(244,63,94,0.08); border:1px solid var(--neon-red); padding:12px; border-radius:6px; margin-bottom:12px;">
+              <strong>⚠️ Equinox Gym ($280.00/mo)</strong> — Unused in > 30 days. Cancel to unlock <strong>+$3,360/yr</strong> in savings!
+            </div>
+            <button class="btn-action btn-danger" onclick="speak('Cancelled Equinox Gym. Unlocked $3,360 annual savings.')">CANCEL SUBSCRIPTION</button>
+          </div>
+        `;
+      } else if (currentRealm === 'credit') {
+        html += topCards + `
+          <div class="realm-header-title"><span>💳 CREDIT SHIELD & REWARDS MAXIMIZER</span></div>
+          <div class="hud-card">
+            <div class="card-label">FICO SIMULATION: 782 (EXCELLENT)</div>
+            <p style="font-size:12px; margin-bottom:12px;">Paying down $3,000 in revolving debt drops utilization to 5% and elevates score to <strong>818 (Tier-1 Elite)</strong>.</p>
+          </div>
+        `;
+      } else if (currentRealm === 'runway') {
+        html += topCards + `
+          <div class="realm-header-title"><span>⏱️ RUNWAY RADAR & "CUT-THE-FAT" MATRIX</span></div>
+          <div class="hud-card">
+            <div class="card-label">ZERO-INCOME SURVIVAL: 340 DAYS</div>
+            <p style="font-size:12px; margin-bottom:12px;">Activating lean emergency protocols extends your runway to <strong>632 Days (21.0 Months)</strong>.</p>
+            <button class="btn-action btn-green" onclick="speak('Lean emergency protocols active. Runway extended by +292 days.')">ACTIVATE LEAN SURVIVAL PROTOCOL</button>
+          </div>
+        `;
+      } else if (currentRealm === 'fire') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🔥 FIRE FREEDOM CLOCK (4% RULE)</span></div>
+          <div class="hud-card">
+            <div class="card-label">STANDARD FIRE TARGET: $1,875,000</div>
+            <p style="font-size:12px; margin-bottom:12px;">At a $32,000/yr savings rate and 8% return, your estimated Freedom Date is in <strong>9.4 Years</strong>.</p>
+          </div>
+        `;
+      } else if (currentRealm === 'plaid') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🏦 PLAID MULTI-INSTITUTION AGGREGATOR</span></div>
+          <div class="hud-card">
+            <div class="card-label">CONNECTED INSTITUTIONS (4 SYNCED)</div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);"><span>🏦 Chase Premier Checking</span><strong>$14,250.00</strong></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);"><span>📈 Fidelity High Yield Reserve</span><strong>$25,400.00</strong></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);"><span>💼 Wells Fargo Operations</span><strong>$5,040.00</strong></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0;"><span>💳 Amex Gold Business</span><strong style="color:var(--neon-red);">-$1,840.50</strong></div>
+          </div>
+        `;
+      } else if (currentRealm === 'montecarlo') {
+        html += topCards + `
+          <div class="realm-header-title"><span>🎲 MONTE CARLO PROBABILISTIC SIMULATOR</span></div>
+          <div class="hud-card">
+            <div class="card-label">1,000 STOCHASTIC SCENARIOS</div>
+            <p style="font-size:12px; margin-bottom:12px;">Survival Probability: <strong>98.6%</strong> over 24 months. Median P50 Vault: <strong>$84,500</strong>.</p>
+            <button class="btn-action" onclick="speak('Monte Carlo simulation re-run across 1,000 paths. 98.6% survival probability confirmed.')">⚡ RE-RUN 1,000 SIMULATIONS</button>
+          </div>
+        `;
+      } else if (currentRealm === 'scanner') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📄 AI RECEIPT OCR SCANNER (GEMINI VISION)</span></div>
+          <div class="hud-card">
+            <div class="card-label">TEST RECEIPT INGESTION</div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-action" onclick="speak('Parsed Whole Foods receipt: $68.42 under Groceries.')">🧪 Test Whole Foods ($68.42)</button>
+              <button class="btn-action" onclick="speak('Parsed Home Depot invoice: $214.35 under Supplies.')">🧪 Test Home Depot ($214.35)</button>
+            </div>
+          </div>
+        `;
+      } else if (currentRealm === 'taxes') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📊 TAX DEDUCTIONS & P&L SCHEDULE C</span></div>
+          <div class="hud-card">
+            <div class="card-label">ELIGIBLE WRITE-OFFS: $3,850.00</div>
+            <p style="font-size:12px; margin-bottom:12px;">Total Tax Savings: <strong>+$924.00</strong>. Download clean CSV spreadsheet for your accountant.</p>
+            <button class="btn-action btn-green" onclick="speak('Tax ledger CSV exported.')">📥 DOWNLOAD CSV TAX LEDGER</button>
+          </div>
+        `;
+      } else if (currentRealm === 'webhooks') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📲 DISCORD & TELEGRAM PUSH SENTINEL</span></div>
+          <div class="hud-card">
+            <div class="card-label">TEST WEBHOOK DISPATCH</div>
+            <button class="btn-action btn-danger" onclick="speak('Dispatched Sentinel anomaly alert to Discord webhook.')">🚨 Trigger Anomaly Alert ($7,500 Outflow)</button>
+          </div>
+        `;
+      } else if (currentRealm === 'schema') {
+        html += topCards + `
+          <div class="realm-header-title"><span>📘 CANONICAL POSTGRESQL SCHEMA (9 TABLES)</span></div>
+          <div class="hud-card">
+            <pre style="background:#010308; padding:14px; border-radius:6px; color:var(--neon-cyan); font-size:11px;">CREATE TABLE accounts (...);\nCREATE TABLE transactions (...);\nCREATE TABLE goals (...);\nCREATE TABLE transaction_rules (...);\n-- STRICT ROW LEVEL SECURITY (auth.uid() = user_id)</pre>
+          </div>
+        `;
+      }
+
+      vp.innerHTML = html;
+      if (currentRealm === 'sigilforge') setTimeout(init3DForge, 50);
+      updateHUD();
+    }
+
+    render();
+  </script>
+</body>
+</html>

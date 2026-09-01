@@ -1,0 +1,6 @@
+﻿node_modules/
+.env
+.env.local
+.gemini/
+*.log
+.DS_Store
