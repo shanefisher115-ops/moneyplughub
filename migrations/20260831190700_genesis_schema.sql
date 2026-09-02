@@ -1,0 +1,2 @@
+﻿-- PrimordiaOS Genesis Migration (Version: 20260831190700)
+-- Canonical production database initialization

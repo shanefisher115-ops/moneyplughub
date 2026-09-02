@@ -1,0 +1,1 @@
+function Get-PSHPrompt { return "⟐ PSH://origin.core >" }

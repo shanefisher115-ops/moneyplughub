@@ -1,0 +1,81 @@
+{
+  "id": "sb_1787968362209",
+  "title": "Viral Pattern-Interrupt Hook • Primary Auditor",
+  "templateId": "youtube_breakdown_169",
+  "platform": "tiktok",
+  "aspectRatio": "16:9",
+  "width": 1920,
+  "height": 1080,
+  "totalDurationSeconds": 15,
+  "narratorAgentId": "davinci_agent",
+  "narratorName": "Leonardo (Polymath)",
+  "lutProfile": "neon_matrix",
+  "referralCode": "ADMIN-PLUG",
+  "shots": [
+    {
+      "shotIndex": 1,
+      "timecode": "[0-3s]",
+      "durationSeconds": 3,
+      "title": "The Pattern Interrupt Hook",
+      "cameraMovement": "Rapid Zoom In on stressed creator looking at messy Excel spreadsheet",
+      "lightingAndVFX": "Desaturated cold blue lighting suddenly shattering into high-voltage neon emerald grid",
+      "visualPrompt": "<FIRST_FRAME> Extreme close-up of a laptop screen with broken spreadsheets shattering like glass, revealing a glowing futuristic cyberpunk financial dashboard beneath, neon emerald lighting, 4K 60fps.",
+      "firstFrameRef": "/moneyplughub_emblem.png",
+      "narrationScript": "Stop tracking your money like it’s 2012. Spreadsheets are where cashflow goes to die.",
+      "overlayText": "THROW AWAY SPREADSHEETS ❌",
+      "overlayCta": "There is a better way",
+      "previewGradient": "from-rose-900 via-slate-900 to-slate-950"
+    },
+    {
+      "shotIndex": 2,
+      "timecode": "[3-7s]",
+      "durationSeconds": 4,
+      "title": "The Asymmetric Upgrade",
+      "cameraMovement": "Smooth Dolly Right across multi-agent AI swarm telemetry",
+      "lightingAndVFX": "Electric emerald and cyan matrix rays, live compounding velocity meter ticking upward",
+      "visualPrompt": "<IMAGE_REF_0> Sleek mobile phone displaying Creator Money OS with real-time per-second compounding stream ticking up ($0.0056/sec), floating particle charts, cinematic depth of field.",
+      "narrationScript": "Creator Money OS turns every audience click into 24/7 recurring commissions and net worth growth.",
+      "overlayText": "REAL-TIME CASHFLOW 📈",
+      "overlayCta": "Compounding 24/7",
+      "previewGradient": "from-emerald-700 via-slate-900 to-cyan-950"
+    },
+    {
+      "shotIndex": 3,
+      "timecode": "[7-11s]",
+      "durationSeconds": 4,
+      "title": "Live Voice Co-Pilot Execution",
+      "cameraMovement": "Dynamic Dutch Angle tracking MoneyOS conversation HUD",
+      "lightingAndVFX": "Pulsing voice waveform ring, instant receipt popup notification",
+      "visualPrompt": "<IMAGE_REF_1> Hand holding smartphone speaking to MoneyOS voice assistant, live waveform audio visualizer glowing neon green, instant transaction receipt confirmation on screen.",
+      "narrationScript": "Just say: \"Check my liquid runway\" or \"Move funds to savings\" — executed instantly without touching a button.",
+      "overlayText": "VOICE-OPERATED FINANCES 🎙️",
+      "overlayCta": "Instant Voice Execution",
+      "previewGradient": "from-cyan-700 via-slate-900 to-purple-950"
+    },
+    {
+      "shotIndex": 4,
+      "timecode": "[11-15s]",
+      "durationSeconds": 4,
+      "title": "Call to Action & Sigil Stamp",
+      "cameraMovement": "Fast Center Snap Zoom on glowing referral pass card",
+      "lightingAndVFX": "Brilliant emerald halo flare with golden particle shower",
+      "visualPrompt": "Final hero card with prominent invite code badge, metallic cyber finish, \"Start Free — No Credit Card\" badge, high conversion UI design.",
+      "narrationScript": "Grab your spot before this tier closes. Link in bio, use invite code ADMIN-PLUG.",
+      "overlayText": "START FREE: CODE ADMIN-PLUG",
+      "overlayCta": "moneyplughub.com",
+      "previewGradient": "from-emerald-600 via-amber-950 to-slate-950"
+    }
+  ],
+  "fullNarrationText": "Stop tracking your money like it’s 2012. Spreadsheets are where cashflow goes to die. Creator Money OS turns every audience click into 24/7 recurring commissions and net worth growth. Just say: \"Check my liquid runway\" or \"Move funds to savings\" — executed instantly without touching a button. Grab your spot before this tier closes. Link in bio, use invite code ADMIN-PLUG.",
+  "captionCopy": "Spreadsheets are dead. Run your entire financial operating system with voice AI and automated referral compounding. Use invite code ADMIN-PLUG to get started free! 💸",
+  "hashtags": [
+    "#moneytok",
+    "#passiveincome",
+    "#financialfreedom",
+    "#creatormoneyos",
+    "#moneyplughub",
+    "#sidehustle2026"
+  ],
+  "pinnedComment": "👉 Get early access to Creator Money OS: https://moneyplughub.com/?ref=ADMIN-PLUG (Use code: ADMIN-PLUG)",
+  "createdAt": "2026-08-29T01:52:42.209Z"
+}

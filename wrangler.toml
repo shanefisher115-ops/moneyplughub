@@ -1,0 +1,8 @@
+﻿name = "moneyplughub"
+compatibility_date = "2026-08-27"
+pages_build_output_dir = "dist/client"
+
+[vars]
+NODE_ENV = "production"
+APP_NAME = "MoneyPlugHub"
+API_URL = "https://moneyplughub.com/api"

@@ -1,0 +1,17 @@
+﻿{
+  "version": 1,
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/api/*",
+    "/go/*",
+    "/assets/*",
+    "/boot.mp4",
+    "/logo.png",
+    "/moneyplughub_emblem.png",
+    "/moneyplughub_badge.png",
+    "/robots.txt",
+    "/sitemap.xml"
+  ]
+}
