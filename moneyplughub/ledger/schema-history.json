@@ -1,0 +1,13 @@
+﻿[
+  {
+    "timestamp": "2026-08-31T19:07:00.000Z",
+    "version": "20260831190700",
+    "environment": "production",
+    "generator": "supabase-cli",
+    "diff_file": "primordiaos/moneyplughub/schema/moneyplughub_production.sql",
+    "hash": "sha256-genesis-primordiaos-moneyplughub",
+    "approved": true,
+    "promoted_from": null,
+    "notes": "Genesis creation of MoneyPlugHub 9-model canonical schema"
+  }
+]

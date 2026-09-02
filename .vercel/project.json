@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_Z0HeHvRdTxYtEHEBOBVWDE5X21lC",
+  "orgId": "team_ajJxfIv2YxADcdZubBc2QsWv",
+  "projectName": "primordiaos",
+  "settings": {
+    "createdAt": 1788132809773,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}
