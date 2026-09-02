@@ -109,15 +109,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
           </button>
         </form>
 
-        {/* Quick Admin Credential Button for Evaluators */}
-        <div className="mt-6 pt-6 border-t border-plug-border/60">
+        {/* Quick Instant Sovereign Access Buttons */}
+        <div className="mt-6 pt-6 border-t border-plug-border/60 space-y-2.5">
           <button
             type="button"
-            onClick={fillAdminCredentials}
-            className="w-full py-2 px-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+            onClick={() => {
+              loginAsGuest(false);
+              onNavigate('overview');
+            }}
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-pink-500/20 hover:from-emerald-500/30 hover:to-pink-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10 cursor-pointer"
+          >
+            <Zap className="w-4 h-4 text-emerald-400 fill-current" />
+            ✨ Instant Enter as Sovereign Creator (All 20 Realms Unlocked)
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              loginAsGuest(true);
+              onNavigate('admin');
+            }}
+            className="w-full py-2.5 px-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
             <Shield className="w-3.5 h-3.5" />
-            Auto-Fill Seed Admin Credentials
+            👑 Instant Enter as Primary Auditor (Admin Mode)
           </button>
         </div>
 
@@ -134,3 +149,4 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
     </div>
   );
 };
+

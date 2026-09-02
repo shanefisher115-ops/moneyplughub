@@ -127,17 +127,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={() => onNavigate('register')}
-            className="w-full sm:w-auto px-8 py-4 bg-plug-accent hover:bg-plug-accentHover text-plug-dark font-extrabold text-base rounded-xl transition-all shadow-xl shadow-plug-accent/25 hover:scale-[1.02] flex items-center justify-center gap-2"
+            onClick={() => onNavigate('sigil-forge')}
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-400 via-cyan-400 to-pink-500 hover:from-emerald-300 hover:to-pink-400 text-slate-950 font-black text-base rounded-xl transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.03] flex items-center justify-center gap-2 cursor-pointer"
           >
-            Start Free — No Credit Card
-            <ArrowRight className="w-5 h-5" />
+            <Sparkles className="w-5 h-5" />
+            Launch 3D Sigil Forge & 20 Realms
+          </button>
+          <button
+            onClick={() => onNavigate('reality-engine')}
+            className="w-full sm:w-auto px-7 py-4 bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 text-cyan-300 font-bold text-base rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:border-cyan-400"
+          >
+            <Zap className="w-5 h-5 text-cyan-400" />
+            Reality Engine Chambers
           </button>
           <button
             onClick={() => onNavigate('pricing')}
-            className="w-full sm:w-auto px-8 py-4 bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-white font-bold text-base rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-4 bg-slate-900/60 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
           >
-            View Plans & Pricing
+            Plans & Pricing
           </button>
         </div>
 
