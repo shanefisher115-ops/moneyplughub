@@ -203,17 +203,51 @@ export interface ProgramClick {
   created_at: string;
 }
 
+export interface MilestoneBadge {
+  id: string;
+  title: string;
+  category: 'Earnings' | 'Referrals' | 'Syndicate' | 'Streak' | 'XP' | 'Special';
+  icon: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary' | 'cosmic';
+  description: string;
+  animated_effect: 'pulse' | 'glow' | 'shimmer' | 'flame' | 'sparkle' | 'orbit';
+  unlocked_at?: string;
+}
+
+export interface EarningsTierInfo {
+  tier_number: number;
+  name: string;
+  title: string;
+  badge: string;
+  color: string;
+  min_earnings_cents: number;
+}
+
 export interface LeaderboardEntry {
   rank: number;
   user_id: string;
   display_name: string;
+  avatar_url?: string;
   xp: number;
   level: number;
   tier_title: string;
   streak_days: number;
   net_worth_cents: number;
+  monthly_earnings_cents: number;
+  total_earnings_cents: number;
   referral_count: number;
+  earnings_tier: EarningsTierInfo;
+  syndicate?: {
+    id: string;
+    name: string;
+    tag: string;
+    emblem_sigil: string;
+    rank?: number;
+  } | null;
+  milestone_badges: MilestoneBadge[];
+  rank_change?: number;
   is_current_user?: boolean;
+  last_active_at?: string;
 }
 
 export interface NetWorthSummary {
