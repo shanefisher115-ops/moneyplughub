@@ -17,16 +17,25 @@ async function runTests() {
   console.log('✓ Step 1: Database schema, quests, and admin seed verified.');
 
   // 2. Create & Initialize User Profile (Alex Champion)
-  const alexId = `test_usr_alex_${Date.now()}`;
+  const existingAlex = db.prepare("SELECT * FROM users WHERE email = 'alex@test.moneyplughub.local'").get() as any;
+  const alexId = existingAlex ? existingAlex.id : 'test_usr_alex';
   const now = new Date().toISOString();
 
   runInTransaction(() => {
-    db.prepare(`
-      INSERT OR REPLACE INTO users (
-        id, email, password_hash, display_name, role, referral_code, 
-        referrer_user_id, referral_count, xp, level, streak_days, tier_title, created_at, updated_at
-      ) VALUES (?, 'alex@test.moneyplughub.local', ?, 'Alex Champion', 'user', 'PLUG-ALEX', NULL, 0, 100, 1, 3, 'Novice Plug', ?, ?)
-    `).run(alexId, bcrypt.hashSync('Password123!', 8), now, now);
+    if (existingAlex) {
+      db.prepare(`
+        UPDATE users
+        SET xp = 100, level = 1, streak_days = 3, updated_at = ?
+        WHERE id = ?
+      `).run(now, alexId);
+    } else {
+      db.prepare(`
+        INSERT INTO users (
+          id, email, password_hash, display_name, role, referral_code,
+          referrer_user_id, referral_count, xp, level, streak_days, tier_title, created_at, updated_at
+        ) VALUES (?, 'alex@test.moneyplughub.local', ?, 'Alex Champion', 'user', 'PLUG-ALEX', NULL, 0, 100, 1, 3, 'Novice Plug', ?, ?)
+      `).run(alexId, bcrypt.hashSync('Password123!', 8), now, now);
+    }
 
     initializeUserFinancialProfile(alexId, 'alex@test.moneyplughub.local');
   });
@@ -117,6 +126,7 @@ async function runTests() {
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
   console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {
