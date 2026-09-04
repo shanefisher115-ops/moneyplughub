@@ -1,4 +1,5 @@
-﻿name = "moneyplughub"
+name = "moneyplughub"
+main = "deploy/worker.ts"
 compatibility_date = "2026-08-27"
 pages_build_output_dir = "dist/client"
 
@@ -6,3 +7,13 @@ pages_build_output_dir = "dist/client"
 NODE_ENV = "production"
 APP_NAME = "MoneyPlugHub"
 API_URL = "https://moneyplughub.com/api"
+
+[[kv_namespaces]]
+binding = "SIGIL_CACHE"
+id = "SIGIL_CACHE_KV_ID"
+preview_id = "SIGIL_CACHE_KV_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "PROFILE_CACHE"
+id = "PROFILE_CACHE_KV_ID"
+preview_id = "PROFILE_CACHE_KV_PREVIEW_ID"
