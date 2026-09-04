@@ -58,6 +58,7 @@ import { signalRealmRouter } from './routes/signalRealmOutreach';
 import { supabaseRouter } from './supabase';
 import { unrealRouter } from './routes/unrealEngine';
 import { unrealBridge } from './unreal/unrealBridge';
+import salesCopilotRouter from './routes/salesCopilot';
 
 const app = express();
 
@@ -144,6 +145,7 @@ app.use('/api/phom', signalRealmRouter);
 app.use('/api/apollo', signalRealmRouter);
 app.use('/api/supabase', supabaseRouter);
 app.use('/api/unreal', unrealRouter);
+app.use('/api/sales-copilot', salesCopilotRouter);
 
 // Healthcheck Endpoint with instant in-memory response
 app.get('/api/health', (req: Request, res: Response) => {

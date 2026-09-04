@@ -44,6 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
   }, []);
 
   const secondaryTabs = [
+    { id: 'sales-copilot', label: '🤖 AI Sales Copilot', icon: Bot, color: 'text-cyan-400' },
     { id: 'supabase', label: '🗄️ Supabase Cloud', icon: Database, color: 'text-emerald-400' },
     { id: 'signal-realm', label: '📡 Signal Realm', icon: Send, color: 'text-cyan-400' },
     { id: 'creator-os', label: '🎨 Creator OS Studio', icon: Sparkles, color: 'text-pink-400' },
