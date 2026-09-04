@@ -77,7 +77,6 @@ async function runTests() {
   console.log('✓ Step 7: StarterOrchestrator Daily Loop dispatched full 5-agent mesh seamlessly.');
 
   // 8. MoneyOS Conversational AI & Live Wallet Context Synthesis
-  // 8. MoneyOS Conversational AI & Live Wallet Context Synthesis
   const moneyOsMsgId = `test_msg_${Date.now()}`;
   db.prepare(`
     INSERT INTO moneyos_conversations (id, user_id, role, content, metadata_json, created_at)
@@ -117,6 +116,7 @@ async function runTests() {
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
   console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {
