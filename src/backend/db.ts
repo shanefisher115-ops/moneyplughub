@@ -228,7 +228,7 @@ export function initDb(): void {
       user_id TEXT NOT NULL,
       currency TEXT NOT NULL CHECK(currency IN ('USDC', 'SOL', 'BTC', 'ETH', 'MPH')),
       balance REAL NOT NULL DEFAULT 0.0,
-      address TEXT NOT NULL UNIQUE,
+      address TEXT NOT NULL,
       created_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
       UNIQUE(user_id, currency)
@@ -807,6 +807,25 @@ export function initDb(): void {
       created_at TEXT NOT NULL
     );
   `);
+
+  // Ensure crypto_wallets table allows shared wallet address across SOL and USDC for same user
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS crypto_wallets_temp (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        currency TEXT NOT NULL CHECK(currency IN ('USDC', 'SOL', 'BTC', 'ETH', 'MPH')),
+        balance REAL NOT NULL DEFAULT 0.0,
+        address TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, currency)
+      );
+      INSERT OR IGNORE INTO crypto_wallets_temp SELECT * FROM crypto_wallets;
+      DROP TABLE crypto_wallets;
+      ALTER TABLE crypto_wallets_temp RENAME TO crypto_wallets;
+    `);
+  } catch (e) {}
 
   const progCols = [
     "payout_type TEXT NOT NULL DEFAULT 'Cash Bonus'",
