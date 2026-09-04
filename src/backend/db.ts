@@ -821,16 +821,53 @@ export function initDb(): void {
     } catch (e) {}
   }
 
-  // Ensure subscription columns exist on users
+  // Ensure subscription and Stripe Connect columns exist on users
   const userCols = [
     "subscriptionTier TEXT NOT NULL DEFAULT 'FREE'",
     "subscriptionActive INTEGER NOT NULL DEFAULT 0",
+    "stripe_connect_account_id TEXT",
   ];
   for (const col of userCols) {
     try {
       db.exec(`ALTER TABLE users ADD COLUMN ${col};`);
     } catch (e) {}
   }
+
+  // Ensure payout batches and payout items tables exist
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS payout_batches (
+        id TEXT PRIMARY KEY,
+        batch_id TEXT UNIQUE NOT NULL,
+        total_amount_cents INTEGER NOT NULL DEFAULT 0,
+        creator_count INTEGER NOT NULL DEFAULT 0,
+        min_threshold_cents INTEGER NOT NULL DEFAULT 5000,
+        status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'pending', 'processing', 'completed', 'failed')),
+        payload_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        executed_at TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS payout_items (
+        id TEXT PRIMARY KEY,
+        batch_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        stripe_connect_account_id TEXT,
+        amount_cents INTEGER NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'USD',
+        commission_ids TEXT NOT NULL,
+        stripe_transfer_id TEXT,
+        status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'transferred', 'failed')),
+        error TEXT,
+        created_at TEXT NOT NULL,
+        executed_at TEXT,
+        FOREIGN KEY (batch_id) REFERENCES payout_batches(batch_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT
+      );
+      CREATE INDEX IF NOT EXISTS idx_payout_items_batch ON payout_items(batch_id);
+      CREATE INDEX IF NOT EXISTS idx_payout_items_user ON payout_items(user_id);
+    `);
+  } catch (e) {}
 
   // Ensure subscriptions table and columns exist
   try {
