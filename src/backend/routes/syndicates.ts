@@ -1,9 +1,46 @@
 import { Router, Request, Response } from 'express';
 import { db, runInTransaction } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
-import { Syndicate, SyndicateMember, MySyndicateResponse, ApiResponse } from '../../types';
+import { Syndicate, SyndicateMember, MySyndicateResponse, SyndicateChannel, SyndicateMessage, ApiResponse } from '../../types';
 
 const router = Router();
+
+export const WEALTH_TIER_RANKS: Record<string, number> = {
+  'novice plug': 1,
+  'bronze': 1,
+  'budget apprentice': 2,
+  'silver': 2,
+  'crypto stacker': 3,
+  'gold': 3,
+  'wealth builder': 4,
+  'platinum': 4,
+  'grand money plug': 5,
+  'diamond apex': 5,
+  'diamond stacker': 6,
+  'cosmic': 6,
+  'cosmic money plug': 7,
+  'apex sovereign': 7,
+};
+
+export function getTierRank(tierTitle: string, level: number = 1): number {
+  if (!tierTitle) return Math.max(1, level);
+  const normalized = tierTitle.trim().toLowerCase();
+  if (WEALTH_TIER_RANKS[normalized]) {
+    return Math.max(WEALTH_TIER_RANKS[normalized], level);
+  }
+  return Math.max(1, level);
+}
+
+export function isWealthTierAccessGranted(
+  userLevel: number,
+  userTierTitle: string,
+  requiredLevel: number,
+  requiredTierTitle: string
+): boolean {
+  const userRank = getTierRank(userTierTitle, userLevel);
+  const requiredRank = getTierRank(requiredTierTitle, requiredLevel);
+  return userRank >= requiredRank;
+}
 
 /**
  * Ensure SQLite Schema Initialization for Creator Syndicates & Guild Wars
@@ -36,10 +73,36 @@ export function initSyndicatesSchema() {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS syndicate_channels (
+      id TEXT PRIMARY KEY,
+      syndicate_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('chat', 'voice')),
+      required_tier TEXT NOT NULL DEFAULT 'Novice Plug',
+      required_level INTEGER NOT NULL DEFAULT 1,
+      description TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (syndicate_id) REFERENCES syndicates(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS syndicate_messages (
+      id TEXT PRIMARY KEY,
+      channel_id TEXT NOT NULL,
+      syndicate_id TEXT NOT NULL,
+      sender_id TEXT NOT NULL,
+      encrypted_content TEXT NOT NULL,
+      is_encrypted INTEGER NOT NULL DEFAULT 1,
+      timestamp TEXT NOT NULL,
+      FOREIGN KEY (channel_id) REFERENCES syndicate_channels(id) ON DELETE CASCADE,
+      FOREIGN KEY (syndicate_id) REFERENCES syndicates(id) ON DELETE CASCADE
+    );
+
     CREATE INDEX IF NOT EXISTS idx_syndicates_score ON syndicates(weekly_score DESC);
     CREATE INDEX IF NOT EXISTS idx_syndicates_tag ON syndicates(tag);
     CREATE INDEX IF NOT EXISTS idx_syndicate_members_syndicate ON syndicate_members(syndicate_id);
     CREATE INDEX IF NOT EXISTS idx_syndicate_members_user ON syndicate_members(user_id);
+    CREATE INDEX IF NOT EXISTS idx_syndicate_channels_syndicate ON syndicate_channels(syndicate_id);
+    CREATE INDEX IF NOT EXISTS idx_syndicate_messages_channel ON syndicate_messages(channel_id);
   `);
 
   // Seed 4 Top Default Syndicates if missing
@@ -652,6 +715,245 @@ router.post('/leave', authenticateToken, (req: AuthenticatedRequest, res: Respon
   } catch (err: any) {
     console.error('Error leaving syndicate:', err);
     res.status(500).json({ success: false, error: 'Failed to leave syndicate.' });
+  }
+});
+
+/**
+ * Helper to ensure default channels exist for a syndicate
+ */
+export function ensureDefaultSyndicateChannels(syndicateId: string) {
+  const existingCount = db.prepare('SELECT COUNT(*) as count FROM syndicate_channels WHERE syndicate_id = ?').get(syndicateId) as { count: number };
+  if (existingCount && existingCount.count > 0) return;
+
+  const now = new Date().toISOString();
+  const defaultChannels = [
+    {
+      id: `chan_${syndicateId}_general_chat`,
+      syndicate_id: syndicateId,
+      name: 'general-chat',
+      type: 'chat',
+      required_tier: 'Novice Plug',
+      required_level: 1,
+      description: 'Open guild chat for all verified syndicate operatives.',
+      created_at: now,
+    },
+    {
+      id: `chan_${syndicateId}_alpha_lounge`,
+      syndicate_id: syndicateId,
+      name: 'alpha-lounge',
+      type: 'chat',
+      required_tier: 'Crypto Stacker',
+      required_level: 3,
+      description: 'Token-gated strategy lounge for Crypto Stacker (Tier 3+) members.',
+      created_at: now,
+    },
+    {
+      id: `chan_${syndicateId}_apex_vault`,
+      syndicate_id: syndicateId,
+      name: 'apex-vault',
+      type: 'chat',
+      required_tier: 'Grand Money Plug',
+      required_level: 5,
+      description: 'Ultra-exclusive end-to-end encrypted vault for Grand Money Plug (Tier 5+) leaders.',
+      created_at: now,
+    },
+    {
+      id: `chan_${syndicateId}_general_voice`,
+      syndicate_id: syndicateId,
+      name: '🔊 General Voice',
+      type: 'voice',
+      required_tier: 'Novice Plug',
+      required_level: 1,
+      description: 'Real-time WebRTC audio channel for all guild members.',
+      created_at: now,
+    },
+    {
+      id: `chan_${syndicateId}_high_rollers_voice`,
+      syndicate_id: syndicateId,
+      name: '🔊 High Rollers Voice',
+      type: 'voice',
+      required_tier: 'Wealth Builder',
+      required_level: 4,
+      description: 'Token-gated WebRTC voice room for Wealth Builder (Tier 4+) members.',
+      created_at: now,
+    },
+    {
+      id: `chan_${syndicateId}_cosmic_war_room`,
+      syndicate_id: syndicateId,
+      name: '🔊 Cosmic War Room',
+      type: 'voice',
+      required_tier: 'Cosmic Money Plug',
+      required_level: 7,
+      description: 'Apex WebRTC voice war room for Cosmic Money Plug (Tier 7+) strategists.',
+      created_at: now,
+    },
+  ];
+
+  const insertStmt = db.prepare(`
+    INSERT OR REPLACE INTO syndicate_channels (
+      id, syndicate_id, name, type, required_tier, required_level, description, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  for (const chan of defaultChannels) {
+    insertStmt.run(
+      chan.id,
+      chan.syndicate_id,
+      chan.name,
+      chan.type,
+      chan.required_tier,
+      chan.required_level,
+      chan.description,
+      chan.created_at
+    );
+  }
+}
+
+/**
+ * GET /api/syndicates/:id/channels
+ * Fetch all chat & voice channels for a syndicate with token-gated unlocked status evaluated against user Wealth Tier
+ */
+router.get('/:id/channels', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const syndicateId = req.params.id;
+
+    // Verify user membership in syndicate
+    const membership = db.prepare('SELECT * FROM syndicate_members WHERE user_id = ? AND syndicate_id = ?').get(userId, syndicateId);
+    if (!membership) {
+      res.status(403).json({ success: false, error: 'Access denied: You must be a member of this syndicate.' });
+      return;
+    }
+
+    // Ensure default channels exist
+    ensureDefaultSyndicateChannels(syndicateId);
+
+    const userRow = db.prepare('SELECT level, tier_title FROM users WHERE id = ?').get(userId) as { level: number; tier_title: string } | undefined;
+    const userLevel = userRow?.level || req.user!.level || 1;
+    const userTierTitle = userRow?.tier_title || req.user!.tier_title || 'Novice Plug';
+
+    const channels = db.prepare('SELECT * FROM syndicate_channels WHERE syndicate_id = ? ORDER BY required_level ASC, type ASC, created_at ASC').all(syndicateId) as unknown as SyndicateChannel[];
+
+    const evaluatedChannels = channels.map(c => ({
+      ...c,
+      unlocked: isWealthTierAccessGranted(userLevel, userTierTitle, c.required_level, c.required_tier),
+    }));
+
+    res.json({
+      success: true,
+      data: evaluatedChannels,
+      user_wealth_tier: {
+        level: userLevel,
+        tier_title: userTierTitle,
+        tier_rank: getTierRank(userTierTitle, userLevel),
+      },
+    });
+  } catch (err: any) {
+    console.error('Error fetching syndicate channels:', err);
+    res.status(500).json({ success: false, error: 'Failed to retrieve syndicate channels.' });
+  }
+});
+
+/**
+ * POST /api/syndicates/:id/channels
+ * Create a new syndicate channel (founders & officers only)
+ */
+router.post('/:id/channels', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const syndicateId = req.params.id;
+    const { name, type, required_tier, required_level, description } = req.body;
+
+    const membership = db.prepare('SELECT * FROM syndicate_members WHERE user_id = ? AND syndicate_id = ?').get(userId, syndicateId) as SyndicateMember | undefined;
+    if (!membership || (membership.role !== 'founder' && membership.role !== 'officer')) {
+      res.status(403).json({ success: false, error: 'Only syndicate founders and officers can create channels.' });
+      return;
+    }
+
+    if (!name || typeof name !== 'string' || name.trim().length < 2) {
+      res.status(400).json({ success: false, error: 'Channel name must be at least 2 characters.' });
+      return;
+    }
+
+    const channelType = (type === 'voice' ? 'voice' : 'chat') as 'chat' | 'voice';
+    const reqTier = required_tier || 'Novice Plug';
+    const reqLevel = typeof required_level === 'number' && required_level >= 1 ? required_level : getTierRank(reqTier, 1);
+    const desc = description && typeof description === 'string' ? description.trim() : '';
+
+    const newChannelId = `chan_${syndicateId}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const now = new Date().toISOString();
+
+    db.prepare(`
+      INSERT INTO syndicate_channels (
+        id, syndicate_id, name, type, required_tier, required_level, description, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(newChannelId, syndicateId, name.trim(), channelType, reqTier, reqLevel, desc, now);
+
+    const created = db.prepare('SELECT * FROM syndicate_channels WHERE id = ?').get(newChannelId) as unknown as SyndicateChannel;
+
+    res.status(201).json({
+      success: true,
+      message: `Channel "${created.name}" established with Wealth Tier restriction [${created.required_tier}].`,
+      data: created,
+    });
+  } catch (err: any) {
+    console.error('Error creating syndicate channel:', err);
+    res.status(500).json({ success: false, error: 'Failed to create channel.' });
+  }
+});
+
+/**
+ * GET /api/syndicates/channels/:channelId/messages
+ * Fetch E2EE encrypted message history for an authorized channel
+ */
+router.get('/channels/:channelId/messages', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const channelId = req.params.channelId;
+
+    const channel = db.prepare('SELECT * FROM syndicate_channels WHERE id = ?').get(channelId) as SyndicateChannel | undefined;
+    if (!channel) {
+      res.status(404).json({ success: false, error: 'Channel not found.' });
+      return;
+    }
+
+    // Verify membership
+    const membership = db.prepare('SELECT * FROM syndicate_members WHERE user_id = ? AND syndicate_id = ?').get(userId, channel.syndicate_id);
+    if (!membership) {
+      res.status(403).json({ success: false, error: 'Access denied: You must be a member of this syndicate.' });
+      return;
+    }
+
+    // Verify Wealth Tier access
+    const userRow = db.prepare('SELECT level, tier_title FROM users WHERE id = ?').get(userId) as { level: number; tier_title: string } | undefined;
+    const userLevel = userRow?.level || req.user!.level || 1;
+    const userTierTitle = userRow?.tier_title || req.user!.tier_title || 'Novice Plug';
+
+    if (!isWealthTierAccessGranted(userLevel, userTierTitle, channel.required_level, channel.required_tier)) {
+      res.status(403).json({
+        success: false,
+        error: `TOKEN_GATED_ACCESS_DENIED: Access to channel "${channel.name}" requires Wealth Tier Badge [${channel.required_tier}] (Level ${channel.required_level}+).`,
+      });
+      return;
+    }
+
+    const messages = db.prepare(`
+      SELECT sm.id, sm.channel_id, sm.syndicate_id, sm.sender_id, sm.encrypted_content, sm.is_encrypted, sm.timestamp,
+             u.display_name as sender_name, u.tier_title as sender_tier, u.level as sender_level
+      FROM syndicate_messages sm
+      JOIN users u ON u.id = sm.sender_id
+      WHERE sm.channel_id = ?
+      ORDER BY sm.timestamp ASC
+      LIMIT 100
+    `).all(channelId) as unknown as SyndicateMessage[];
+
+    res.json({
+      success: true,
+      data: messages,
+    });
+  } catch (err: any) {
+    console.error('Error fetching channel messages:', err);
+    res.status(500).json({ success: false, error: 'Failed to retrieve channel messages.' });
   }
 });
 

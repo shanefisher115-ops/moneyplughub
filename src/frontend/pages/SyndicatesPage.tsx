@@ -2,11 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { Syndicate, SyndicateMember, MySyndicateResponse } from '../../types';
+import { SyndicateChatVoice } from '../components/SyndicateChatVoice';
 import {
   Shield, Users, Trophy, Zap, Crown, Flame, Plus,
   Sparkles, CheckCircle2, ChevronRight, Search,
   Award, TrendingUp, DollarSign, Swords, Star,
-  Info, Compass, ShieldAlert, ArrowUpRight, Copy, Check
+  Info, Compass, ShieldAlert, ArrowUpRight, Copy, Check,
+  MessageSquare, Volume2
 } from 'lucide-react';
 
 const SIGIL_OPTIONS = [
@@ -733,6 +735,25 @@ export const SyndicatesPage: React.FC<{ onNavigate?: (tab: string) => void }> = 
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Token-Gated Syndicate Chat & WebRTC Voice Rooms */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2 font-mono">
+                    <MessageSquare className="w-5 h-5 text-plug-accent" />
+                    Token-Gated Syndicate Chat & WebRTC Voice Rooms
+                  </h3>
+                  <span className="text-xs font-mono text-slate-400">
+                    Gated by User Wealth Tier Badges • E2EE Encrypted
+                  </span>
+                </div>
+
+                <SyndicateChatVoice
+                  syndicateId={mySyndicateData.syndicate.id}
+                  syndicateName={mySyndicateData.syndicate.name}
+                  syndicateTag={mySyndicateData.syndicate.tag}
+                />
               </div>
 
               {/* Guild Buff Perks Detailed Breakdown */}
