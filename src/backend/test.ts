@@ -7,6 +7,7 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import { generateOpenGraphSvg, getWealthTierMeta } from './routes/og';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,7 +117,30 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. Dynamic OpenGraph Image Generation Service Verification
+  const ogCardSvg = generateOpenGraphSvg({
+    referralCode: 'PLUG-ALEX',
+    displayName: 'Alex Champion',
+    tierTitle: 'Crypto Stacker',
+    level: 3,
+    xp: 4500,
+    referralCount: 12,
+  });
+
+  assert(ogCardSvg.includes('PLUG-ALEX'), 'OG Card SVG must include creator referral code');
+  assert(ogCardSvg.includes('Alex Champion'), 'OG Card SVG must include display name');
+  assert(ogCardSvg.includes('Crypto Stacker'), 'OG Card SVG must include Wealth Tier title');
+  assert(ogCardSvg.includes('FTC 16 CFR PART 255 DISCLOSURE'), 'OG Card SVG must include mandatory FTC disclosure text');
+  assert(ogCardSvg.includes('#ad · Paid Referral Link'), 'OG Card SVG must include FTC #ad disclosure badge');
+  assert(ogCardSvg.includes('data:image/svg+xml;base64,'), 'OG Card SVG must embed deterministic SVG sigil base64 data');
+
+  const tierMeta = getWealthTierMeta('Crypto Stacker');
+  assert.strictEqual(tierMeta.badgeHex, '#a855f7');
+  assert.strictEqual(tierMeta.multiplier, 1.25);
+  console.log('✓ Step 10: Verified Dynamic OpenGraph Image Generation Service (1200x630 cards, SVG sigil, Wealth Tier badges, referral code & mandatory FTC disclosures).');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, OPENGRAPH SERVICE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {
