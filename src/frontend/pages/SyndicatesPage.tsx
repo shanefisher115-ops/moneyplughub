@@ -2,11 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { Syndicate, SyndicateMember, MySyndicateResponse } from '../../types';
+import { SyndicateChatVoiceModal } from '../components/SyndicateChatVoiceModal';
 import {
   Shield, Users, Trophy, Zap, Crown, Flame, Plus,
   Sparkles, CheckCircle2, ChevronRight, Search,
   Award, TrendingUp, DollarSign, Swords, Star,
-  Info, Compass, ShieldAlert, ArrowUpRight, Copy, Check
+  Info, Compass, ShieldAlert, ArrowUpRight, Copy, Check, MessageSquare, Radio
 } from 'lucide-react';
 
 const SIGIL_OPTIONS = [
@@ -45,6 +46,9 @@ export const SyndicatesPage: React.FC<{ onNavigate?: (tab: string) => void }> = 
   const [selectedRosterSyndicate, setSelectedRosterSyndicate] = useState<Syndicate | null>(null);
   const [rosterMembers, setRosterMembers] = useState<any[]>([]);
   const [isLoadingRoster, setIsLoadingRoster] = useState<boolean>(false);
+
+  // Token-Gated Chat & Voice Modal State
+  const [activeChatSyndicate, setActiveChatSyndicate] = useState<Syndicate | null>(null);
 
   // Copy helper
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -645,6 +649,15 @@ export const SyndicatesPage: React.FC<{ onNavigate?: (tab: string) => void }> = 
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-1">
+              {isUserGuild && (
+                <button
+                  onClick={() => setActiveChatSyndicate(syndicate)}
+                  className="w-full py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold flex items-center justify-center gap-1.5 transition-all mb-1"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>Chat & Voice Rooms</span>
+                </button>
+              )}
                     <button
                       onClick={() => handleOpenRoster(syndicate)}
                       className="flex-1 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-mono transition-colors"
@@ -776,12 +789,21 @@ export const SyndicatesPage: React.FC<{ onNavigate?: (tab: string) => void }> = 
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleOpenRoster(mySyndicateData.syndicate!)}
-                    className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-bold transition-colors"
-                  >
-                    View Full Member Roster ({mySyndicateData.syndicate.member_count})
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setActiveChatSyndicate(mySyndicateData.syndicate!)}
+                      className="flex-1 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 text-purple-200 font-mono text-xs font-bold transition-all flex items-center justify-center gap-2"
+                    >
+                      <Radio className="w-4 h-4 text-purple-400" />
+                      <span>Launch Guild Chat & Voice Rooms</span>
+                    </button>
+                    <button
+                      onClick={() => handleOpenRoster(mySyndicateData.syndicate!)}
+                      className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-bold transition-colors"
+                    >
+                      Roster ({mySyndicateData.syndicate.member_count})
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -982,6 +1004,15 @@ export const SyndicatesPage: React.FC<{ onNavigate?: (tab: string) => void }> = 
             </form>
           </div>
         </div>
+      )}
+
+      {/* Token-Gated Syndicate Chat & Voice Rooms Modal */}
+      {activeChatSyndicate && (
+        <SyndicateChatVoiceModal
+          syndicate={activeChatSyndicate}
+          onClose={() => setActiveChatSyndicate(null)}
+          onNavigate={onNavigate}
+        />
       )}
 
       {/* Syndicate Member Roster Modal */}
