@@ -68,6 +68,7 @@ import { FloatingXpContainer } from './components/FloatingXpContainer';
 import { PeerPushBanner } from './components/PeerPushBanner';
 import { usePeerSignal } from './context/PeerPushContext';
 import { useAdaptiveProfile } from './context/AdaptiveProfileContext';
+import { DunningWarningBanner } from './components/DunningWarningBanner';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -290,6 +291,8 @@ export const App: React.FC = () => {
 
       {/* Draggable, Minimizable, Movable Floating MoneyOS AI Window */}
       <FloatingMoneyOSWindow onNavigate={handleNavigate} />
+
+      <DunningWarningBanner onResolved={() => window.location.reload()} />
 
       <Navbar 
         currentTab={currentTab} 
