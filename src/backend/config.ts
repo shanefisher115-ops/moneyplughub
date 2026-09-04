@@ -107,6 +107,13 @@ export const config = {
     },
   },
 
+  // Webhooks for Discord & Telegram Notifications
+  webhooks: {
+    discordUrl: process.env.DISCORD_WEBHOOK_URL || '',
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',
+    telegramChatId: process.env.TELEGRAM_CHAT_ID || '',
+  },
+
   // Supabase Cloud Database & Replication Bridge
   supabase: {
     get url(): string {

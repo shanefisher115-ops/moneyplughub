@@ -50,9 +50,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval.unref) {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -790,6 +793,18 @@ export function initDb(): void {
     );
     CREATE INDEX IF NOT EXISTS idx_market_status ON marketplace_listings(status);
     CREATE INDEX IF NOT EXISTS idx_market_rarity ON marketplace_listings(rarity);
+
+    -- USER WEBHOOK SETTINGS
+    CREATE TABLE IF NOT EXISTS user_webhook_settings (
+      user_id TEXT PRIMARY KEY,
+      discord_url TEXT NOT NULL DEFAULT '',
+      telegram_bot_token TEXT NOT NULL DEFAULT '',
+      telegram_chat_id TEXT NOT NULL DEFAULT '',
+      notify_commissions INTEGER NOT NULL DEFAULT 1,
+      notify_rank_promotions INTEGER NOT NULL DEFAULT 1,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
 
     -- ALCHEMICAL CRAFTING RECIPES
     CREATE TABLE IF NOT EXISTS crafting_recipes (

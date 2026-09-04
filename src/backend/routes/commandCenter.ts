@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { db, runInTransaction } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
+import { checkAndNotifyRankPromotion } from '../services/webhookDispatcher';
 
 const router = Router();
 
@@ -155,7 +156,19 @@ router.post('/db/xp-actions/:id/toggle', authenticateToken, (req: AuthenticatedR
   let earnedXp = 0;
   if (nextStatus === 'Done') {
     earnedXp = item.xp_value || 50;
+    const userBefore = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
+    const oldLevel = Number(userBefore?.level || 1);
+    const oldTier = userBefore?.tier_title || 'Novice Plug';
+    const newXp = Number(userBefore?.xp || 0) + earnedXp;
+
     db.prepare('UPDATE users SET xp = xp + ?, updated_at = ? WHERE id = ?').run(earnedXp, now, userId);
+
+    checkAndNotifyRankPromotion({
+      userId,
+      oldLevel,
+      oldTierTitle: oldTier,
+      newXp,
+    });
   }
 
   res.json({

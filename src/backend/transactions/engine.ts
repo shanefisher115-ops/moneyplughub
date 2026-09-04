@@ -9,6 +9,7 @@ import {
   CreateTransactionDTO,
 } from '../../types/transactions';
 import { validateTransactionPayload } from './validation';
+import { triggerCommissionWebhook } from '../services/webhookDispatcher';
 
 /**
  * ? Reusable Deduplication Engine
@@ -233,7 +234,18 @@ export async function insertCommission(
     return duplicate as CommissionTransaction;
   }
 
-  return persistTransactionRecord(payload) as CommissionTransaction;
+  const tx = persistTransactionRecord(payload) as CommissionTransaction;
+
+  // Asynchronously dispatch real-time webhook notification
+  triggerCommissionWebhook({
+    userId,
+    amountCents: Math.round(amount * 100),
+    referredName: referralUserId,
+    notes: reason,
+    commissionId: tx.id,
+  });
+
+  return tx;
 }
 
 /**
