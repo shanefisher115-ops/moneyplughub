@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Check, X, Zap } from 'lucide-react';
+import { Check, X, Zap, Bot, Sparkles } from 'lucide-react';
+import { SalesCopilotVoice } from '../components/SalesCopilotVoice';
 
 interface PricingPageProps {
   onNavigate: (tab: string) => void;
@@ -7,6 +8,7 @@ interface PricingPageProps {
 
 export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [showCopilot, setShowCopilot] = useState(true);
 
   const plans = [
     {
@@ -88,6 +90,9 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
       
       {/* Header */}
       <div className="text-center space-y-4 max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold uppercase tracking-wider border border-cyan-500/30">
+          <Sparkles className="w-3.5 h-3.5" /> AI Sales Copilot Powered by Gemini Flash
+        </div>
         <h1 className="text-4xl font-bold text-white">Simple, transparent pricing</h1>
         <p className="text-lg text-slate-400">Unlock the full power of Creator Money OS. No hidden fees.</p>
         
@@ -104,6 +109,23 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
             Annually <span className="text-xs bg-plug-accent/20 text-plug-accent px-2 py-0.5 rounded-full ml-1">2 months free</span>
           </span>
         </div>
+      </div>
+
+      {/* Embedded Gemini Flash AI Sales Copilot Voice Component */}
+      <div className="max-w-7xl mx-auto">
+        {showCopilot ? (
+          <SalesCopilotVoice onClose={() => setShowCopilot(false)} />
+        ) : (
+          <div className="text-center">
+            <button
+              onClick={() => setShowCopilot(true)}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 mx-auto cursor-pointer shadow-lg shadow-cyan-500/20"
+            >
+              <Bot className="w-4 h-4" />
+              <span>Launch AI Sales Copilot & Calculator</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Pricing Cards */}

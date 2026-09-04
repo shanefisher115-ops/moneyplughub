@@ -7,6 +7,7 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import { calculateAffiliateEarnings, detectCheckoutIntent, SUBSCRIPTION_TIERS } from './routes/salesCopilot';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,7 +117,35 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. AI Sales Copilot Voice & Gemini Flash Integration Verification
+  assert.strictEqual(SUBSCRIPTION_TIERS.length, 4, 'Must have exactly 4 subscription tiers');
+
+  // Test Earnings Calculator (Creator tier: 20% commission + $10 bonus)
+  const calc10 = calculateAffiliateEarnings({ referralCount: 10, tierId: 'creator' });
+  assert.strictEqual(calc10.monthlyRecurringUsd, 58.00, '10 referrals @ $29 spend * 20% = $58/mo');
+  assert.strictEqual(calc10.annualRecurringUsd, 696.00, '$58/mo * 12 = $696/yr');
+  assert.strictEqual(calc10.directBonusTotalUsd, 100.00, '10 referrals * $10 bonus = $100');
+
+  // Test Earnings Calculator (Pro tier: 35% commission + $15 bonus)
+  const calcPro50 = calculateAffiliateEarnings({ referralCount: 50, tierId: 'pro', avgSubscriptionSpendUsd: 149 });
+  assert.strictEqual(calcPro50.monthlyRecurringUsd, 2607.50, '50 referrals @ $149 spend * 35% = $2,607.50/mo');
+  assert.strictEqual(calcPro50.directBonusTotalUsd, 750.00, '50 referrals * $15 bonus = $750');
+
+  // Test Checkout Trigger Intent Detection
+  const intent1 = detectCheckoutIntent('Can I upgrade to Pro plan right now?');
+  assert.strictEqual(intent1.triggerCheckout, true);
+  assert.strictEqual(intent1.planId, 'pro');
+
+  const intent2 = detectCheckoutIntent('Let us checkout with Creator tier');
+  assert.strictEqual(intent2.triggerCheckout, true);
+  assert.strictEqual(intent2.planId, 'creator');
+
+  const intent3 = detectCheckoutIntent('What are the features of Enterprise tier?');
+  assert.strictEqual(intent3.triggerCheckout, false);
+
+  console.log('✓ Step 10: Verified AI Sales Copilot (Gemini Flash), Subscription Tiers, Earnings Calculator & Checkout Intent Trigger.');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, SALES COPILOT & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
 }
 
 runTests().catch((err) => {

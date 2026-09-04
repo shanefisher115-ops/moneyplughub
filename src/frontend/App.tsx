@@ -35,6 +35,7 @@ import { SecurityPolicyPage } from './pages/SecurityPolicyPage';
 import { PlugInOSv5DashboardPage } from './pages/PlugInOSv5DashboardPage';
 import { MoneyOSPage } from './pages/MoneyOSPage';
 import { PricingPage } from './pages/PricingPage';
+import { SalesCopilotVoice } from './components/SalesCopilotVoice';
 import { WhatIsThisPage } from './pages/WhatIsThisPage';
 import { HowItWorksPage } from './pages/HowItWorksPage';
 import { ComplianceSafetyPage } from './pages/ComplianceSafetyPage';
@@ -341,6 +342,10 @@ export const App: React.FC = () => {
           <RegisterPage onNavigate={handleNavigate} initialRefCode={initialRefCode} />
         ) : currentTab === 'pricing' ? (
           <PricingPage onNavigate={handleNavigate} />
+        ) : currentTab === 'sales-copilot' || currentTab === 'copilot' ? (
+          <div className="max-w-5xl mx-auto px-4 py-8">
+            <SalesCopilotVoice />
+          </div>
         ) : currentTab === 'moneyos' || currentTab === 'chat' ? (
           <MoneyOSPage />
         ) : currentTab === 'v5' || currentTab === 'plugin-os-v5' ? (
