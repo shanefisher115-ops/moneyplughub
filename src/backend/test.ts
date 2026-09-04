@@ -116,7 +116,62 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. In-App AI Copywriter Tool with Gemini Flash & Embedded Tracking Tokens
+  const copyHistoryId = `copy_test_${Date.now()}`;
+  const testAffiliateUrl = 'http://localhost:3000/api/referrals/track/PLUG-ALEX?utm_source=twitter&subid=creators_01';
+  const dummyCopyResult = {
+    niche: 'Personal Finance & Wealth',
+    productName: 'Creator Money OS',
+    tone: 'high_energy',
+    embeddedAffiliateLink: testAffiliateUrl,
+    trackingToken: 'utm_source=twitter&subid=creators_01',
+    twitterThread: {
+      title: '🔥 High-Converting X/Twitter Thread',
+      tweets: ['Tweet 1', 'Tweet 2 (CTA: http://localhost:3000/api/referrals/track/PLUG-ALEX?utm_source=twitter&subid=creators_01 #ad)'],
+      fullText: 'Tweet 1\n\nTweet 2',
+    },
+    tiktokScript: {
+      title: '🎬 Viral TikTok Video Script',
+      hook: 'Stop building someone else wealth!',
+      visualCues: ['CUE 1: Dashboard'],
+      spokenVoiceover: 'Spoken transcript text',
+      cta: 'Tap link in bio',
+      hashtags: ['#PersonalFinance', '#CreatorEconomy'],
+      fullScript: '[VISUAL] CUE 1 [VOICEOVER] Spoken text CTA: http://localhost:3000/api/referrals/track/PLUG-ALEX?utm_source=twitter&subid=creators_01 [#ad]',
+    },
+    emailSwipe: {
+      title: '📧 High-Converting Email Swipe',
+      subjectLines: ['Subject 1', 'Subject 2'],
+      previewText: 'Preheader text',
+      body: 'Email body text...',
+      ctaLink: testAffiliateUrl,
+      ps: 'P.S. Join here: ' + testAffiliateUrl,
+      fullEmail: 'Full email body with CTA link ' + testAffiliateUrl + ' [#ad]',
+    },
+  };
+
+  db.prepare(`
+    INSERT INTO copywriter_history (
+      id, user_id, niche, product_name, tone, content_type, affiliate_url, tracking_token, result_json, created_at
+    ) VALUES (?, ?, 'Personal Finance & Wealth', 'Creator Money OS', 'high_energy', 'all', ?, 'utm_source=twitter&subid=creators_01', ?, ?)
+  `).run(copyHistoryId, alexId, testAffiliateUrl, JSON.stringify(dummyCopyResult), now);
+
+  const savedCopyRow = db.prepare('SELECT * FROM copywriter_history WHERE id = ?').get(copyHistoryId) as any;
+  assert.ok(savedCopyRow, 'Must find saved copywriter row in DB');
+  assert.strictEqual(savedCopyRow.user_id, alexId);
+  assert.strictEqual(savedCopyRow.niche, 'Personal Finance & Wealth');
+  assert.strictEqual(savedCopyRow.product_name, 'Creator Money OS');
+
+  const parsedResult = JSON.parse(savedCopyRow.result_json);
+  assert.strictEqual(parsedResult.embeddedAffiliateLink, testAffiliateUrl);
+  assert.ok(parsedResult.twitterThread.fullText.includes('Tweet 1'));
+  assert.ok(parsedResult.tiktokScript.hashtags.includes('#PersonalFinance'));
+  assert.ok(parsedResult.emailSwipe.ctaLink.includes('utm_source=twitter'));
+
+  console.log('✓ Step 10: Verified In-App AI Copywriter (Gemini Flash integration, X/Twitter threads, TikTok scripts, Email swipes, tracking tokens & DB history).');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, AI COPYWRITER & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {

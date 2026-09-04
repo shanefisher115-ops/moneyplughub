@@ -672,6 +672,22 @@ export function initDb(): void {
     );
     CREATE INDEX IF NOT EXISTS idx_moneyos_user ON moneyos_conversations(user_id, created_at);
 
+    -- AI COPYWRITER GENERATIONS HISTORY
+    CREATE TABLE IF NOT EXISTS copywriter_history (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      niche TEXT NOT NULL,
+      product_name TEXT NOT NULL,
+      tone TEXT NOT NULL,
+      content_type TEXT NOT NULL,
+      affiliate_url TEXT NOT NULL,
+      tracking_token TEXT NOT NULL,
+      result_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_copywriter_user ON copywriter_history(user_id, created_at);
+
     -- DAILY LOOT CLAIMS (Daily Mystery Loot Crate & Gacha Engine)
     CREATE TABLE IF NOT EXISTS daily_loot_claims (
       id TEXT PRIMARY KEY,
