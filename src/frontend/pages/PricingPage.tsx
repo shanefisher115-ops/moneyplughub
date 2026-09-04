@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Check, X, Zap } from 'lucide-react';
+import { RoiPricingSliderWidget } from '../components/RoiPricingSliderWidget';
 
 interface PricingPageProps {
   onNavigate: (tab: string) => void;
@@ -156,6 +157,11 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Interactive Creator ROI Calculator */}
+      <div className="max-w-6xl mx-auto pt-12">
+        <RoiPricingSliderWidget onNavigate={onNavigate} />
       </div>
 
       {/* Feature Matrix */}
