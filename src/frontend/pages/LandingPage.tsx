@@ -5,6 +5,7 @@ import {
   PieChart, Target, CreditCard, Landmark, BarChart3, Globe, 
   Play, Star, Award, Gift, Sparkle
 } from 'lucide-react';
+import { RoiPricingSliderWidget } from '../components/RoiPricingSliderWidget';
 
 interface LandingPageProps {
   onNavigate: (tab: string) => void;
@@ -326,6 +327,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ═══ INTERACTIVE CREATOR ROI PRICING SLIDER WIDGET ═══ */}
+      <section id="roi-calculator" className="max-w-6xl mx-auto px-4">
+        <RoiPricingSliderWidget onNavigate={onNavigate} />
       </section>
 
       {/* ═══ DUAL COMPARISON SIMULATOR: REFERRALS VS. TRADITIONAL INVESTING ═══ */}
