@@ -512,6 +512,33 @@ export interface MySyndicateResponse {
   war_status: GuildWarStatus;
 }
 
+export type ChannelType = 'chat' | 'voice';
+
+export interface SyndicateChannel {
+  id: string;
+  syndicate_id: string;
+  name: string;
+  type: ChannelType;
+  required_tier: string;
+  required_level: number;
+  description: string;
+  created_at: string;
+  unlocked?: boolean;
+}
+
+export interface SyndicateMessage {
+  id: string;
+  channel_id: string;
+  syndicate_id: string;
+  sender_id: string;
+  sender_name?: string;
+  sender_tier?: string;
+  sender_level?: number;
+  encrypted_content: string;
+  is_encrypted: boolean;
+  timestamp: string;
+}
+
 
 export type AchievementTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond Apex';
 export type AchievementCategory = 'Voice AI' | 'Viral Growth' | 'Wealth Vault' | 'Sigil Mastery' | 'Syndicates';
