@@ -15,13 +15,13 @@ export class McpIdentityGateway {
     return { token, expiresAt };
   }
 
-  validateDevicePosture(posture: any) {
-    const { warpConnected, diskEncrypted, firewallEnabled, trustScore } = posture;
+  validateDevicePosture(posture: { warpConnected?: boolean; diskEncrypted?: boolean; firewallEnabled?: boolean; trustScore?: number }) {
+    const { warpConnected, diskEncrypted, firewallEnabled, trustScore = 0 } = posture || {};
 
-    return warpConnected && diskEncrypted && firewallEnabled && trustScore >= 80;
+    return Boolean(warpConnected && diskEncrypted && firewallEnabled && trustScore >= 80);
   }
 
-  bindIdentity(sessionId: string, identity: any) {
+  bindIdentity(sessionId: string, identity: { userId: string; devicePosture?: unknown; serviceToken?: string; confidence?: number }) {
     const payload = {
       sessionId,
       userId: identity.userId,

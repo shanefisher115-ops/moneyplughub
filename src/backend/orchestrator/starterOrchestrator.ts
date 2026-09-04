@@ -28,10 +28,10 @@ export class StarterOrchestrator {
     userId: string,
     task: OrchestratorTask,
     source: 'user_command' | 'scheduled_tick' | 'daily_loop_start' = 'user_command',
-    payload?: any
+    payload?: { preferredSlug?: string }
   ): Promise<{
     success: boolean;
-    data?: any;
+    data?: unknown;
     error?: string;
     status: OrchestratorStatus;
   }> {
@@ -81,33 +81,42 @@ export class StarterOrchestrator {
     });
 
     try {
-      let resultData: any = null;
+      let resultData: unknown = null;
 
       // 6. Execute Module (INVARIANT: All side effects occur through allowed modules)
       switch (task) {
-        case 'balance_pull':
-          resultData = await BalanceAgent.run(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'balance_pull': {
+          const res = await BalanceAgent.run(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
-        case 'earnings_calc':
-          resultData = await EarningsAgent.run(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'earnings_calc': {
+          const res = await EarningsAgent.run(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
-        case 'referral_suggest':
-          resultData = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', payload?.preferredSlug);
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'referral_suggest': {
+          const res = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', payload?.preferredSlug);
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
-        case 'automation_tick':
+        case 'automation_tick': {
           resultData = await AutomationAgent.onScheduleTick(userId, 'all');
           break;
+        }
 
-        case 'insight_generate':
-          resultData = await InsightAgent.generateDailyInsight(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'insight_generate': {
+          const res = await InsightAgent.generateDailyInsight(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
         case 'daily_loop':
           resultData = await this.runDailyLoop(userId);
@@ -145,7 +154,14 @@ export class StarterOrchestrator {
   /**
    * Daily Loop Sequence: Balance -> Earnings -> Referral Suggestion -> Daily Insights
    */
-  public static async runDailyLoop(userId: string): Promise<any> {
+  public static async runDailyLoop(userId: string): Promise<{
+    balances: unknown;
+    earnings: unknown;
+    referral: unknown;
+    script: unknown;
+    insight: unknown;
+    completedAt: string;
+  }> {
     const balances = await BalanceAgent.run(userId, 'scheduled: daily_morning');
     const earnings = await EarningsAgent.run(userId, 'scheduled: daily_morning');
     const referral = await ReferralAgent.runDailySuggestion(userId, 'scheduled: daily_referral_suggestion');
@@ -197,7 +213,12 @@ export class StarterOrchestrator {
   public static getState(userId: string): OrchestratorState {
     const row = db.prepare(`
       SELECT * FROM orchestrator_state WHERE user_id = ?
-    `).get(userId) as any;
+    `).get(userId) as {
+      status?: OrchestratorStatus;
+      consecutive_failures?: number;
+      last_run_at?: string | null;
+      degraded_reason?: string | null;
+    } | undefined;
 
     const currentActive = this.activeRunsMap.get(userId) || 0;
     const lastRunTime = this.lastRunMap.get(userId) || 0;
