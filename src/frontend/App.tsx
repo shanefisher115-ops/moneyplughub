@@ -42,6 +42,7 @@ import { BillingTermsPage } from './pages/BillingTermsPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { HelpCenterPage } from './pages/HelpCenterPage';
 import { SystemStatusPage } from './pages/SystemStatusPage';
+import { TaxCompliancePage } from './pages/TaxCompliancePage';
 import { ChangelogRoadmapPage } from './pages/ChangelogRoadmapPage';
 import { SigilForgePage } from './pages/SigilForgePage';
 import { EconomyMarketplacePage } from './pages/EconomyMarketplacePage';
@@ -361,6 +362,8 @@ export const App: React.FC = () => {
           <SignalRealmPage onNavigate={handleNavigate} />
         ) : currentTab === 'video' || currentTab === 'video-studio' || currentTab === 'video-production' || currentTab === 'davinci' || currentTab === 'loop-engineer' || currentTab === 'omni-flash' || currentTab === 'loops' || currentTab === 'faceless-video' ? (
           <VideoProductionPage onNavigate={handleNavigate} />
+        ) : currentTab === 'tax' || currentTab === 'tax-compliance' || currentTab === 'w9' || currentTab === '1099' ? (
+          <TaxCompliancePage onNavigate={handleNavigate} />
         ) : currentTab === 'security' || currentTab === 'security-policy' ? (
           <SecurityPolicyPage />
         ) : currentTab === 'overview' || currentTab === 'command-center' ? (

@@ -52,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
     { id: 'net-worth', label: 'Living Vault', icon: Wallet, color: 'text-amber-400', minLevel: 3 },
     { id: 'budget', label: 'Budget Shield', icon: PieChart, color: 'text-sky-400', minLevel: 3 },
     { id: 'generate', label: 'AI Studio', icon: Sparkles, color: 'text-pink-400', minLevel: 6 },
+    { id: 'tax', label: 'Tax Compliance & 1099', icon: ShieldCheck, color: 'text-indigo-400' },
     { id: 'quests', label: 'Quests & Loot', icon: Trophy, color: 'text-yellow-400', minLevel: 3 },
     { id: 'achievements', label: 'Trophies & Prestige', icon: Crown, color: 'text-amber-400' },
     { id: 'syndicates', label: 'Syndicates', icon: Swords, color: 'text-emerald-400' },
