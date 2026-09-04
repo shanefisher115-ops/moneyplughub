@@ -52,7 +52,7 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 // Periodic background WAL flush to disk
 setInterval(() => {
   checkpointWal();
-}, 60000);
+}, 60000).unref();
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -805,6 +805,55 @@ export function initDb(): void {
       description TEXT NOT NULL,
       accent_color TEXT NOT NULL,
       created_at TEXT NOT NULL
+    );
+
+    -- TAX COMPLIANCE: CREATOR W-9 FORMS
+    CREATE TABLE IF NOT EXISTS creator_w9_forms (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL UNIQUE,
+      legal_name TEXT NOT NULL,
+      business_name TEXT,
+      tax_classification TEXT NOT NULL CHECK(tax_classification IN ('individual', 'c_corp', 's_corp', 'partnership', 'llc', 'other')),
+      tin_type TEXT NOT NULL CHECK(tin_type IN ('SSN', 'EIN')),
+      tin_last_4 TEXT NOT NULL,
+      tin_hash TEXT NOT NULL,
+      address_line1 TEXT NOT NULL,
+      address_line2 TEXT,
+      city TEXT NOT NULL,
+      state TEXT NOT NULL,
+      zip_code TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'submitted' CHECK(status IN ('draft', 'submitted', 'verified', 'rejected')),
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- DIGITAL SIGNATURE LOGS
+    CREATE TABLE IF NOT EXISTS digital_signature_logs (
+      id TEXT PRIMARY KEY,
+      w9_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      signature_name TEXT NOT NULL,
+      ip_address TEXT NOT NULL,
+      user_agent TEXT NOT NULL,
+      consent_agreed INTEGER NOT NULL DEFAULT 1,
+      signed_at TEXT NOT NULL,
+      FOREIGN KEY (w9_id) REFERENCES creator_w9_forms(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- 1099-MISC EXPORT LOGS
+    CREATE TABLE IF NOT EXISTS tax_1099_exports (
+      id TEXT PRIMARY KEY,
+      year INTEGER NOT NULL,
+      user_id TEXT NOT NULL,
+      gross_earnings_cents INTEGER NOT NULL,
+      threshold_exceeded INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'generated' CHECK(status IN ('generated', 'filed', 'sent')),
+      export_data_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE(user_id, year)
     );
   `);
 
