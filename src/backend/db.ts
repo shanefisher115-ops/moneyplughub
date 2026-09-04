@@ -50,9 +50,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval.unref) {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -99,7 +102,7 @@ export function initDb(): void {
       referred_user_id TEXT NOT NULL UNIQUE,
       amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
       currency TEXT NOT NULL DEFAULT 'USD',
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid', 'quarantined')),
       notes TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
@@ -807,6 +810,22 @@ export function initDb(): void {
       created_at TEXT NOT NULL
     );
   `);
+
+  const refClickCols = [
+    "client_fingerprint TEXT",
+    "source_category TEXT",
+    "ai_platform TEXT",
+    "intent_score REAL DEFAULT 0.5",
+    "utm_source TEXT",
+    "utm_medium TEXT",
+    "utm_campaign TEXT",
+  ];
+
+  for (const col of refClickCols) {
+    try {
+      db.exec(`ALTER TABLE referral_clicks ADD COLUMN ${col};`);
+    } catch (e) {}
+  }
 
   const progCols = [
     "payout_type TEXT NOT NULL DEFAULT 'Cash Bonus'",
