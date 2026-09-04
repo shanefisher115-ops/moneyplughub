@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { db, runInTransaction } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { QuestTask, LeaderboardEntry, ApiResponse } from '../../types';
+import { leaderboardWsManager } from '../leaderboard/ws';
 
 const router = Router();
 router.use(authenticateToken);
@@ -245,38 +246,23 @@ router.post('/quests/:id/claim', (req: AuthenticatedRequest, res: Response) => {
 });
 
 /**
- * Leaderboard Rankings (XP, Net Worth, Referral Count)
+ * Leaderboard Rankings (Top 100 Creators, Earnings Tiers, Syndicates, Milestone Badges)
  */
 router.get('/leaderboard', (req: AuthenticatedRequest, res: Response) => {
-  const currentUserId = req.user!.id;
+  try {
+    const currentUserId = req.user!.id;
+    const leaderboard = leaderboardWsManager.getLeaderboardTop100(currentUserId);
 
-  const rawUsers = db.prepare(`
-    SELECT u.id as user_id, u.display_name, u.xp, u.level, u.tier_title, u.streak_days, u.referral_count,
-           COALESCE(SUM(CASE WHEN a.is_liability = 0 THEN a.balance_cents ELSE -a.balance_cents END), 0) as net_worth_cents
-    FROM users u
-    LEFT JOIN accounts a ON a.user_id = u.id
-    GROUP BY u.id
-    ORDER BY u.xp DESC, net_worth_cents DESC
-    LIMIT 50
-  `).all() as any[];
-
-  const leaderboard: LeaderboardEntry[] = rawUsers.map((item, index) => ({
-    rank: index + 1,
-    user_id: item.user_id,
-    display_name: item.display_name,
-    xp: Number(item.xp || 0),
-    level: Number(item.level || 1),
-    tier_title: item.tier_title || 'Novice Plug',
-    streak_days: Number(item.streak_days || 1),
-    net_worth_cents: Number(item.net_worth_cents || 0),
-    referral_count: Number(item.referral_count || 0),
-    is_current_user: item.user_id === currentUserId,
-  }));
-
-  res.json({
-    success: true,
-    data: leaderboard
-  });
+    res.json({
+      success: true,
+      data: leaderboard,
+      total_count: leaderboard.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.error('Error fetching leaderboard:', err);
+    res.status(500).json({ success: false, error: 'Failed to retrieve creator leaderboard.' });
+  }
 });
 
 export default router;
