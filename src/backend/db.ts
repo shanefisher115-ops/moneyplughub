@@ -672,6 +672,24 @@ export function initDb(): void {
     );
     CREATE INDEX IF NOT EXISTS idx_moneyos_user ON moneyos_conversations(user_id, created_at);
 
+    -- AI COPYWRITER OUTPUTS
+    CREATE TABLE IF NOT EXISTS ai_copywriter_outputs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      niche TEXT NOT NULL,
+      format TEXT NOT NULL,
+      product_name TEXT NOT NULL,
+      affiliate_url TEXT NOT NULL,
+      tracking_token TEXT NOT NULL,
+      x_thread TEXT,
+      tiktok_script TEXT,
+      email_swipe TEXT,
+      xp_awarded INTEGER DEFAULT 35,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_ai_copywriter_user ON ai_copywriter_outputs(user_id);
+
     -- DAILY LOOT CLAIMS (Daily Mystery Loot Crate & Gacha Engine)
     CREATE TABLE IF NOT EXISTS daily_loot_claims (
       id TEXT PRIMARY KEY,

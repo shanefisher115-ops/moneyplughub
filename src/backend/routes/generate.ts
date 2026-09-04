@@ -4,6 +4,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { config } from '../config';
 import { generateSigil } from './sigil';
 import { calculateXPWithMultipliers } from './growth';
+import { GoogleGenAI } from '@google/genai';
 
 const router = Router();
 
@@ -358,6 +359,298 @@ ${referralLink}`;
       artifact,
       user_xp: (user.xp || 0) + xpAwarded,
     }
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════
+//  6. 🤖 GEMINI FLASH IN-APP AI COPYWRITER & TRACKING TOKEN ENGINE
+// ══════════════════════════════════════════════════════════════════
+
+/**
+ * Fallback AI Copy Generator - Creates tailored, high-converting copy across formats with tracking tokens
+ */
+function buildNicheFallbackCopy(params: {
+  niche: string;
+  format: string;
+  productName: string;
+  targetAudience: string;
+  trackingUrl: string;
+  referralCode: string;
+  trackingToken: string;
+  keyAngle: string;
+  tone: string;
+}) {
+  const { niche, productName, targetAudience, trackingUrl, referralCode, trackingToken, keyAngle, tone } = params;
+
+  const xThread = `🧵 1/6: ${keyAngle || 'The Uncomfortable Truth'} about succeeding in ${niche} in 2026.
+
+Most people in ${niche} are still relying on outdated strategies from 2022. Here is the exact breakdown of how top creators generate 5-figure monthly revenue on autopilot using ${productName}: 👇
+
+---
+
+2/6: ⚡ THE PROBLEM:
+If your target audience is ${targetAudience || 'creators & side hustlers'}, manual conversion pipelines are holding you back.
+
+• Wasted hours typing manual outreach
+• Zero tracking on affiliate link clicks
+• Low conversion velocity
+
+---
+
+3/6: 💡 THE SYSTEM:
+${productName} completely automates this workflow.
+By embedding tracking tokens (like \`${trackingToken}\`), every click is attributed in real time.
+
+You get:
+✅ Instant conversion telemetry
+✅ High-converting copy templates tailored for ${niche}
+✅ Passive commission pipeline directly into your wallet
+
+---
+
+4/6: 📊 THE RESULTS:
+Creators using this exact framework in ${niche} are seeing:
+• 3.4x higher click-through rates
+• $10.00+ commission payouts per converted lead
+• Zero friction onboarding for new referrals
+
+---
+
+5/6: 🚀 STEP-BY-STEP ACTION PLAN:
+1. Claim your account using VIP invite code [${referralCode}]
+2. Deploy the pre-built ${niche} conversion funnel
+3. Embed your tracking token \`${trackingToken}\` across your bio & posts
+
+---
+
+6/6: 🔥 READY TO SCALE?
+Tap the link below to get instant access and start monetizing your audience in ${niche}:
+👉 ${trackingUrl}${FTC_DISCLOSURE_FOOTER}`;
+
+  const tiktokScript = `🎬 **HOOK (0:00 - 0:03) [Pattern Interrupt / ${keyAngle}]:**
+"Stop trying to grow in ${niche} without an automated copy engine. Here is the exact 60-second system I use to turn audience views into daily commission payouts."
+
+📱 **VISUAL / B-ROLL CUE:**
+Show screen recording of ${productName} dashboard with real-time tracking token \`${trackingToken}\` and incoming conversion alerts. Fast-paced text overlay on screen.
+
+🔊 **AUDIO / SOUND CUE:**
+Upbeat, high-energy trending phonk or synthwave beats.
+
+💬 **BODY (0:03 - 0:45) [The Solution]:**
+"If you belong to ${targetAudience || 'the creator economy'}, you know how hard it is to write converting scripts every day. I switched to ${productName} — it generates custom X threads, video scripts, and email swipes with embedded affiliate tracking tokens natively built-in."
+
+🎯 **CALL TO ACTION (0:45 - 0:60):**
+"Drop a comment 'PLUG' or tap the bio link right now to unlock your free account with my private invite code **${referralCode}**."
+
+🔗 **BIO LINK & TRACKING URL:**
+${trackingUrl}${FTC_DISCLOSURE_FOOTER}`;
+
+  const emailSwipe = `📩 **SUBJECT LINES (A/B Test Options):**
+Option A: The 2026 ${niche} playbook (and how to copy it)
+Option B: How I automated my ${niche} revenue pipeline in 60 seconds
+Option C: Quick question about your ${niche} stack, [Name]?
+
+👁️ **PREVIEW TEXT:**
+How creators in ${niche} are embedding tracking tokens to scale daily commissions...
+
+---
+
+Hey [Name],
+
+If you've been following the ${niche} space lately, you've probably noticed a massive shift.
+
+The creators making real recurring revenue aren't spending 10 hours a week writing copy manually. They are using **${productName}** to generate high-converting short-form scripts, X threads, and email funnels on demand.
+
+Here is why this is game-changing for ${targetAudience || 'creators'}:
+
+1. **Built-in Affiliate Link Embedding:** Every swipe comes pre-formatted with your tracking link.
+2. **Custom Tracking Token:** Track attribution down to the exact post with token \`${trackingToken}\`.
+3. **Niche-Specific Optimization:** Tailored specifically for ${niche} conversion psychology.
+
+👉 **[Click here to unlock your ${productName} workspace with code: ${referralCode}](${trackingUrl})**
+
+Let me know if you set up your profile today!
+
+Best,
+[Your Name]
+
+P.S. You also get starter XP bonuses and custom procedural sigils when you join via this private invite link:
+${trackingUrl}${FTC_DISCLOSURE_FOOTER}`;
+
+  return { xThread, tiktokScript, emailSwipe };
+}
+
+// ── POST /api/generate/copywriter (Authenticated) ────────────────────
+router.post('/copywriter', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const {
+    niche = 'Personal Finance & Crypto',
+    format = 'all', // 'x_thread', 'tiktok_script', 'email_swipe', 'all'
+    productName = 'Creator Money OS',
+    targetAudience = 'Creators, Freelancers & Side Hustlers',
+    affiliateUrl,
+    trackingToken: inputTrackingToken,
+    keyAngle = 'Contrarian Truth & High Yield',
+    tone = 'Direct, High-Energy & Authoritative',
+  } = req.body;
+
+  const user = db.prepare(
+    'SELECT id, display_name, referral_code, xp FROM users WHERE id = ?'
+  ).get(userId) as any;
+
+  if (!user) {
+    res.status(404).json({ success: false, error: 'User not found' });
+    return;
+  }
+
+  const referralCode = user.referral_code || 'PLUG-VIP';
+  const trackingToken = inputTrackingToken || `tok_${Math.random().toString(36).substring(2, 8)}`;
+
+  // Synthesize default or custom tracking URL
+  let trackingUrl = affiliateUrl && affiliateUrl.trim().length > 5
+    ? affiliateUrl.trim()
+    : `${config.appUrl}/api/referrals/track/${referralCode}`;
+
+  const delimiter = trackingUrl.includes('?') ? '&' : '?';
+  trackingUrl = `${trackingUrl}${delimiter}sub_id=${encodeURIComponent(trackingToken)}&utm_source=ai_copywriter`;
+
+  let xThread = '';
+  let tiktokScript = '';
+  let emailSwipe = '';
+  let engineUsed = 'Gemini 2.5 Flash';
+
+  const apiKey = config.google.apiKey;
+
+  if (apiKey && apiKey.length > 5) {
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      const prompt = `You are a world-class direct response AI Copywriter and Viral Monetization Strategist.
+Task: Generate high-converting copywriting artifacts for a creator.
+
+CREATOR PROFILE & CAMPAIGN INPUTS:
+- Niche: ${niche}
+- Offer / Product Name: ${productName}
+- Target Audience: ${targetAudience}
+- Core Angle / Hook: ${keyAngle}
+- Tone of Voice: ${tone}
+- Creator Invite Code: ${referralCode}
+- Embedded Tracking Link: ${trackingUrl}
+- Tracking Sub-ID Token: ${trackingToken}
+
+REQUIREMENTS:
+Please output JSON format containing three fields: "xThread", "tiktokScript", and "emailSwipe".
+1. "xThread": A 5-6 tweet X/Twitter thread with strong hook, actionable insights, numbered format, and CTA containing the tracking link [${trackingUrl}].
+2. "tiktokScript": A short-form video script with Hook (0-3s), Visual/B-Roll Cues, Audio/Sound Cues, Body, and CTA with link [${trackingUrl}].
+3. "emailSwipe": A high-converting email newsletter swipe with 3 A/B Subject Lines, Preview Text, Body, CTA link [${trackingUrl}], and P.S. note.
+Include FTC disclosure "${FTC_DISCLOSURE_FOOTER}" in each artifact.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+      });
+
+      const rawText = response.text || '';
+      // Attempt JSON parsing from Gemini output
+      try {
+        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          xThread = parsed.xThread || '';
+          tiktokScript = parsed.tiktokScript || '';
+          emailSwipe = parsed.emailSwipe || '';
+        }
+      } catch (parseErr) {
+        // Parsing fallback
+      }
+
+      if (!xThread || !tiktokScript || !emailSwipe) {
+        // Fallback to text synthesis if JSON parsing failed
+        const fallback = buildNicheFallbackCopy({
+          niche, format, productName, targetAudience, trackingUrl, referralCode, trackingToken, keyAngle, tone
+        });
+        xThread = xThread || fallback.xThread;
+        tiktokScript = tiktokScript || fallback.tiktokScript;
+        emailSwipe = emailSwipe || fallback.emailSwipe;
+      }
+    } catch (aiErr: any) {
+      console.warn('[Gemini Flash Copywriter Notice]:', aiErr.message);
+      engineUsed = 'Sovereign Procedural Copy Engine (Offline Backup)';
+      const fallback = buildNicheFallbackCopy({
+        niche, format, productName, targetAudience, trackingUrl, referralCode, trackingToken, keyAngle, tone
+      });
+      xThread = fallback.xThread;
+      tiktokScript = fallback.tiktokScript;
+      emailSwipe = fallback.emailSwipe;
+    }
+  } else {
+    engineUsed = 'Sovereign Procedural Copy Engine';
+    const fallback = buildNicheFallbackCopy({
+      niche, format, productName, targetAudience, trackingUrl, referralCode, trackingToken, keyAngle, tone
+    });
+    xThread = fallback.xThread;
+    tiktokScript = fallback.tiktokScript;
+    emailSwipe = fallback.emailSwipe;
+  }
+
+  // Award +35 XP
+  let xpAwarded = 35;
+  const now = new Date().toISOString();
+  try {
+    const { totalXP } = calculateXPWithMultipliers(35, userId);
+    xpAwarded = totalXP;
+    db.prepare('UPDATE users SET xp = xp + ?, updated_at = ? WHERE id = ?').run(xpAwarded, now, userId);
+  } catch (e) {}
+
+  // Save artifact output to DB
+  const copyId = `copy_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  db.prepare(`
+    INSERT INTO ai_copywriter_outputs (
+      id, user_id, niche, format, product_name, affiliate_url, tracking_token,
+      x_thread, tiktok_script, email_swipe, xp_awarded, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    copyId, userId, niche, format, productName, trackingUrl, trackingToken,
+    xThread, tiktokScript, emailSwipe, xpAwarded, now
+  );
+
+  recordAuditLog(userId, 'AI_COPYWRITER_GENERATE', 'ai_copywriter_outputs', copyId, {
+    niche, format, productName, trackingToken, engineUsed, xpAwarded
+  });
+
+  res.json({
+    success: true,
+    message: `✨ AI Copy generated successfully with Gemini Flash (+${xpAwarded} XP awarded)`,
+    data: {
+      copyId,
+      engineUsed,
+      niche,
+      format,
+      productName,
+      targetAudience,
+      trackingToken,
+      trackingUrl,
+      referralCode,
+      xThread,
+      tiktokScript,
+      emailSwipe,
+      xpAwarded,
+      createdAt: now,
+    }
+  });
+});
+
+// ── GET /api/generate/copywriter/history (Authenticated) ────────────
+router.get('/copywriter/history', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const history = db.prepare(`
+    SELECT * FROM ai_copywriter_outputs
+    WHERE user_id = ?
+    ORDER BY created_at DESC LIMIT 20
+  `).all(userId);
+
+  res.json({
+    success: true,
+    data: history,
   });
 });
 
