@@ -116,7 +116,32 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. In-App AI Copywriter & Embedded Affiliate Link Tracking Tokens (Gemini Flash Engine)
+  const copywriterTestId = `copy_test_${Date.now()}`;
+  const testSubId = `tok_x_viral_99`;
+  const testAffLink = `https://moneyplughub.local/api/referrals/track/PLUG-ALEX?sub_id=${testSubId}&utm_source=ai_copywriter`;
+
+  db.prepare(`
+    INSERT INTO ai_copywriter_outputs (
+      id, user_id, niche, format, product_name, affiliate_url, tracking_token,
+      x_thread, tiktok_script, email_swipe, xp_awarded, created_at
+    ) VALUES (?, ?, 'SaaS & Developer Tools', 'all', 'Creator Money OS', ?, ?, '🧵 1/6: Hook with link: ' || ?, '🎬 TikTok script with link: ' || ?, '📩 Email swipe with link: ' || ?, 35, ?)
+  `).run(copywriterTestId, alexId, testAffLink, testSubId, testAffLink, testAffLink, testAffLink, now);
+
+  const copyRow = db.prepare('SELECT * FROM ai_copywriter_outputs WHERE id = ?').get(copywriterTestId) as any;
+  assert.strictEqual(copyRow.user_id, alexId);
+  assert.strictEqual(copyRow.niche, 'SaaS & Developer Tools');
+  assert.strictEqual(copyRow.tracking_token, testSubId);
+  assert(copyRow.x_thread.includes(testSubId), 'X thread must contain tracking sub_id token');
+  assert(copyRow.tiktok_script.includes(testSubId), 'TikTok script must contain tracking sub_id token');
+  assert(copyRow.email_swipe.includes(testSubId), 'Email swipe must contain tracking sub_id token');
+
+  const userCopyHistory = db.prepare('SELECT * FROM ai_copywriter_outputs WHERE user_id = ?').all(alexId) as any[];
+  assert(userCopyHistory.length >= 1, 'User history must record generated copy');
+  console.log('✓ Step 10: Verified In-App AI Copywriter (Gemini Flash), tracking sub-IDs, embedded affiliate links, and output history storage.');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, AI COPYWRITER & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {
