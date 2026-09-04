@@ -1,6 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
+import {
+  referralAntiFraudMiddleware,
+  computeClientFingerprint,
+  checkReferralVelocity,
+  assessSelfReferralRisk,
+  quarantineReferral,
+  AntiFraudRequest
+} from '../middleware/referralAntiFraud';
 import { config } from '../config';
 import { CommissionEntry, ApiResponse } from '../../types';
 
@@ -147,9 +155,9 @@ export function classifyTrafficSource(referer: string, userAgent: string, query:
 //     Sets a 30-day cookie and redirects to homepage.
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/track/:code', (req: Request, res: Response) => {
+router.get('/track/:code', referralAntiFraudMiddleware, (req: AntiFraudRequest, res: Response) => {
   const code = req.params.code.trim().toUpperCase();
-  const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const fp = req.clientFingerprint || computeClientFingerprint(req);
   const userAgent = req.headers['user-agent'] || '';
   const referer = req.headers['referer'] || '';
   const now = new Date().toISOString();
@@ -170,38 +178,33 @@ router.get('/track/:code', (req: Request, res: Response) => {
   const utmMedium = (req.query.utm_medium as string) || null;
   const utmCampaign = (req.query.utm_campaign as string) || null;
 
-  // ── FRAUD CHECK: IP rate limiting — max 5 clicks per IP per hour ──
-  const recentClicks = db.prepare(
-    "SELECT COUNT(*) as cnt FROM referral_clicks WHERE ip_address = ? AND created_at > datetime('now', '-1 hour')"
-  ).get(ip) as any;
-
-  if (Number(recentClicks?.cnt || 0) >= 5) {
-    const fraudId = `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    db.prepare(
-      'INSERT INTO referral_fraud_log (id, referral_code, ip_address, reason, created_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(fraudId, code, ip, 'IP rate limit exceeded (5+ clicks/hour)', now);
-
-    // Still set cookie so UX isn't broken, but don't log more clicks
+  // ── ANTI-FRAUD VELOCITY CHECK ──
+  if (req.fraudAssessment?.isVelocityExceeded) {
+    // Velocity threshold reached: set cookie for UX but suppress logging additional duplicate clicks
     res.cookie('ref', code, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, sameSite: 'lax', path: '/' });
     res.redirect(req.query.redirect as string || `/?ref=${code}`);
     return;
   }
 
-  // ── FRAUD CHECK: Duplicate click from same IP within 24h ──
-  const duplicateClick = db.prepare(
-    "SELECT id FROM referral_clicks WHERE ip_address = ? AND referral_code = ? AND created_at > datetime('now', '-24 hours') LIMIT 1"
-  ).get(ip, code) as any;
+  // ── FRAUD CHECK: Duplicate click from same IP / Fingerprint within 24h ──
+  const duplicateClick = db.prepare(`
+    SELECT id FROM referral_clicks
+    WHERE (ip_address = ? OR fingerprint_hash = ?)
+      AND referral_code = ?
+      AND created_at > datetime('now', '-24 hours')
+    LIMIT 1
+  `).get(fp.ip, fp.hash, code) as any;
 
   if (!duplicateClick) {
     const clickId = `rclick_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     db.prepare(`
       INSERT INTO referral_clicks (
-        id, referral_code, referrer_user_id, ip_address, user_agent, referer_url, landing_page,
+        id, referral_code, referrer_user_id, ip_address, fingerprint_hash, user_agent, referer_url, landing_page,
         source_category, ai_platform, intent_score, utm_source, utm_medium, utm_campaign, created_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
-      clickId, code, referrer.id, ip, userAgent.substring(0, 500), referer.substring(0, 500),
+      clickId, code, referrer.id, fp.ip, fp.hash, userAgent.substring(0, 500), referer.substring(0, 500),
       (req.query.page as string) || '/', category, aiPlatform, intentScore, utmSource, utmMedium, utmCampaign, now
     );
   }
@@ -609,6 +612,124 @@ router.get('/fraud-log', authenticateToken, (req: AuthenticatedRequest, res: Res
   res.json({ success: true, data: logs });
 });
 
+router.get('/quarantine', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  if (req.user!.role !== 'admin') {
+    res.status(403).json({ success: false, error: 'Admin only' });
+    return;
+  }
+
+  const items = db.prepare(`
+    SELECT q.*,
+           u1.display_name as referrer_name, u1.email as referrer_email,
+           u2.display_name as referred_name, u2.email as referred_email
+    FROM referral_quarantine q
+    LEFT JOIN users u1 ON u1.id = q.referrer_user_id
+    LEFT JOIN users u2 ON u2.id = q.referred_user_id
+    ORDER BY q.created_at DESC LIMIT 100
+  `).all();
+
+  res.json({ success: true, data: items });
+});
+
+router.post('/quarantine/:id/release', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  if (req.user!.role !== 'admin') {
+    res.status(403).json({ success: false, error: 'Admin only' });
+    return;
+  }
+
+  const quarantineId = req.params.id;
+  const now = new Date().toISOString();
+
+  const item = db.prepare('SELECT * FROM referral_quarantine WHERE id = ?').get(quarantineId) as any;
+  if (!item) {
+    res.status(404).json({ success: false, error: 'Quarantine record not found' });
+    return;
+  }
+
+  db.prepare("UPDATE referral_quarantine SET status = 'released', updated_at = ? WHERE id = ?").run(now, quarantineId);
+
+  // If there's an associated commission entry, clear quarantine notes and set status to approved
+  if (item.referrer_user_id && item.referred_user_id) {
+    db.prepare(`
+      UPDATE commission_ledger
+      SET status = 'approved', updated_at = ?
+      WHERE referrer_user_id = ? AND referred_user_id = ? AND status = 'pending'
+    `).run(now, item.referrer_user_id, item.referred_user_id);
+  }
+
+  recordAuditLog(req.user!.id, 'REFERRAL_QUARANTINE_RELEASED', 'referral_quarantine', quarantineId, {
+    referral_code: item.referral_code,
+  });
+
+  res.json({ success: true, message: 'Quarantined referral released and commission approved.' });
+});
+
+router.post('/quarantine/:id/reject', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  if (req.user!.role !== 'admin') {
+    res.status(403).json({ success: false, error: 'Admin only' });
+    return;
+  }
+
+  const quarantineId = req.params.id;
+  const now = new Date().toISOString();
+
+  const item = db.prepare('SELECT * FROM referral_quarantine WHERE id = ?').get(quarantineId) as any;
+  if (!item) {
+    res.status(404).json({ success: false, error: 'Quarantine record not found' });
+    return;
+  }
+
+  db.prepare("UPDATE referral_quarantine SET status = 'rejected', updated_at = ? WHERE id = ?").run(now, quarantineId);
+
+  // Remove or void associated commission entry from ledger
+  if (item.referrer_user_id && item.referred_user_id) {
+    db.prepare(`
+      DELETE FROM commission_ledger
+      WHERE referrer_user_id = ? AND referred_user_id = ? AND status = 'pending'
+    `).run(item.referrer_user_id, item.referred_user_id);
+  }
+
+  recordAuditLog(req.user!.id, 'REFERRAL_QUARANTINE_REJECTED', 'referral_quarantine', quarantineId, {
+    referral_code: item.referral_code,
+  });
+
+  res.json({ success: true, message: 'Quarantined referral rejected and pending commission removed.' });
+});
+
+router.get('/anti-fraud/stats', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  if (req.user!.role !== 'admin') {
+    res.status(403).json({ success: false, error: 'Admin only' });
+    return;
+  }
+
+  const totalClicks = (db.prepare('SELECT COUNT(*) as cnt FROM referral_clicks').get() as any)?.cnt || 0;
+  const totalFraudLogs = (db.prepare('SELECT COUNT(*) as cnt FROM referral_fraud_log').get() as any)?.cnt || 0;
+  const quarantineStats = db.prepare(`
+    SELECT
+      COUNT(*) as total,
+      SUM(CASE WHEN status = 'quarantined' THEN 1 ELSE 0 END) as quarantined,
+      SUM(CASE WHEN status = 'released' THEN 1 ELSE 0 END) as released,
+      SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
+      AVG(risk_score) as avg_risk
+    FROM referral_quarantine
+  `).get() as any;
+
+  res.json({
+    success: true,
+    data: {
+      total_clicks: Number(totalClicks),
+      total_fraud_logs: Number(totalFraudLogs),
+      quarantine: {
+        total: Number(quarantineStats?.total || 0),
+        quarantined: Number(quarantineStats?.quarantined || 0),
+        released: Number(quarantineStats?.released || 0),
+        rejected: Number(quarantineStats?.rejected || 0),
+        avg_risk_score: Number(quarantineStats?.avg_risk || 0).toFixed(2),
+      }
+    }
+  });
+});
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  6. EXPORTED HELPERS — Called from auth.ts on signup
@@ -617,49 +738,84 @@ router.get('/fraud-log', authenticateToken, (req: AuthenticatedRequest, res: Res
 /** 
  * Attribute a conversion to a referral click.
  * Called from auth.ts register handler after a user signs up with a referral code.
- * Performs fraud checks and marks the click as converted.
+ * Performs anti-fraud fingerprint & self-referral checks, and quarantines suspicious referrals.
  */
-export function attributeReferralConversion(newUserId: string, referrerUserId: string, ip: string): void {
+export function attributeReferralConversion(
+  newUserId: string,
+  referrerUserId: string,
+  ip: string,
+  req?: Request
+): { isQuarantined: boolean; quarantineId?: string; riskScore: number } {
   const now = new Date().toISOString();
 
-  // Self-referral check
-  if (newUserId === referrerUserId) {
-    const fraudId = `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    db.prepare(
-      'INSERT INTO referral_fraud_log (id, referral_code, ip_address, reason, created_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(fraudId, 'SELF_REFERRAL', ip, `User ${newUserId} attempted self-referral`, now);
-    return;
+  // Compute client fingerprint from req if provided
+  const fp = req ? computeClientFingerprint(req) : { hash: `fp_fallback_${ip}`, ip, userAgent: '', acceptLanguage: '' };
+
+  // Fetch converting user info
+  const convertingUser = db.prepare('SELECT email FROM users WHERE id = ?').get(newUserId) as any;
+  const convertingEmail = convertingUser?.email;
+
+  // Run Self-Referral & Anti-Fraud Risk Assessment
+  const risk = assessSelfReferralRisk({
+    referrerUserId,
+    convertingUserId: newUserId,
+    convertingEmail,
+    ip: fp.ip,
+    fingerprintHash: fp.hash,
+  });
+
+  // Get Referrer referral code
+  const referrer = db.prepare('SELECT referral_code FROM users WHERE id = ?').get(referrerUserId) as any;
+  const code = referrer?.referral_code || 'UNKNOWN';
+
+  // Check if suspicious or self-referral -> Quarantine!
+  if (risk.isSuspicious) {
+    const quarantineId = quarantineReferral({
+      referralCode: code,
+      referrerUserId,
+      referredUserId: newUserId,
+      ip: fp.ip,
+      fingerprintHash: fp.hash,
+      riskScore: risk.riskScore,
+      reasons: risk.reasons,
+      notes: risk.isSelfReferral ? 'Self-referral flagged for quarantine.' : 'High risk referral conversion quarantined.',
+    });
+
+    // Annotate commission ledger entry
+    db.prepare(`
+      UPDATE commission_ledger
+      SET notes = COALESCE(notes, '') || ' [QUARANTINED: Risk Score ' || ? || ']'
+      WHERE referrer_user_id = ? AND referred_user_id = ?
+    `).run(risk.riskScore, referrerUserId, newUserId);
+
+    return { isQuarantined: true, quarantineId, riskScore: risk.riskScore };
   }
 
-  // Same IP warning (flag for review, don't block)
-  const referrerClicks = db.prepare(
-    "SELECT ip_address FROM referral_clicks WHERE referrer_user_id = ? AND ip_address = ? AND created_at > datetime('now', '-7 days') LIMIT 1"
-  ).get(referrerUserId, ip) as any;
-
-  if (referrerClicks) {
+  // Same IP warning check
+  if (risk.reasons.some(r => r.includes('Same IP'))) {
     const fraudId = `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    db.prepare(
-      'INSERT INTO referral_fraud_log (id, referral_code, ip_address, reason, created_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(fraudId, 'SAME_IP_WARNING', ip, `New user ${newUserId} same IP as referrer ${referrerUserId} — flagged for review`, now);
+    db.prepare(`
+      INSERT INTO referral_fraud_log (id, referral_code, ip_address, fingerprint_hash, reason, risk_score, status, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'flagged', ?)
+    `).run(fraudId, code, fp.ip, fp.hash, `Same IP warning for new user ${newUserId}`, risk.riskScore, now);
   }
 
   // Mark most recent click as converted
   try {
-    db.prepare(`
-      UPDATE referral_clicks 
-      SET converted = 1, converted_user_id = ?
+    const lastClick = db.prepare(`
+      SELECT id FROM referral_clicks
       WHERE referrer_user_id = ? AND converted = 0
       ORDER BY created_at DESC LIMIT 1
-    `).run(newUserId, referrerUserId);
-  } catch {
-    // SQLite doesn't support ORDER BY in UPDATE — use subquery
-    const lastClick = db.prepare(
-      'SELECT id FROM referral_clicks WHERE referrer_user_id = ? AND converted = 0 ORDER BY created_at DESC LIMIT 1'
-    ).get(referrerUserId) as any;
+    `).get(referrerUserId) as any;
+
     if (lastClick) {
       db.prepare('UPDATE referral_clicks SET converted = 1, converted_user_id = ? WHERE id = ?').run(newUserId, lastClick.id);
     }
+  } catch (err) {
+    console.error('Error marking click as converted:', err);
   }
+
+  return { isQuarantined: false, riskScore: risk.riskScore };
 }
 
 /** Get commission tier for a user's referral count */

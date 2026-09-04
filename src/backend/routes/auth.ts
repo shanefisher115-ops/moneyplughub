@@ -171,10 +171,10 @@ router.post('/register', (req: Request, res: Response) => {
       );
     });
 
-    // ── Referral Attribution: Track conversion + fraud check + viral growth mechanics ──
+    // ── Referral Attribution: Track conversion + anti-fraud fingerprinting + viral growth ──
     if (referrer) {
       const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-      attributeReferralConversion(userId, referrer.id, ip);
+      attributeReferralConversion(userId, referrer.id, ip, req);
       try {
         processReferralEvent(referrer.id);
       } catch (growthErr) {
@@ -380,7 +380,7 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
 
         if (referrer) {
           const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-          attributeReferralConversion(effectiveId, referrer.id, ip);
+          attributeReferralConversion(effectiveId, referrer.id, ip, req);
           try {
             processReferralEvent(referrer.id);
           } catch {}
