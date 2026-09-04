@@ -73,6 +73,7 @@ export class VoiceWebSocketManager {
         try { ws.ping(); } catch {}
       });
     }, 25000);
+    this.heartbeatInterval.unref();
 
     return this.wss;
   }
@@ -98,7 +99,7 @@ export class VoiceWebSocketManager {
       if (s) s.isAlive = true;
     });
 
-    ws.on('message', async (data: any, isBinary: boolean) => {
+    ws.on('message', async (data: unknown, isBinary: boolean) => {
       const s = this.sessions.get(ws);
       if (!s) return;
       s.isAlive = true;
@@ -112,7 +113,7 @@ export class VoiceWebSocketManager {
       // JSON text frame
       let frame: ClientFrame;
       try {
-        const raw = typeof data === 'string' ? data : data.toString('utf8');
+        const raw = typeof data === 'string' ? data : (data as Buffer | { toString(enc?: string): string }).toString('utf8');
         frame = JSON.parse(raw);
       } catch {
         this.send(ws, {
@@ -186,7 +187,7 @@ export class VoiceWebSocketManager {
                 isFinal: true,
                 confidence: sttResult.confidence,
               });
-            } catch (err: any) {
+            } catch {
               this.send(ws, {
                 type: 'transcript',
                 text: '',
@@ -212,7 +213,7 @@ export class VoiceWebSocketManager {
       }
 
       case 'ping': {
-        const clientTs = frame.clientTimestamp || (frame as any).timestamp || Date.now();
+        const clientTs = frame.clientTimestamp || ('timestamp' in frame && typeof (frame as { timestamp?: number }).timestamp === 'number' ? (frame as { timestamp: number }).timestamp : Date.now());
         this.send(ws, {
           type: 'pong',
           clientTimestamp: clientTs,
@@ -222,10 +223,11 @@ export class VoiceWebSocketManager {
       }
 
       default: {
+        const frameType = (frame as { type?: string }).type || 'unknown';
         this.send(ws, {
           type: 'error',
           code: 'UNKNOWN_FRAME_TYPE',
-          message: 'Unrecognized frame type: ' + (frame as any).type,
+          message: 'Unrecognized frame type: ' + frameType,
         });
       }
     }
@@ -343,12 +345,13 @@ export class VoiceWebSocketManager {
             durationMs: Date.now() - startTime,
           });
         }
-      } catch (err: any) {
+      } catch (err) {
         if (!abortController.signal.aborted && session.generationToken === token) {
+          const errMessage = err instanceof Error ? err.message : 'TTS streaming failure';
           this.send(ws, {
             type: 'error',
             code: 'TTS_FAILED',
-            message: err.message || 'TTS streaming failure',
+            message: errMessage,
             fallback: 'browser',
           });
         }
