@@ -1,17 +1,23 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import Stripe from 'stripe';
 import { config } from '../config';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
+import { insertRealTransaction } from '../transactions/engine';
 
 const router = Router();
+
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_moneyplughub';
+export const stripe = new Stripe(stripeSecretKey, {
+  apiVersion: '2024-06-20' as any,
+});
 
 // ═══════════════════════════════════════════════════════════════════
 //  BILLING ENGINE — Creator Money OS
 //  Self-hosted subscription management, invoicing, promo codes,
-//  trial logic, and upgrade/downgrade flows.
-//  Stripe is ONLY used as a dumb card charger via webhook.
+//  trial logic, upgrade/downgrade flows, and Stripe webhook sync.
 // ═══════════════════════════════════════════════════════════════════
 
 // ── Schema ───────────────────────────────────────────────────────
@@ -36,7 +42,7 @@ try {
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
       plan_id TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('trialing','active','past_due','canceled','expired')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('trialing','active','past_due','canceled','expired','unpaid','incomplete_expired')),
       billing_cycle TEXT NOT NULL DEFAULT 'monthly' CHECK(billing_cycle IN ('monthly','annual')),
       current_period_start TEXT NOT NULL,
       current_period_end TEXT NOT NULL,
@@ -146,6 +152,353 @@ try {
   // Tables may already exist
 }
 
+// Helper function to resolve plan & tier mapping
+function resolvePlanAndTier(rawPlan: string): { planId: string; tier: string; tierTitle: string } {
+  const planLower = String(rawPlan || '').toLowerCase();
+  if (planLower.includes('enterprise')) {
+    return { planId: 'plan_enterprise', tier: 'ENTERPRISE', tierTitle: 'Enterprise Sovereign' };
+  } else if (planLower.includes('pro')) {
+    return { planId: 'plan_pro', tier: 'PRO', tierTitle: 'Pro Master' };
+  } else if (planLower.includes('creator')) {
+    return { planId: 'plan_creator', tier: 'CREATOR', tierTitle: 'Creator Plug' };
+  } else if (planLower.includes('free')) {
+    return { planId: 'plan_free', tier: 'FREE', tierTitle: 'Novice Plug' };
+  }
+  return { planId: 'plan_creator', tier: 'CREATOR', tierTitle: 'Creator Plug' };
+}
+
+/**
+ * Atomic Processor for Stripe checkout.session.completed events.
+ * Syncs subscriptions, user tier, and financial_transactions ledger in a single SQLite transaction.
+ */
+export function processCheckoutSessionCompleted(session: Stripe.Checkout.Session | any): {
+  subscriptionId: string;
+  transactionId: string;
+  tier: string;
+} {
+  const stripeSubscriptionId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
+  const stripeCustomerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+
+  // Resolve user ID
+  let userId = session.metadata?.user_id || session.client_reference_id;
+  if (!userId && stripeSubscriptionId) {
+    const existingSub = db.prepare('SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ? OR id = ?')
+      .get(stripeSubscriptionId, stripeSubscriptionId) as any;
+    userId = existingSub?.user_id;
+  }
+  if (!userId) {
+    const firstUser = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+    userId = firstUser?.id || 'u_system_stripe';
+  }
+
+  const rawPlan = session.metadata?.plan_id || session.metadata?.plan || 'plan_creator';
+  const billingCycle = session.metadata?.billing_cycle || 'monthly';
+  const { planId, tier: targetTier, tierTitle } = resolvePlanAndTier(rawPlan);
+
+  const now = new Date().toISOString();
+  const periodEnd = billingCycle === 'annual'
+    ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const subId = stripeSubscriptionId || `sub_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+  const txId = `tx_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+  const amountTotalCents = session.amount_total ?? session.amount ?? 0;
+  const amountDollars = Number((amountTotalCents / 100).toFixed(2));
+  const processorId = session.id;
+
+  runInTransaction(() => {
+    // 1. Update User Tier
+    db.prepare(`
+      UPDATE users
+      SET subscriptionTier = ?,
+          subscriptionActive = 1,
+          tier_title = ?,
+          updated_at = ?
+      WHERE id = ?
+    `).run(targetTier, tierTitle, now, userId);
+
+    // 2. Upsert Subscription Record
+    const existingSub = db.prepare('SELECT id FROM subscriptions WHERE id = ? OR stripe_subscription_id = ?')
+      .get(subId, subId) as any;
+
+    if (existingSub) {
+      db.prepare(`
+        UPDATE subscriptions
+        SET user_id = ?, plan_id = ?, status = 'active', billing_cycle = ?,
+            current_period_start = ?, current_period_end = ?, stripe_subscription_id = ?, updated_at = ?
+        WHERE id = ?
+      `).run(userId, planId, billingCycle, now, periodEnd, subId, now, existingSub.id);
+    } else {
+      db.prepare(`
+        INSERT INTO subscriptions (id, user_id, plan_id, status, billing_cycle, current_period_start, current_period_end, stripe_subscription_id, created_at, updated_at)
+        VALUES (?, ?, ?, 'active', ?, ?, ?, ?, ?, ?)
+      `).run(subId, userId, planId, billingCycle, now, periodEnd, subId, now, now);
+    }
+
+    // 3. Insert Record into Financial Transaction Ledger (Idempotent by processor_id)
+    const existingTx = db.prepare('SELECT id FROM financial_transactions WHERE processor_id = ?').get(processorId) as any;
+    if (!existingTx) {
+      db.prepare(`
+        INSERT INTO financial_transactions (id, user_id, amount, type, source, timestamp, is_real, processor_id, metadata, created_at)
+        VALUES (?, ?, ?, 'charge', 'stripe', ?, 1, ?, ?, ?)
+      `).run(
+        txId,
+        userId,
+        amountDollars,
+        now,
+        processorId,
+        JSON.stringify({
+          stripe_checkout_session_id: session.id,
+          stripe_subscription_id: subId,
+          stripe_customer_id: stripeCustomerId,
+          tier: targetTier,
+          plan_id: planId,
+          billing_cycle: billingCycle,
+          currency: session.currency?.toUpperCase() || 'USD',
+          ...session.metadata,
+        }),
+        now
+      );
+    }
+
+    // 4. Mark matching Invoice paid if applicable
+    if (session.metadata?.invoice_id) {
+      db.prepare(`
+        UPDATE invoices
+        SET status = 'paid', paid_at = ?, payment_method = 'stripe', stripe_payment_intent_id = ?, updated_at = ?
+        WHERE id = ?
+      `).run(now, session.payment_intent || null, now, session.metadata.invoice_id);
+    }
+
+    recordAuditLog(userId, 'STRIPE_CHECKOUT_COMPLETED', 'subscriptions', subId, {
+      tier: targetTier,
+      amountDollars,
+      stripeSubscriptionId: subId,
+      checkoutSessionId: session.id,
+    });
+  });
+
+  return { subscriptionId: subId, transactionId: txId, tier: targetTier };
+}
+
+/**
+ * Atomic Processor for Stripe customer.subscription.updated events.
+ * Syncs subscriptions, user tier, and financial_transactions ledger in a single SQLite transaction.
+ */
+export function processSubscriptionUpdated(sub: Stripe.Subscription | any): {
+  subscriptionId: string;
+  tier: string;
+  status: string;
+} {
+  const stripeSubscriptionId = sub.id;
+  const stripeCustomerId = typeof sub.customer === 'string' ? sub.customer : sub.customer?.id;
+
+  // Resolve user_id
+  let userId = sub.metadata?.user_id;
+  if (!userId) {
+    const existingSub = db.prepare('SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ? OR id = ?')
+      .get(stripeSubscriptionId, stripeSubscriptionId) as any;
+    userId = existingSub?.user_id;
+  }
+  if (!userId) {
+    const firstUser = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+    userId = firstUser?.id || 'u_system_stripe';
+  }
+
+  const subStatus = sub.status; // 'active', 'trialing', 'past_due', 'canceled', 'unpaid', 'incomplete_expired'
+  const isSubActive = (subStatus === 'active' || subStatus === 'trialing');
+
+  // Determine plan and tier
+  let rawPlan = sub.metadata?.plan_id || sub.metadata?.plan || sub.items?.data?.[0]?.plan?.id || sub.items?.data?.[0]?.price?.id || '';
+  if (!rawPlan) {
+    const existingSub = db.prepare('SELECT plan_id FROM subscriptions WHERE stripe_subscription_id = ? OR id = ?')
+      .get(stripeSubscriptionId, stripeSubscriptionId) as any;
+    rawPlan = existingSub?.plan_id || 'plan_creator';
+  }
+
+  let { planId, tier: targetTier, tierTitle } = resolvePlanAndTier(rawPlan);
+
+  // Downgrade if subscription is canceled, unpaid, or expired
+  if (!isSubActive && (subStatus === 'canceled' || subStatus === 'unpaid' || subStatus === 'incomplete_expired')) {
+    targetTier = 'FREE';
+    tierTitle = 'Novice Plug';
+  }
+
+  const now = new Date().toISOString();
+  const periodStart = sub.current_period_start ? new Date(sub.current_period_start * 1000).toISOString() : now;
+  const periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  const canceledAt = sub.canceled_at ? new Date(sub.canceled_at * 1000).toISOString() : null;
+  const cancelReason = sub.cancellation_details?.reason || sub.cancel_reason || null;
+
+  runInTransaction(() => {
+    // 1. Update User Tier
+    db.prepare(`
+      UPDATE users
+      SET subscriptionTier = ?,
+          subscriptionActive = ?,
+          tier_title = ?,
+          updated_at = ?
+      WHERE id = ?
+    `).run(targetTier, isSubActive ? 1 : 0, tierTitle, now, userId);
+
+    // 2. Update Subscription Record
+    const existingSub = db.prepare('SELECT id FROM subscriptions WHERE stripe_subscription_id = ? OR id = ?')
+      .get(stripeSubscriptionId, stripeSubscriptionId) as any;
+
+    if (existingSub) {
+      db.prepare(`
+        UPDATE subscriptions
+        SET user_id = ?, plan_id = ?, status = ?,
+            current_period_start = ?, current_period_end = ?, canceled_at = ?, cancel_reason = ?,
+            stripe_subscription_id = ?, updated_at = ?
+        WHERE id = ?
+      `).run(userId, planId, subStatus, periodStart, periodEnd, canceledAt, cancelReason, stripeSubscriptionId, now, existingSub.id);
+    } else {
+      db.prepare(`
+        INSERT INTO subscriptions (id, user_id, plan_id, status, billing_cycle, current_period_start, current_period_end, canceled_at, cancel_reason, stripe_subscription_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, 'monthly', ?, ?, ?, ?, ?, ?, ?)
+      `).run(stripeSubscriptionId, userId, planId, subStatus, periodStart, periodEnd, canceledAt, cancelReason, stripeSubscriptionId, now, now);
+    }
+
+    // 3. Financial Transaction Ledger sync (for subscription payment / renewal if present)
+    const latestInvoiceId = typeof sub.latest_invoice === 'string' ? sub.latest_invoice : sub.latest_invoice?.id;
+    if (latestInvoiceId && isSubActive) {
+      const processorId = `inv_${latestInvoiceId}`;
+      const existingTx = db.prepare('SELECT id FROM financial_transactions WHERE processor_id = ?').get(processorId) as any;
+      if (!existingTx) {
+        const amountCents = sub.latest_invoice?.amount_paid || sub.items?.data?.[0]?.price?.unit_amount || 0;
+        const amountDollars = Number((amountCents / 100).toFixed(2));
+        if (amountDollars > 0) {
+          const txId = `tx_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+          db.prepare(`
+            INSERT INTO financial_transactions (id, user_id, amount, type, source, timestamp, is_real, processor_id, metadata, created_at)
+            VALUES (?, ?, ?, 'charge', 'stripe', ?, 1, ?, ?, ?)
+          `).run(
+            txId,
+            userId,
+            amountDollars,
+            now,
+            processorId,
+            JSON.stringify({
+              stripe_subscription_id: stripeSubscriptionId,
+              stripe_customer_id: stripeCustomerId,
+              stripe_invoice_id: latestInvoiceId,
+              tier: targetTier,
+              plan_id: planId,
+              status: subStatus,
+            }),
+            now
+          );
+        }
+      }
+    }
+
+    recordAuditLog(userId, 'STRIPE_SUBSCRIPTION_UPDATED', 'subscriptions', stripeSubscriptionId, {
+      tier: targetTier,
+      status: subStatus,
+      stripeSubscriptionId,
+    });
+  });
+
+  return { subscriptionId: stripeSubscriptionId, tier: targetTier, status: subStatus };
+}
+
+/**
+ * Centralized Stripe Webhook Router dispatching atomic database ledger updates.
+ */
+export async function handleStripeWebhookEvent(event: Stripe.Event): Promise<{
+  eventType: string;
+  subscriptionId?: string;
+  transactionId?: string;
+  tier?: string;
+  status?: string;
+}> {
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const res = processCheckoutSessionCompleted(session);
+      return { eventType: event.type, ...res };
+    }
+
+    case 'customer.subscription.updated': {
+      const sub = event.data.object as Stripe.Subscription;
+      const res = processSubscriptionUpdated(sub);
+      return { eventType: event.type, ...res };
+    }
+
+    case 'customer.subscription.deleted': {
+      const sub = event.data.object as Stripe.Subscription;
+      const res = processSubscriptionUpdated({ ...sub, status: 'canceled' });
+      return { eventType: event.type, ...res };
+    }
+
+    case 'invoice.payment_succeeded': {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      if (subId) {
+        const existingSub = db.prepare('SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ? OR id = ?')
+          .get(subId, subId) as any;
+        if (existingSub) {
+          const userId = existingSub.user_id;
+          const now = new Date().toISOString();
+          const amountDollars = Number(((invoice.amount_paid || 0) / 100).toFixed(2));
+          runInTransaction(() => {
+            db.prepare("UPDATE subscriptions SET status = 'active', updated_at = ? WHERE id = ? or stripe_subscription_id = ?")
+              .run(now, subId, subId);
+            if (amountDollars > 0) {
+              const txId = `tx_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+              const processorId = invoice.id;
+              const existingTx = db.prepare('SELECT id FROM financial_transactions WHERE processor_id = ?').get(processorId);
+              if (!existingTx) {
+                db.prepare(`
+                  INSERT INTO financial_transactions (id, user_id, amount, type, source, timestamp, is_real, processor_id, metadata, created_at)
+                  VALUES (?, ?, ?, 'charge', 'stripe', ?, 1, ?, ?, ?)
+                `).run(
+                  txId,
+                  userId,
+                  amountDollars,
+                  now,
+                  processorId,
+                  JSON.stringify({
+                    stripe_invoice_id: invoice.id,
+                    stripe_subscription_id: subId,
+                    stripe_customer_id: invoice.customer,
+                  }),
+                  now
+                );
+              }
+            }
+          });
+        }
+      }
+      return { eventType: event.type, subscriptionId: subId || undefined };
+    }
+
+    case 'invoice.payment_failed': {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      if (subId) {
+        const now = new Date().toISOString();
+        runInTransaction(() => {
+          db.prepare("UPDATE subscriptions SET status = 'past_due', updated_at = ? WHERE stripe_subscription_id = ? OR id = ?")
+            .run(now, subId, subId);
+        });
+      }
+      return { eventType: event.type, subscriptionId: subId || undefined };
+    }
+
+    case 'payment_intent.succeeded':
+    case 'charge.succeeded':
+    case 'charge.refunded': {
+      const tx = await insertRealTransaction(event);
+      return { eventType: event.type, transactionId: tx.id };
+    }
+
+    default: {
+      return { eventType: event.type };
+    }
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════════
 //  1. PLANS — Public
@@ -172,6 +525,131 @@ router.get('/plans', (_req: Request, res: Response) => {
   });
 });
 
+// ═══════════════════════════════════════════════════════════════════
+//  1B. CREATE STRIPE CHECKOUT SESSION
+//      POST /api/billing/create-checkout-session
+// ═══════════════════════════════════════════════════════════════════
+
+router.post('/create-checkout-session', async (req: Request, res: Response) => {
+  try {
+    const { plan_id = 'plan_creator', planId, billing_cycle = 'monthly', billingCycle, promo_code, promoCode, success_url, cancel_url } = req.body || {};
+    const effectivePlanId = plan_id || planId || 'plan_creator';
+    const effectiveCycle = billing_cycle || billingCycle || 'monthly';
+    const cleanPromo = (promo_code || promoCode || '').trim().toUpperCase();
+
+    let userId = (req as any).user?.id;
+    if (!userId) {
+      const authHeader = req.headers['authorization'];
+      const token = (authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null) || req.cookies?.token;
+      if (token) {
+        try {
+          const decoded: any = jwt.verify(token, config.jwtSecret);
+          userId = decoded?.userId || decoded?.id;
+        } catch (e) {}
+      }
+    }
+
+    if (!userId) {
+      const firstUser: any = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get();
+      userId = firstUser?.id;
+    }
+
+    if (!userId) {
+      res.status(401).json({ error: 'UNAUTHENTICATED' });
+      return;
+    }
+
+    const plan = db.prepare('SELECT * FROM billing_plans WHERE id = ? OR slug = ?')
+      .get(effectivePlanId, effectivePlanId.replace('plan_', '')) as any;
+
+    if (!plan) {
+      res.status(404).json({ success: false, error: 'PLAN_NOT_FOUND' });
+      return;
+    }
+
+    let basePriceCents = effectiveCycle === 'annual' ? plan.price_cents_annual : plan.price_cents_monthly;
+    let finalPriceCents = basePriceCents;
+
+    if (cleanPromo === 'FOUNDING50') {
+      finalPriceCents = 0;
+    } else if (cleanPromo === 'VIPCREATOR') {
+      finalPriceCents = Math.round(basePriceCents * 0.5);
+    } else if (cleanPromo === 'EARLYBIRD') {
+      finalPriceCents = Math.round(basePriceCents * 0.8);
+    }
+
+    const domain = req.headers.origin || req.headers.referer || 'http://localhost:3000';
+    const defaultSuccessUrl = `${domain}/billing?session_id={CHECKOUT_SESSION_ID}&success=true`;
+    const defaultCancelUrl = `${domain}/billing?canceled=true`;
+
+    const targetTier = plan.slug === 'enterprise' ? 'ENTERPRISE' : plan.slug === 'pro' ? 'PRO' : plan.slug === 'creator' ? 'CREATOR' : 'FREE';
+
+    let session: Stripe.Checkout.Session;
+    if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.includes('mock')) {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: `Creator Money OS — ${plan.name} Plan`,
+                description: `Subscription tier: ${plan.name} (${effectiveCycle})`,
+              },
+              unit_amount: finalPriceCents,
+              recurring: finalPriceCents > 0 ? { interval: effectiveCycle === 'annual' ? 'year' : 'month' } : undefined,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: finalPriceCents > 0 ? 'subscription' : 'payment',
+        success_url: success_url || defaultSuccessUrl,
+        cancel_url: cancel_url || defaultCancelUrl,
+        client_reference_id: userId,
+        metadata: {
+          user_id: userId,
+          plan_id: plan.id,
+          plan_slug: plan.slug,
+          tier: targetTier,
+          billing_cycle: effectiveCycle,
+          promo_code: cleanPromo || '',
+        },
+      });
+    } else {
+      // Mock Checkout session for dev and test environments
+      const mockSessionId = `cs_test_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      session = {
+        id: mockSessionId,
+        object: 'checkout.session',
+        amount_total: finalPriceCents,
+        currency: 'usd',
+        customer: `cus_mock_${userId}`,
+        client_reference_id: userId,
+        url: (success_url || defaultSuccessUrl).replace('{CHECKOUT_SESSION_ID}', mockSessionId),
+        metadata: {
+          user_id: userId,
+          plan_id: plan.id,
+          plan_slug: plan.slug,
+          tier: targetTier,
+          billing_cycle: effectiveCycle,
+          promo_code: cleanPromo || '',
+        },
+      } as any;
+    }
+
+    res.json({
+      success: true,
+      sessionId: session.id,
+      url: session.url,
+      plan: plan.name,
+      tier: targetTier,
+      amount_cents: finalPriceCents,
+    });
+  } catch (error: any) {
+    console.error('Error creating Stripe Checkout session:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════════
 //  2. SUBSCRIBE — Create or change subscription
@@ -310,7 +788,6 @@ router.post('/subscribe', (req: Request, res: Response) => {
   }
 });
 
-
 // ═══════════════════════════════════════════════════════════════════
 //  3. CURRENT SUBSCRIPTION
 //     GET /api/billing/subscription
@@ -385,7 +862,6 @@ router.get('/subscription', authenticateToken, (req: AuthenticatedRequest, res: 
   });
 });
 
-
 // ═══════════════════════════════════════════════════════════════════
 //  4. CANCEL SUBSCRIPTION
 //     POST /api/billing/cancel
@@ -406,7 +882,7 @@ router.post('/cancel', authenticateToken, (req: AuthenticatedRequest, res: Respo
     return;
   }
 
-  // Cancel at end of billing period (don't immediately revoke access)
+  // Cancel at end of billing period
   db.prepare(
     "UPDATE subscriptions SET status = 'canceled', canceled_at = ?, cancel_reason = ?, updated_at = ? WHERE id = ?"
   ).run(now, reason || 'User requested cancellation', now, sub.id);
@@ -419,7 +895,6 @@ router.post('/cancel', authenticateToken, (req: AuthenticatedRequest, res: Respo
     data: { access_until: sub.current_period_end }
   });
 });
-
 
 // ═══════════════════════════════════════════════════════════════════
 //  5. INVOICES
@@ -450,7 +925,6 @@ router.get('/invoices', authenticateToken, (req: AuthenticatedRequest, res: Resp
   });
 });
 
-
 // ═══════════════════════════════════════════════════════════════════
 //  6. PROMO CODE VALIDATION
 //     POST /api/billing/validate-promo
@@ -458,7 +932,7 @@ router.get('/invoices', authenticateToken, (req: AuthenticatedRequest, res: Resp
 // ═══════════════════════════════════════════════════════════════════
 
 router.post('/validate-promo', (req: Request, res: Response) => {
-  const { code, plan_id } = req.body;
+  const { code } = req.body;
 
   if (!code) {
     res.status(400).json({ success: false, error: 'Code is required' });
@@ -484,7 +958,6 @@ router.post('/validate-promo', (req: Request, res: Response) => {
     return;
   }
 
-  // Calculate discount preview
   let previewDiscount = '';
   if (promo.discount_type === 'percent') {
     previewDiscount = `${promo.discount_value}% off`;
@@ -503,7 +976,6 @@ router.post('/validate-promo', (req: Request, res: Response) => {
     }
   });
 });
-
 
 // ═══════════════════════════════════════════════════════════════════
 //  7. ADMIN: Promo Code Management
@@ -558,7 +1030,6 @@ router.get('/promos', authenticateToken, (req: AuthenticatedRequest, res: Respon
   res.json({ success: true, data: promos });
 });
 
-// Mark invoice as paid (manual/offline payment)
 router.post('/invoices/:id/mark-paid', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
   if (req.user!.role !== 'admin') {
     res.status(403).json({ success: false, error: 'Admin only' });
@@ -582,74 +1053,41 @@ router.post('/invoices/:id/mark-paid', authenticateToken, (req: AuthenticatedReq
   res.json({ success: true, message: `Invoice marked as paid ($${(inv.total_cents / 100).toFixed(2)})` });
 });
 
-
 // ═══════════════════════════════════════════════════════════════════
-//  8. STRIPE WEBHOOK — Future integration point
+//  8. STRIPE WEBHOOK HANDLER
 //     POST /api/billing/webhook/stripe
-//     This is where Stripe sends payment confirmations.
-//     When connected, it auto-marks invoices paid and activates subs.
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/webhook/stripe', (req: Request, res: Response) => {
-  // TODO: Add Stripe webhook signature verification
-  // const sig = req.headers['stripe-signature'];
-  // const event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-
-  const event = req.body;
+router.post('/webhook/stripe', async (req: Request, res: Response) => {
+  const sig = req.headers['stripe-signature'];
+  let event: Stripe.Event;
 
   try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data?.object;
-        const invoiceId = session?.metadata?.invoice_id;
-        const now = new Date().toISOString();
-
-        if (invoiceId) {
-          db.prepare(
-            "UPDATE invoices SET status = 'paid', paid_at = ?, payment_method = 'stripe', stripe_payment_intent_id = ?, updated_at = ? WHERE id = ?"
-          ).run(now, session?.payment_intent || null, now, invoiceId);
-
-          // Activate subscription
-          const inv = db.prepare('SELECT subscription_id FROM invoices WHERE id = ?').get(invoiceId) as any;
-          if (inv?.subscription_id) {
-            db.prepare(
-              "UPDATE subscriptions SET status = 'active', stripe_subscription_id = ?, updated_at = ? WHERE id = ?"
-            ).run(session?.subscription || null, now, inv.subscription_id);
-          }
-        }
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data?.object;
-        const subId = invoice?.metadata?.subscription_id;
-        if (subId) {
-          db.prepare(
-            "UPDATE subscriptions SET status = 'past_due', updated_at = ? WHERE id = ?"
-          ).run(new Date().toISOString(), subId);
-        }
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        const sub = event.data?.object;
-        const subId = sub?.metadata?.subscription_id;
-        if (subId) {
-          db.prepare(
-            "UPDATE subscriptions SET status = 'canceled', canceled_at = ?, updated_at = ? WHERE id = ?"
-          ).run(new Date().toISOString(), new Date().toISOString(), subId);
-        }
-        break;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (webhookSecret && sig) {
+      const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+      event = stripe.webhooks.constructEvent(rawBody, sig as string, webhookSecret);
+    } else {
+      event = req.body as Stripe.Event;
+      if (!event.type || !event.data?.object) {
+        res.status(400).json({ error: 'Invalid Stripe event structure' });
+        return;
       }
     }
-
-    res.json({ received: true });
   } catch (err: any) {
-    console.error('Stripe webhook error:', err);
-    res.status(400).json({ error: 'Webhook processing failed' });
+    console.error('[Billing Webhook] Signature verification failed:', err.message);
+    res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    return;
+  }
+
+  try {
+    const result = await handleStripeWebhookEvent(event);
+    res.json({ success: true, received: true, ...result });
+  } catch (err: any) {
+    console.error('[Billing Webhook] Processing error:', err);
+    res.status(500).json({ error: 'Webhook processing failed', details: err.message });
   }
 });
-
 
 // ═══════════════════════════════════════════════════════════════════
 //  9. ADMIN: Revenue Dashboard
