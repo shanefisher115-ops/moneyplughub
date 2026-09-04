@@ -23,6 +23,11 @@ export interface User {
   tier_title: string;
   created_at: string;
   updated_at: string;
+  commission_balance?: number;
+  pending_balance?: number;
+  lifetime_earnings?: number;
+  total_referrals?: number;
+  active_referrals?: number;
 }
 
 export interface UserWithStats extends User {
