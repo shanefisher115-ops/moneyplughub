@@ -125,7 +125,12 @@ export async function insertRealTransaction(
     eventObject.customer ||
     'u_system_stripe';
 
-  const rawAmount = eventObject.amount_total ?? eventObject.amount ?? 0;
+  const rawAmount =
+    eventObject.amount_total ??
+    eventObject.amount ??
+    eventObject.items?.data?.[0]?.price?.unit_amount ??
+    eventObject.plan?.amount ??
+    0;
   const amountDollars = Number((rawAmount / 100).toFixed(2));
   const timestamp = new Date(stripeEvent.created * 1000).toISOString();
 
