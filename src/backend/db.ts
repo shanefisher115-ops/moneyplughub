@@ -30,7 +30,7 @@ export function checkpointWal(): boolean {
 
 export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message: string; dbPath: string } {
   try {
-    const check = db.prepare('PRAGMA integrity_check;').get() as any;
+    const check = db.prepare('PRAGMA integrity_check;').get() as { integrity_check?: string } | undefined;
     const stats = fs.statSync(config.dbPath);
     const ok = check?.integrity_check === 'ok';
     return {
@@ -50,9 +50,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval && typeof walInterval.unref === 'function') {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -1079,7 +1082,7 @@ export function seedClosedEconomy(): void {
 
   // 3. Initial Active Marketplace Listings
   try {
-    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as any)?.c || 0;
+    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as { c: number } | undefined)?.c || 0;
     if (listCount < 6) {
       const insertListing = db.prepare(`
         INSERT OR IGNORE INTO marketplace_listings (id, seller_id, seller_name, item_id, item_name, item_type, rarity, price_core_units, status, buyer_id, created_at, sold_at)

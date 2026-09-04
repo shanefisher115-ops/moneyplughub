@@ -7,7 +7,7 @@ async function testLootEngine() {
   // 1. Verify daily_loot_claims table exists
   const tableCheck = db.prepare(`
     SELECT name FROM sqlite_master WHERE type='table' AND name='daily_loot_claims'
-  `).get() as any;
+  `).get() as { name: string } | undefined;
 
   if (!tableCheck) {
     throw new Error('❌ Table daily_loot_claims does not exist in SQLite DB!');
@@ -15,14 +15,14 @@ async function testLootEngine() {
   console.log('✅ SQLite table `daily_loot_claims` verified.');
 
   // 2. Fetch or create a test user
-  let testUser = db.prepare('SELECT id, email, xp, level, tier_title FROM users LIMIT 1').get() as any;
+  let testUser = db.prepare('SELECT id, email, xp, level, tier_title FROM users LIMIT 1').get() as { id: string; email: string; xp: number; level: number; tier_title: string } | undefined;
   if (!testUser) {
     const now = new Date().toISOString();
     db.prepare(`
       INSERT OR REPLACE INTO users (id, email, password_hash, display_name, referral_code, created_at, updated_at)
       VALUES ('user_loot_test', 'loot_test@moneyplughub.com', 'hash', 'Loot Tester', 'LOOT-TEST', ?, ?)
     `).run(now, now);
-    testUser = { id: 'user_loot_test' };
+    testUser = { id: 'user_loot_test', email: 'loot_test@moneyplughub.com', xp: 100, level: 1, tier_title: 'Novice Plug' };
   }
 
   const userId = testUser.id;
@@ -74,7 +74,7 @@ async function testLootEngine() {
     VALUES (?, ?, 'epic_crate', '+1000 XP, $5.00 Cash', 'Epic Daily Mystery Crate', 3, ?)
   `).run(claimId, userId, nowIso);
 
-  const recordedClaim = db.prepare('SELECT * FROM daily_loot_claims WHERE id = ?').get(claimId) as any;
+  const recordedClaim = db.prepare('SELECT * FROM daily_loot_claims WHERE id = ?').get(claimId) as { id: string; user_id: string; reward_value: string; streak_days: number; claimed_at: string } | undefined;
   if (!recordedClaim) {
     throw new Error('❌ Failed to record loot claim in database!');
   }

@@ -7,7 +7,7 @@ export function seed(): void {
   console.log('Initializing database schema & quests at:', config.dbPath);
 
   // Check if admin user already exists
-  const existingAdmin = db.prepare('SELECT id, email FROM users WHERE role = ?').get('admin') as any;
+  const existingAdmin = db.prepare('SELECT id, email FROM users WHERE role = ?').get('admin') as { id: string; email: string } | undefined;
 
   if (!existingAdmin) {
     const salt = bcrypt.genSaltSync(10);
