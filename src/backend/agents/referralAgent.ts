@@ -34,7 +34,16 @@ export class ReferralAgent {
         SELECT * FROM crypto_referral_programs 
         WHERE status = 'active'
         ORDER BY total_clicks DESC, total_earnings_cents DESC
-      `).all() as any[];
+      `).all() as Array<{
+        name: string;
+        slug: string;
+        destination_url: string;
+        bonus_desc: string;
+        total_clicks: number;
+        status: string;
+        tags: string;
+        category: string;
+      }>;
 
       if (programs.length === 0) {
         const errorMsg = 'Invariant Error: No active referral programs found in context.world.referrals.';
@@ -225,7 +234,7 @@ export class ReferralAgent {
 
     const script = db.prepare(`
       SELECT * FROM content_engine_scripts WHERE id = ? AND user_id = ?
-    `).get(scriptId, userId) as any;
+    `).get(scriptId, userId) as { id: string; suggestion_id: string; program: string; hook: string; script: string; cta: string; cta_link: string; platform: string; status: 'Idea' | 'Script Ready' | 'Posted'; created_at: string; posted_at?: string | null } | undefined;
 
     if (!script) {
       return { success: false, error: 'Script not found' };

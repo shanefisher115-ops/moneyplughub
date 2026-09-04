@@ -31,12 +31,13 @@ async function runTests() {
     initializeUserFinancialProfile(alexId, 'alex@test.moneyplughub.local');
   });
 
-  const alex = db.prepare('SELECT * FROM users WHERE id = ?').get(alexId) as any;
+  const alex = db.prepare('SELECT * FROM users WHERE id = ?').get(alexId) as { xp: number } | undefined;
+  assert(alex);
   assert.strictEqual(Number(alex.xp), 100);
   console.log('✓ Step 2: User profile initialized.');
 
   // 3. Plug In OS v5.0: 13 AI Modules Database
-  const modules = db.prepare('SELECT * FROM ai_modules').all() as any[];
+  const modules = db.prepare('SELECT * FROM ai_modules').all() as Array<{ name: string }>;
   assert.strictEqual(modules.length, 13, 'Must have exactly 13 AI Modules');
   assert(modules.some(m => m.name === 'VisionCore Engine'), 'Must include VisionCore Engine');
   assert(modules.some(m => m.name === 'PulseWave Telemetry'), 'Must include PulseWave Telemetry');
@@ -44,7 +45,7 @@ async function runTests() {
   console.log(`✓ Step 3: Verified 13 AI Modules database (VisionCore, PulseWave, SignalCore, DaVinci Suite, Osmium, etc.).`);
 
   // 4. Plug In OS v5.0: 6 AI Model Families Registry
-  const models = db.prepare('SELECT * FROM ai_models').all() as any[];
+  const models = db.prepare('SELECT * FROM ai_models').all() as Array<{ provider: string }>;
   assert.strictEqual(models.length, 6, 'Must have exactly 6 AI Model Families');
   assert(models.some(m => m.provider === 'OpenAI'), 'Must include OpenAI');
   assert(models.some(m => m.provider === 'Anthropic'), 'Must include Anthropic');
@@ -61,13 +62,15 @@ async function runTests() {
     VALUES (?, ?, 'Draft 3 viral hooks for Rakuten', 'Marketing', 'model_claude35', 'Synthesized via Claude 3.5 Sonnet', 420, 180, 5, ?)
   `).run(taskId, alexId, now);
 
-  const taskRow = db.prepare('SELECT * FROM ai_orchestrator_tasks WHERE id = ?').get(taskId) as any;
+  const taskRow = db.prepare('SELECT * FROM ai_orchestrator_tasks WHERE id = ?').get(taskId) as { assigned_model_id: string; feedback_rating: number } | undefined;
+  assert(taskRow);
   assert.strictEqual(taskRow.assigned_model_id, 'model_claude35');
   assert.strictEqual(taskRow.feedback_rating, 5);
   console.log('✓ Step 5: Verified AI Orchestrator dynamic task routing & 5★ feedback loop.');
 
   // 6. Command Center & Referral Hub
-  const rakuten = db.prepare("SELECT * FROM crypto_referral_programs WHERE slug = 'rakuten'").get() as any;
+  const rakuten = db.prepare("SELECT * FROM crypto_referral_programs WHERE slug = 'rakuten'").get() as { destination_url: string } | undefined;
+  assert(rakuten);
   assert.strictEqual(rakuten.destination_url, 'https://www.rakuten.com/r/CASHPL19');
   console.log('✓ Step 6: Verified Rakuten link (https://www.rakuten.com/r/CASHPL19) and Starter Set programs.');
 
@@ -84,7 +87,7 @@ async function runTests() {
     VALUES (?, ?, 'user', 'What is my best debt payoff strategy?', '{}', ?)
   `).run(moneyOsMsgId, alexId, now);
 
-  const moneyOsHistory = db.prepare('SELECT * FROM moneyos_conversations WHERE user_id = ?').all(alexId) as any[];
+  const moneyOsHistory = db.prepare('SELECT * FROM moneyos_conversations WHERE user_id = ?').all(alexId) as Array<{ id: string }>;
   assert(moneyOsHistory.length > 0, 'Must contain MoneyOS messages');
   console.log('✓ Step 8: Verified MoneyOS live wallet context synthesis & conversation engine.');
 

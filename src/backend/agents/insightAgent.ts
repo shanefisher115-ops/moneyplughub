@@ -31,7 +31,7 @@ export class InsightAgent {
       // Balances
       const balances = db.prepare(`
         SELECT * FROM balance_snapshots WHERE user_id = ?
-      `).all(userId) as any[];
+      `).all(userId) as Array<{ balance_cents: number }>;
 
       const totalBalanceCents = balances.reduce((acc, b) => acc + (b.balance_cents || 0), 0);
       const totalBalanceUsd = (totalBalanceCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -39,19 +39,19 @@ export class InsightAgent {
       // Earnings
       const dailyEarn = db.prepare(`
         SELECT * FROM earnings_snapshots WHERE user_id = ? AND window = 'daily'
-      `).get(userId) as any;
+      `).get(userId) as { gross_cents: number } | undefined;
       const dailyGrossUsd = ((dailyEarn?.gross_cents || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
       // Referral Suggestions
       const latestRefSug = db.prepare(`
         SELECT * FROM referral_suggestions WHERE user_id = ? ORDER BY created_at DESC LIMIT 1
-      `).get(userId) as any;
+      `).get(userId) as { program: string; suggested_action: string } | undefined;
 
       // Automation Runs Today
       const runsToday = db.prepare(`
         SELECT * FROM automation_runs 
         WHERE user_id = ? AND started_at LIKE ?
-      `).all(userId, `${dateStr}%`) as any[];
+      `).all(userId, `${dateStr}%`) as Array<{ status: string }>;
 
       const successfulRuns = runsToday.filter(r => r.status === 'success').length;
       const failedRuns = runsToday.filter(r => r.status === 'failure').length;
@@ -69,7 +69,7 @@ export class InsightAgent {
       }
 
       // Suggestion 2: Emergency fund / savings angle
-      const efGoal = db.prepare(`SELECT * FROM financial_goals WHERE user_id = ? AND category = 'emergency_fund'`).get(userId) as any;
+      const efGoal = db.prepare(`SELECT * FROM financial_goals WHERE user_id = ? AND category = 'emergency_fund'`).get(userId) as { title: string; current_cents: number; target_cents: number } | undefined;
       if (efGoal) {
         rawSuggestions.push(`Deposit $25–$50 to strengthen your ${efGoal.title} (current progress: $${(efGoal.current_cents / 100).toFixed(2)} / $${(efGoal.target_cents / 100).toFixed(2)}).`);
       } else {
@@ -77,7 +77,7 @@ export class InsightAgent {
       }
 
       // Suggestion 3: Debt paydown / Avalanche
-      const topDebt = db.prepare(`SELECT * FROM debts WHERE user_id = ? ORDER BY interest_rate DESC LIMIT 1`).get(userId) as any;
+      const topDebt = db.prepare(`SELECT * FROM debts WHERE user_id = ? ORDER BY interest_rate DESC LIMIT 1`).get(userId) as { name: string; interest_rate: number } | undefined;
       if (topDebt) {
         rawSuggestions.push(`Apply Avalanche paydown towards ${topDebt.name} (${topDebt.interest_rate}% APR) to minimize compounding interest.`);
       }
