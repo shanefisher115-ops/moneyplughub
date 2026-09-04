@@ -98,7 +98,7 @@ export class VoiceWebSocketManager {
       if (s) s.isAlive = true;
     });
 
-    ws.on('message', async (data: any, isBinary: boolean) => {
+    ws.on('message', async (data: unknown, isBinary: boolean) => {
       const s = this.sessions.get(ws);
       if (!s) return;
       s.isAlive = true;
@@ -112,7 +112,7 @@ export class VoiceWebSocketManager {
       // JSON text frame
       let frame: ClientFrame;
       try {
-        const raw = typeof data === 'string' ? data : data.toString('utf8');
+        const raw = typeof data === 'string' ? data : (data as Buffer).toString('utf8');
         frame = JSON.parse(raw);
       } catch {
         this.send(ws, {
@@ -212,7 +212,7 @@ export class VoiceWebSocketManager {
       }
 
       case 'ping': {
-        const clientTs = frame.clientTimestamp || (frame as any).timestamp || Date.now();
+        const clientTs = frame.clientTimestamp || ('timestamp' in frame ? (frame.timestamp as number) : undefined) || Date.now();
         this.send(ws, {
           type: 'pong',
           clientTimestamp: clientTs,
@@ -222,10 +222,11 @@ export class VoiceWebSocketManager {
       }
 
       default: {
+        const unknownType = (frame as { type?: string }).type || 'unknown';
         this.send(ws, {
           type: 'error',
           code: 'UNKNOWN_FRAME_TYPE',
-          message: 'Unrecognized frame type: ' + (frame as any).type,
+          message: 'Unrecognized frame type: ' + unknownType,
         });
       }
     }
