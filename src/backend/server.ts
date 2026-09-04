@@ -8,6 +8,7 @@ import fs from 'fs';
 import { config } from './config';
 import { db, initDb } from './db';
 import { setupVoiceWebSocket, voiceWsManager } from './voice/ws';
+import { setupLeaderboardWebSocket, leaderboardWsManager } from './ws/leaderboardWs';
 import authRoutes from './routes/auth';
 import referralRoutes from './routes/referrals';
 import adminRoutes from './routes/admin';
@@ -41,6 +42,7 @@ import voiceRoutes from './voice/router';
 import lootRoutes from './routes/loot';
 import syndicatesRoutes from './routes/syndicates';
 import achievementsRoutes from './routes/achievements';
+import leaderboardRoutes from './routes/leaderboard';
 import { primordiaRouter, initPrimordiaSchema } from './routes/primordia';
 import { primordiaNuclearRouter, initPrimordiaNuclearSchema } from './routes/primordiaNuclear';
 import { xpEconomyRouter } from './routes/xpEconomy';
@@ -124,6 +126,7 @@ app.use('/api/voice', voiceRoutes);
 app.use('/api/loot', lootRoutes);
 app.use('/api/syndicates', syndicatesRoutes);
 app.use('/api/achievements', achievementsRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/primordia', primordiaRouter);
 app.use('/api/primordia/nuclear', primordiaNuclearRouter);
 app.use('/api/xp-economy', xpEconomyRouter);
@@ -209,6 +212,7 @@ const server = http.createServer(app);
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
 setupVoiceWebSocket(server);
+setupLeaderboardWebSocket(server);
 unrealBridge.init(server);
 
 server.listen(3001, () => {
@@ -220,6 +224,7 @@ const server3000 = http.createServer(app);
 server3000.keepAliveTimeout = 65000;
 server3000.headersTimeout = 66000;
 setupVoiceWebSocket(server3000);
+setupLeaderboardWebSocket(server3000);
 
 server3000.listen(3000, () => {
   console.log(`⚡ Plug In OS v5.0 Dual Listener running on port 3000`);
@@ -232,6 +237,7 @@ server3000.listen(3000, () => {
 const handleShutdown = () => {
   console.log('\nClosing servers...');
   voiceWsManager.close();
+  leaderboardWsManager.close();
   server.close(() => {
     server3000.close(() => {
       db.close();
