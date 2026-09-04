@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { config } from '../config';
 import { User } from '../../types';
+import { checkAndNotifyRankPromotion } from '../services/webhookDispatcher';
 
 const router = Router();
 
@@ -369,6 +370,9 @@ router.post('/daily/open', (req: Request, res: Response) => {
       if (isAuthenticated && user) {
         // Fetch latest XP from DB
         const currentUser = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
+        const oldLevel = Number(currentUser?.level || 1);
+        const oldTierTitle = currentUser?.tier_title || 'Novice Plug';
+
         newTotalXp = (Number(currentUser?.xp) || 0) + totalXpEarned;
         const levelData = computeLevelAndTier(newTotalXp);
         newLevel = levelData.level;
@@ -380,6 +384,13 @@ router.post('/daily/open', (req: Request, res: Response) => {
           SET xp = ?, level = ?, tier_title = ?, streak_days = ?, updated_at = ?
           WHERE id = ?
         `).run(newTotalXp, newLevel, newTier, streakDays, nowIso, userId);
+
+        checkAndNotifyRankPromotion({
+          userId,
+          oldLevel,
+          oldTierTitle,
+          newXp: newTotalXp,
+        });
 
         // Credit cash reward to bank/checking account
         if (finalCashCreditCents > 0) {

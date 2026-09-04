@@ -4,6 +4,7 @@ import { config } from '../config';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { Achievement, AchievementsSummary, User } from '../../types';
+import { checkAndNotifyRankPromotion } from '../services/webhookDispatcher';
 
 const router = Router();
 
@@ -763,6 +764,9 @@ router.post('/claim/:id', authenticateToken, (req: AuthenticatedRequest, res: Re
 
       // 2. Fetch current user XP and add reward XP
       const currentUser = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
+      const oldLevel = Number(currentUser?.level || 1);
+      const oldTierTitle = currentUser?.tier_title || 'Novice Plug';
+
       newXp = Number(currentUser?.xp || 0) + achievement.reward_xp;
       const computed = computeLevelAndTier(newXp);
       newLevel = computed.level;
@@ -773,6 +777,13 @@ router.post('/claim/:id', authenticateToken, (req: AuthenticatedRequest, res: Re
         SET xp = ?, level = ?, tier_title = ?, updated_at = ?
         WHERE id = ?
       `).run(newXp, newLevel, newTierTitle, now, userId);
+
+      checkAndNotifyRankPromotion({
+        userId,
+        oldLevel,
+        oldTierTitle,
+        newXp,
+      });
 
       // 3. Credit cash incentive to user's primary bank checking account
       if (achievement.reward_cents > 0) {

@@ -8,6 +8,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { User, AuthResponse, ApiResponse } from '../../types';
 import { attributeReferralConversion } from './referrals';
 import { processReferralEvent } from './growth';
+import { triggerCommissionWebhook } from '../services/webhookDispatcher';
 
 const router = Router();
 
@@ -157,6 +158,15 @@ router.post('/register', (req: Request, res: Response) => {
             status: 'pending'
           }
         );
+
+        // Asynchronously dispatch real-time webhook notification to Discord / Telegram
+        triggerCommissionWebhook({
+          userId: referrer.id,
+          amountCents: config.commissionAmountCents,
+          referredName: display_name.trim(),
+          notes: `Referral sign-up: ${display_name.trim()} (${normalizedEmail})`,
+          commissionId,
+        });
       }
 
       // Initialize rich financial profile (bank accounts, crypto wallets, debts, budget categories, goals)
