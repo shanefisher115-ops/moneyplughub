@@ -7,6 +7,7 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import { runPayoutsTests } from './test_payouts';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,7 +117,12 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
+  // 10. Automated Creator Payout Processor
+  await runPayoutsTests();
+  console.log('✓ Step 10: Verified Automated Creator Payout Processor & Batch Stripe Connect Engine.');
+
   console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {
