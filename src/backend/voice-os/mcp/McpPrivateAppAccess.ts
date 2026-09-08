@@ -7,11 +7,11 @@ export class McpPrivateAppAccess {
     this.bus = bus;
   }
 
-  verifyAccess(identity: any) {
+  verifyAccess(identity: { userId: string; role: string; devicePosture?: { trustScore?: number } }) {
     const allowedRoles = ["admin", "operator", "finance"];
     const roleAllowed = allowedRoles.includes(identity.role);
 
-    const postureValid = identity.devicePosture.trustScore >= 80;
+    const postureValid = (identity.devicePosture?.trustScore ?? 0) >= 80;
 
     const access = roleAllowed && postureValid;
 

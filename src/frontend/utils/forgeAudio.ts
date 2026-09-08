@@ -220,6 +220,166 @@ class ForgeAudioEngine {
       osc2.stop(now + duration);
     } catch {}
   }
+
+  // ── Continuous Solfeggio Drone State ──────────────────────────────
+  private droneOsc1: OscillatorNode | null = null;
+  private droneOsc2: OscillatorNode | null = null;
+  private droneGain: GainNode | null = null;
+  private droneHz: number | null = null;
+
+  public startHarmonicDrone(freq: number = 528) {
+    if (this.isMuted) return;
+    this.stopHarmonicDrone();
+
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, now);
+
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(freq * 0.5, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.035, now + 1.5);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+
+      this.droneOsc1 = osc1;
+      this.droneOsc2 = osc2;
+      this.droneGain = gain;
+      this.droneHz = freq;
+    } catch {}
+  }
+
+  public stopHarmonicDrone() {
+    if (!this.droneGain || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      this.droneGain.gain.linearRampToValueAtTime(0.0001, now + 0.8);
+      setTimeout(() => {
+        try {
+          this.droneOsc1?.stop();
+          this.droneOsc2?.stop();
+          this.droneOsc1?.disconnect();
+          this.droneOsc2?.disconnect();
+          this.droneGain?.disconnect();
+        } catch {}
+        this.droneOsc1 = null;
+        this.droneOsc2 = null;
+        this.droneGain = null;
+        this.droneHz = null;
+      }, 900);
+    } catch {
+      this.droneOsc1 = null;
+      this.droneOsc2 = null;
+      this.droneGain = null;
+      this.droneHz = null;
+    }
+  }
+
+  public isDroneActive(): boolean {
+    return this.droneHz !== null;
+  }
+
+  public getDroneHz(): number | null {
+    return this.droneHz;
+  }
+
+  /**
+   * Cinematic Forge Ignition & Ascension Ritual Audio
+   * Sub-bass seismic drop (38Hz), high-frequency plasma surge, and Solfeggio shimmer.
+   */
+  public playIgnitionSequence() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+
+      // 1. Deep Sub-Bass Pulse (38Hz - 24Hz)
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(75, now);
+      subOsc.frequency.exponentialRampToValueAtTime(32, now + 1.2);
+      subGain.gain.setValueAtTime(0.25, now);
+      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+      subOsc.connect(subGain);
+      subGain.connect(ctx.destination);
+      subOsc.start(now);
+      subOsc.stop(now + 1.6);
+
+      // 2. Rising Plasma Laser Sweep
+      const sweepOsc = ctx.createOscillator();
+      const sweepGain = ctx.createGain();
+      sweepOsc.type = 'sawtooth';
+      sweepOsc.frequency.setValueAtTime(220, now + 0.1);
+      sweepOsc.frequency.exponentialRampToValueAtTime(1760, now + 0.9);
+      sweepGain.gain.setValueAtTime(0.001, now + 0.1);
+      sweepGain.gain.linearRampToValueAtTime(0.08, now + 0.4);
+      sweepGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
+      sweepOsc.connect(sweepGain);
+      sweepGain.connect(ctx.destination);
+      sweepOsc.start(now + 0.1);
+      sweepOsc.stop(now + 1.1);
+
+      // 3. Multi-Harmonic Angelic Bell Shimmer
+      const harmonics = [528, 792, 1056, 1584, 2112];
+      harmonics.forEach((h, i) => {
+        const hOsc = ctx.createOscillator();
+        const hGain = ctx.createGain();
+        hOsc.type = 'sine';
+        hOsc.frequency.setValueAtTime(h, now + 0.35 + i * 0.05);
+
+        hGain.gain.setValueAtTime(0.0001, now + 0.35 + i * 0.05);
+        hGain.gain.linearRampToValueAtTime(0.06 / (i + 1), now + 0.5 + i * 0.05);
+        hGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+
+        hOsc.connect(hGain);
+        hGain.connect(ctx.destination);
+        hOsc.start(now + 0.35 + i * 0.05);
+        hOsc.stop(now + 2.6);
+      });
+    } catch {}
+  }
+
+  /**
+   * Precision Magnetic Snap for 0° Right-Side-Up Lock
+   */
+  public playOrientSnap() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      // Double click tick
+      [0, 0.045].forEach((offset) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, now + offset);
+        osc.frequency.exponentialRampToValueAtTime(800, now + offset + 0.03);
+        gain.gain.setValueAtTime(0.08, now + offset);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.035);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + offset);
+        osc.stop(now + offset + 0.04);
+      });
+    } catch {}
+  }
 }
 
 export const forgeAudio = new ForgeAudioEngine();

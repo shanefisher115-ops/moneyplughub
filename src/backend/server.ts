@@ -8,6 +8,7 @@ import fs from 'fs';
 import { config } from './config';
 import { db, initDb } from './db';
 import { setupVoiceWebSocket, voiceWsManager } from './voice/ws';
+import { setupSyndicateWebSocket, syndicateWsManager } from './syndicateWs';
 import authRoutes from './routes/auth';
 import referralRoutes from './routes/referrals';
 import adminRoutes from './routes/admin';
@@ -32,6 +33,7 @@ import moneyosRoutes from './routes/moneyos';
 import ttsRoutes from './routes/tts';
 import billingRoutes from './routes/billing';
 import sigilRoutes from './routes/sigil';
+import ogRoutes from './routes/og';
 import growthRoutes from './routes/growth';
 import viralRoutes from './routes/viral';
 import supportRoutes from './routes/support';
@@ -58,6 +60,8 @@ import { signalRealmRouter } from './routes/signalRealmOutreach';
 import { supabaseRouter } from './supabase';
 import { unrealRouter } from './routes/unrealEngine';
 import { unrealBridge } from './unreal/unrealBridge';
+import { agentProtocolRouter } from './routes/agentProtocol';
+import { AgentSwarmEngine } from './agents/agentSwarmEngine';
 
 const app = express();
 
@@ -75,6 +79,7 @@ app.use(compression({
 initDb();
 initPrimordiaSchema();
 initPrimordiaNuclearSchema();
+AgentSwarmEngine.initSchema();
 
 // Middlewares
 app.use(cors({
@@ -115,6 +120,7 @@ app.use('/api/moneyos', moneyosRoutes);
 app.use('/api/tts', ttsRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/sigil', sigilRoutes);
+app.use('/api/og', ogRoutes);
 app.use('/api/growth', growthRoutes);
 app.use('/api/viral', viralRoutes);
 app.use('/api/support', supportRoutes);
@@ -144,6 +150,15 @@ app.use('/api/phom', signalRealmRouter);
 app.use('/api/apollo', signalRealmRouter);
 app.use('/api/supabase', supabaseRouter);
 app.use('/api/unreal', unrealRouter);
+
+// Autonomous Agent Native Protocol & Swarm Execution Engine
+app.use('/api/agent', agentProtocolRouter);
+app.use('/api/agents/swarm', agentProtocolRouter);
+app.get('/.well-known/agent.json', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.json(AgentSwarmEngine.getManifest());
+});
 
 // Healthcheck Endpoint with instant in-memory response
 app.get('/api/health', (req: Request, res: Response) => {
@@ -196,7 +211,7 @@ if (clientDistExists) {
 }
 
 // Global Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error & { status?: number }, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled Server Error:', err);
   res.status(500).json({
     success: false,
@@ -209,6 +224,7 @@ const server = http.createServer(app);
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
 setupVoiceWebSocket(server);
+setupSyndicateWebSocket(server);
 unrealBridge.init(server);
 
 server.listen(3001, () => {
@@ -220,6 +236,7 @@ const server3000 = http.createServer(app);
 server3000.keepAliveTimeout = 65000;
 server3000.headersTimeout = 66000;
 setupVoiceWebSocket(server3000);
+setupSyndicateWebSocket(server3000);
 
 server3000.listen(3000, () => {
   console.log(`⚡ Plug In OS v5.0 Dual Listener running on port 3000`);
@@ -232,6 +249,7 @@ server3000.listen(3000, () => {
 const handleShutdown = () => {
   console.log('\nClosing servers...');
   voiceWsManager.close();
+  syndicateWsManager.close();
   server.close(() => {
     server3000.close(() => {
       db.close();

@@ -314,10 +314,10 @@ export async function runTier4Tests(suite: TestSuite): Promise<void> {
     const creator = createTestUserFixture('enterprise_lead');
     initializeUserFinancialProfile(creator.id, creator.email);
 
-    // 1. Verify 12 AI Modules and 6 AI Model Families
+    // 1. Verify 13 AI Modules and 6 AI Model Families
     const aiModules = db.prepare('SELECT COUNT(*) as cnt FROM ai_modules').get() as any;
     const aiModels = db.prepare('SELECT COUNT(*) as cnt FROM ai_models').get() as any;
-    assert.strictEqual(aiModules.cnt, 12, 'Must have 12 active AI Modules');
+    assert.strictEqual(aiModules.cnt, 13, 'Must have 13 active AI Modules');
     assert.strictEqual(aiModels.cnt, 6, 'Must have 6 connected AI Model Families');
 
     // 2. Dispatch StarterOrchestrator Daily Loop with full 5-agent mesh

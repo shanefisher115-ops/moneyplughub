@@ -30,7 +30,7 @@ export function checkpointWal(): boolean {
 
 export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message: string; dbPath: string } {
   try {
-    const check = db.prepare('PRAGMA integrity_check;').get() as any;
+    const check = db.prepare('PRAGMA integrity_check;').get() as { integrity_check?: string } | undefined;
     const stats = fs.statSync(config.dbPath);
     const ok = check?.integrity_check === 'ok';
     return {
@@ -50,9 +50,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval.unref) {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -99,7 +102,7 @@ export function initDb(): void {
       referred_user_id TEXT NOT NULL UNIQUE,
       amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
       currency TEXT NOT NULL DEFAULT 'USD',
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid', 'quarantined')),
       notes TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
@@ -808,6 +811,22 @@ export function initDb(): void {
     );
   `);
 
+  const refClickCols = [
+    "client_fingerprint TEXT",
+    "source_category TEXT",
+    "ai_platform TEXT",
+    "intent_score REAL DEFAULT 0.5",
+    "utm_source TEXT",
+    "utm_medium TEXT",
+    "utm_campaign TEXT",
+  ];
+
+  for (const col of refClickCols) {
+    try {
+      db.exec(`ALTER TABLE referral_clicks ADD COLUMN ${col};`);
+    } catch (e) {}
+  }
+
   const progCols = [
     "payout_type TEXT NOT NULL DEFAULT 'Cash Bonus'",
     "payout_amount TEXT NOT NULL DEFAULT '$30.00'",
@@ -1079,7 +1098,7 @@ export function seedClosedEconomy(): void {
 
   // 3. Initial Active Marketplace Listings
   try {
-    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as any)?.c || 0;
+    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as { c?: number } | undefined)?.c || 0;
     if (listCount < 6) {
       const insertListing = db.prepare(`
         INSERT OR IGNORE INTO marketplace_listings (id, seller_id, seller_name, item_id, item_name, item_type, rarity, price_core_units, status, buyer_id, created_at, sold_at)

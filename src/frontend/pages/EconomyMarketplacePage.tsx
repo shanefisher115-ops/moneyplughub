@@ -240,8 +240,9 @@ export const EconomyMarketplacePage: React.FC = () => {
       return;
     }
 
-    if (paymentMethod === 'xp' && (!user || user.xp < item.cost_xp)) {
-      showToast(`Insufficient XP. Requires ${item.cost_xp.toLocaleString()} XP (You have ${user?.xp?.toLocaleString() || 0} XP).`, 'error');
+    const userXp = user?.xp ?? 0;
+    if (paymentMethod === 'xp' && (!user || userXp < item.cost_xp)) {
+      showToast(`Insufficient XP. Requires ${item.cost_xp.toLocaleString()} XP (You have ${userXp.toLocaleString()} XP).`, 'error');
       forgeAudio.playTick(400);
       return;
     }
@@ -434,8 +435,9 @@ export const EconomyMarketplacePage: React.FC = () => {
 
   // Handle Convert XP -> Core Units
   const handleConvertXp = async (e?: React.MouseEvent) => {
-    if (!user || user.xp < xpToConvert) {
-      showToast(`Insufficient XP. You have ${user?.xp?.toLocaleString() || 0} XP.`, 'error');
+    const userXp = user?.xp ?? 0;
+    if (!user || userXp < xpToConvert) {
+      showToast(`Insufficient XP. You have ${userXp.toLocaleString()} XP.`, 'error');
       return;
     }
 
@@ -1092,7 +1094,7 @@ export const EconomyMarketplacePage: React.FC = () => {
 
               <button
                 onClick={(e) => handleConvertXp(e)}
-                disabled={isConverting || !user || user.xp < xpToConvert}
+                disabled={isConverting || !user || (user?.xp ?? 0) < xpToConvert}
                 className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-400 via-plug-accent to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-plug-accent/20 transition-all cursor-pointer disabled:opacity-40"
               >
                 {isConverting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Coins className="w-4 h-4" />}

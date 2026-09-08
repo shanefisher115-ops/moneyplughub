@@ -5,6 +5,8 @@ import { db, initDb, runInTransaction, initializeUserFinancialProfile } from './
 import { seed } from './seed';
 import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
+import { generateOpenGraphSvg } from './routes/og';
+import { generateSigil } from './routes/sigil';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
 
@@ -116,7 +118,29 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. OpenGraph Dynamic Image Generation Service
+  const testSigilSvg = generateSigil('PLUG-ALEX', 350);
+  const testSigilB64 = Buffer.from(testSigilSvg).toString('base64');
+  const ogCardSvg = generateOpenGraphSvg({
+    displayName: 'Alex Champion',
+    referralCode: 'PLUG-ALEX',
+    tierTitle: 'Novice Plug',
+    level: 1,
+    xp: 100,
+    referralCount: 0,
+    sigilSvgBase64: testSigilB64,
+  });
+
+  assert(ogCardSvg.includes('width="1200"') && ogCardSvg.includes('height="630"'), 'OpenGraph SVG must be 1200x630');
+  assert(ogCardSvg.includes('Alex Champion'), 'OpenGraph SVG must include creator name');
+  assert(ogCardSvg.includes('PLUG-ALEX'), 'OpenGraph SVG must include referral code');
+  assert(ogCardSvg.includes('Novice Plug'), 'OpenGraph SVG must include Wealth Tier');
+  assert(ogCardSvg.includes('#ad'), 'OpenGraph SVG must include mandatory FTC #ad tag');
+  assert(ogCardSvg.includes('FTC 16 CFR PART 255 DISCLOSURE'), 'OpenGraph SVG must include FTC Part 255 disclosure text');
+  console.log('✓ Step 10: Verified OpenGraph Dynamic Image Generation Service (1200x630, Sigil, Wealth Tier, FTC Part 255 overlays).');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, OPENGRAPH SERVICE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {

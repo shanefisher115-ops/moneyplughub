@@ -65,13 +65,13 @@ async function runVoiceEngineTests(): Promise<void> {
     server.listen(0, '127.0.0.1', () => resolve());
   });
 
-  const address = server.address() as any;
+  const address = server.address() as { port: number };
   const port = address.port;
   const wsUrl = `ws://127.0.0.1:${port}/ws/voice`;
 
   const ws = new WebSocket(wsUrl);
 
-  const receivedFrames: any[] = [];
+  const receivedFrames: Record<string, unknown>[] = [];
   await new Promise<void>((resolve, reject) => {
     ws.on('open', () => {
       // 1. Send session_init frame

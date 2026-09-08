@@ -15,14 +15,19 @@ export interface User {
   display_name: string;
   role: UserRole;
   referral_code: string;
-  referrer_user_id: string | null;
-  referral_count: number;
+  referrer_user_id?: string | null;
+  referral_count?: number;
   xp: number;
   level: number;
-  streak_days: number;
-  tier_title: string;
+  streak_days?: number;
+  tier_title?: string;
+  commission_balance?: number;
+  pending_balance?: number;
+  lifetime_earnings?: number;
+  total_referrals?: number;
+  active_referrals?: number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface UserWithStats extends User {
@@ -441,7 +446,7 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;

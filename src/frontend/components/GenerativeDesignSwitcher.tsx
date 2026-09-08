@@ -201,21 +201,18 @@ export const GenerativeDesignSwitcher: React.FC = () => {
         </div>
       )}
 
-      {/* Floating Living Vault Launcher Button */}
+      {/* Floating Living Vault Launcher Button: [ 🏦 Living Vault: $2,450 ▴ ] */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-4 py-2.5 rounded-full bg-slate-950/95 hover:bg-slate-900 border border-slate-700/80 shadow-2xl backdrop-blur-md text-white text-xs font-mono font-bold flex items-center gap-2.5 transition-all hover:scale-105 group"
+        className="px-4 py-2 rounded-full bg-slate-950/95 hover:bg-slate-900 border border-emerald-500/40 hover:border-emerald-400 shadow-2xl backdrop-blur-md text-white text-xs font-mono font-bold flex items-center gap-2 transition-all hover:scale-105 group cursor-pointer"
         style={{
           boxShadow: `0 0 25px -5px ${tierConfig.accentColor}`,
         }}
       >
-        <span 
-          className="w-2.5 h-2.5 rounded-full animate-ping" 
-          style={{ backgroundColor: tierConfig.accentColor }}
-        />
-        <Landmark className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-        <span>Living Vault <strong style={{ color: tierConfig.accentColor }}>${netWorthUsd.toLocaleString()}</strong></span>
-        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-slate-400" />}
+        <span className="text-sm">🏦</span>
+        <span className="text-slate-400">Living Vault:</span>
+        <strong className="text-emerald-400 font-extrabold">${netWorthUsd.toLocaleString()}</strong>
+        <span className="text-emerald-400 text-xs font-bold transition-transform duration-200">{isOpen ? '▾' : '▴'}</span>
       </button>
     </div>
   );

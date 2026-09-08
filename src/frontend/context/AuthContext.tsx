@@ -20,6 +20,8 @@ const DEFAULT_SOVEREIGN_USER: User = {
   display_name: 'Sovereign Creator',
   role: 'admin',
   referral_code: 'CREATOR777',
+  referrer_user_id: null,
+  referral_count: 128,
   commission_balance: 14250.00,
   pending_balance: 3820.00,
   lifetime_earnings: 48920.00,
@@ -27,7 +29,10 @@ const DEFAULT_SOVEREIGN_USER: User = {
   active_referrals: 94,
   level: 10,
   xp: 48500,
+  streak_days: 14,
+  tier_title: 'Apex Sovereign',
   created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

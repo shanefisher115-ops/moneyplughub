@@ -30,7 +30,7 @@ export class EarningsAgent {
       // 2. Read Context (Inputs): Prior Earnings for Monotonicity Validation
       const priorEarnings = db.prepare(`
         SELECT * FROM earnings_snapshots WHERE user_id = ?
-      `).all(userId) as any[];
+      `).all(userId) as Array<{ window: string; computed_at: string }>;
 
       const priorComputedMap = new Map<string, string>();
       for (const p of priorEarnings) {
@@ -93,7 +93,7 @@ export class EarningsAgent {
           WHERE user_id = ? 
             AND type IN ('income', 'reward')
             AND date >= ? AND date <= ?
-        `).get(userId, winStartDateStr, winEndDateStr) as any;
+        `).get(userId, winStartDateStr, winEndDateStr) as { total_cents?: number } | undefined;
 
         const commissionRow = db.prepare(`
           SELECT COALESCE(SUM(amount_cents), 0) as total_cents 
@@ -101,18 +101,18 @@ export class EarningsAgent {
           WHERE referrer_user_id = ? 
             AND status IN ('approved', 'paid')
             AND created_at >= ? AND created_at <= ?
-        `).get(userId, win.start, win.end) as any;
+        `).get(userId, win.start, win.end) as { total_cents?: number } | undefined;
 
         // Base app matrix earnings
         let affiliateCents = 0;
         if (win.window === 'daily') {
-          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_today_cents), 0) as t FROM crypto_referral_programs`).get() as any;
+          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_today_cents), 0) as t FROM crypto_referral_programs`).get() as { t?: number } | undefined;
           affiliateCents = Number(appRow?.t || 0);
         } else if (win.window === 'monthly') {
-          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_month_cents), 0) as t FROM crypto_referral_programs`).get() as any;
+          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_month_cents), 0) as t FROM crypto_referral_programs`).get() as { t?: number } | undefined;
           affiliateCents = Number(appRow?.t || 0);
         } else {
-          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_month_cents), 0) as t FROM crypto_referral_programs`).get() as any;
+          const appRow = db.prepare(`SELECT COALESCE(SUM(earnings_month_cents), 0) as t FROM crypto_referral_programs`).get() as { t?: number } | undefined;
           affiliateCents = Math.round(Number(appRow?.t || 0) * 0.35); // 7-day approximation
         }
 
@@ -180,10 +180,11 @@ export class EarningsAgent {
         event: 'earnings.compute_completed',
         message: `Successfully computed daily, weekly, and monthly earnings with monotonic computedAt: ${computedAt}`,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'EarningsAgent computation failed.';
       console.error('EarningsAgent compute error:', err);
       this.recordEvent(userId, 'earnings.compute_failed', {
-        error: err.message,
+        error: errMsg,
         trigger,
         timestamp: computedAt,
       });
@@ -192,7 +193,7 @@ export class EarningsAgent {
         success: false,
         earnings: [],
         event: 'earnings.compute_failed',
-        message: err.message || 'EarningsAgent computation failed.',
+        message: errMsg,
       };
     }
   }
@@ -200,7 +201,7 @@ export class EarningsAgent {
   private static recordEvent(
     userId: string,
     eventType: 'earnings.compute_started' | 'earnings.compute_completed' | 'earnings.compute_failed',
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): void {
     const id = `evt_earn_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     try {

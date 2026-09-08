@@ -190,67 +190,84 @@ function Primordia-LoopStart {
     Start-Job -Name "PrimordiaLoop-$($Global:PrimordiaLoopToken)" -ScriptBlock {
         param($profile, $channel, $delaySeconds, $stateFile, $logFile)
 
-        while ($true) {
-    try {
-        $state = Get-Content -Path $stateFile -Encoding UTF8 | ConvertFrom-Json
-        if ($state.loop -ne "RUNNING") {
-            break
-        }
+        function AutoPost-JobStep {
+            param(
+                [string]$targetChannel,
+                [string]$targetProfile
+            )
+            $viralHooks = @(
+                "The traditional banking stack extracts wealth from creators. MoneyPlugHub gives you 241ms Voice AI + living SQLite vault + $10/signup commissions 🚀",
+                "Stop tracking wealth in spreadsheets. Procedural cryptographic 3D sigils that pay real cash per referral ⚡ #moneyos #passiveincome",
+                "Plug In OS v5.0 is live: Self-hosted Creator Money OS with realtime Solfeggio 528Hz acoustic harmonics and zero monthly fees.",
+                "Just generated my deterministic 3D vector sigil in the Sigil Forge. Every scan routes direct cash to my sovereign ledger 🌐",
+                "Viral velocity reached supercritical threshold! Compounding affiliate ARR with automated syndicate distribution."
+            )
+            $selectedContent = $viralHooks | Get-Random
+            $timeStr = Get-Date -Format "HH:mm:ss"
+            $post = "AutoPoster pushed content '$selectedContent' to '$targetChannel' at $timeStr"
 
-        # Increment iterations
-        $state.iterations++
-        Set-Content -Path $stateFile -Value ($state | ConvertTo-Json -Depth 5)
+            # Relay to MoneyPlugHub backend
+            try {
+                $payload = @{
+                    platform = $targetChannel
+                    content  = $selectedContent
+                    profile  = $targetProfile
+                } | ConvertTo-Json -Depth 3
+                $null = Invoke-RestMethod -Uri "http://localhost:3001/api/primordia/autoposter/publish" -Method Post -Body $payload -ContentType "application/json" -TimeoutSec 3 -ErrorAction SilentlyContinue
+            } catch {}
+
+            return @{ Content = $selectedContent; Post = $post }
+        }
 
         # Global rotation tables
         $channels = @("MoneyPlugHub","TikTok","YouTube","Instagram","X","Reddit","Facebook")
         $profiles = @("default","then","cosmic","moneyplug","primordial","creatorOS","loop")
 
-        # Compute rotation index
-        $i = $state.iterations
+        while ($true) {
+            try {
+                if (-not (Test-Path $stateFile)) { break }
+                $raw = Get-Content -Path $stateFile -Encoding UTF8 -Raw
+                if (-not $raw) { break }
+                $state = $raw | ConvertFrom-Json
+                if ($state.loop -ne "RUNNING") {
+                    break
+                }
 
-        # Rotate channel + profile
-        $nextChannel = $channels[$i % $channels.Count]
-        $nextProfile = $profiles[$i % $profiles.Count]
+                # Increment iterations
+                $state.iterations = [int]$state.iterations + 1
+                $i = $state.iterations
 
-        # Log loop step
-        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $line = "[$timestamp] LOOP STEP: profile=$nextProfile channel=$nextChannel iteration=$i"
-        Add-Content -Path $logFile -Value $line -Encoding UTF8
+                # Rotate channel + profile
+                $nextChannel = $channels[$i % $channels.Count]
+                $nextProfile = $profiles[$i % $profiles.Count]
 
-        # Run AutoPoster Agent each cycle
-        Primordia-AutoPoster -channel $nextChannel -profile $nextProfile
+                # Run AutoPoster step
+                $result = AutoPost-JobStep -targetChannel $nextChannel -targetProfile $nextProfile
+                $state.lastContent = $result.Content
+                $state.lastPost    = $result.Post
 
-        Start-Sleep -Seconds $delaySeconds
-    } catch {
-        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $line = "[$timestamp] LOOP ERROR: $($_.Exception.Message)"
-        Add-Content -Path $logFile -Value $line -Encoding UTF8
-        break
-    }
-}
+                $json = $state | ConvertTo-Json -Depth 5
+                Set-Content -Path $stateFile -Value $json -Encoding UTF8
 
-$Global:PrimordiaChannels = @(
-    "MoneyPlugHub",
-    "TikTok",
-    "YouTube",
-    "Instagram",
-    "X",
-    "Reddit",
-    "Facebook"
-)
-
-                  $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-                  $line = "[$timestamp] LOOP STEP: profile=$profile channel=$channel"
-                  Add-Content -Path $logFile -Value $line -Encoding UTF8
-
-                                               # Run AutoPoster Agent each loop cycle
-                  Primordia-AutoPoster -channel $channel -profile $profile
+                # Log loop step and autopost
+                $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                $lineStep  = "[$timestamp] LOOP STEP: profile=$nextProfile channel=$nextChannel iteration=$i"
+                $linePost  = "[$timestamp] AUTOPOST: $($result.Post)"
+                Add-Content -Path $logFile -Value $lineStep -Encoding UTF8
+                Add-Content -Path $logFile -Value $linePost -Encoding UTF8
 
                 Start-Sleep -Seconds $delaySeconds
             } catch {
                 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                 $line = "[$timestamp] LOOP ERROR: $($_.Exception.Message)"
                 Add-Content -Path $logFile -Value $line -Encoding UTF8
+
+                try {
+                    $st = Get-Content -Path $stateFile -Encoding UTF8 -Raw | ConvertFrom-Json
+                    $st.loop = "STOPPED"
+                    Set-Content -Path $stateFile -Value ($st | ConvertTo-Json -Depth 5) -Encoding UTF8
+                } catch {}
+
                 break
             }
         }
