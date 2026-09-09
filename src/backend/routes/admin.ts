@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { z } from 'zod';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, requireAdmin, AuthenticatedRequest } from '../middleware/auth';
+import { sendCreatorNotification } from '../services/notificationEngine';
 import { CommissionEntry, AdminStats, AuditLog, User, ApiResponse } from '../../types';
 
 const router = Router();
@@ -149,6 +150,14 @@ router.patch('/commissions/:id/status', (req: AuthenticatedRequest, res: Respons
         }
       );
     });
+
+    // Real-time Webhook Alert to Creator
+    sendCreatorNotification(existingCommission.referrer_user_id, {
+      type: 'commission',
+      amount_cents: existingCommission.amount_cents,
+      commission_status: status,
+      program_name: 'MoneyPlugHub Referral',
+    }).catch(err => console.error('[Webhook Trigger Error - Commission Status Update]:', err));
 
     res.json({
       success: true,

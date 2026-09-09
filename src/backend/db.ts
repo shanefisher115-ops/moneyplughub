@@ -806,7 +806,63 @@ export function initDb(): void {
       accent_color TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+
+    -- CREATOR NOTIFICATION SETTINGS (Discord & Telegram Webhooks)
+    CREATE TABLE IF NOT EXISTS creator_notification_settings (
+      user_id TEXT PRIMARY KEY,
+      discord_webhook_url TEXT NOT NULL DEFAULT '',
+      telegram_webhook_url TEXT NOT NULL DEFAULT '',
+      telegram_bot_token TEXT NOT NULL DEFAULT '',
+      telegram_chat_id TEXT NOT NULL DEFAULT '',
+      notify_commissions INTEGER NOT NULL DEFAULT 1,
+      notify_quests INTEGER NOT NULL DEFAULT 1,
+      notify_tier_levelups INTEGER NOT NULL DEFAULT 1,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- NOTIFICATION LOGS (Audit trail for outgoing webhooks)
+    CREATE TABLE IF NOT EXISTS notification_logs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      event_type TEXT NOT NULL CHECK(event_type IN ('commission', 'quest', 'tier_levelup', 'test')),
+      channel TEXT NOT NULL CHECK(channel IN ('discord', 'telegram', 'both', 'none')),
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      payload_json TEXT,
+      status TEXT NOT NULL CHECK(status IN ('success', 'failed', 'partial')),
+      error_details TEXT,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_notif_logs_user ON notification_logs(user_id);
+    CREATE INDEX IF NOT EXISTS idx_notif_logs_created ON notification_logs(created_at);
   `);
+
+  // Migrate notification_logs channel constraint to allow 'none'
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS notification_logs_v2 (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        event_type TEXT NOT NULL CHECK(event_type IN ('commission', 'quest', 'tier_levelup', 'test')),
+        channel TEXT NOT NULL CHECK(channel IN ('discord', 'telegram', 'both', 'none')),
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        payload_json TEXT,
+        status TEXT NOT NULL CHECK(status IN ('success', 'failed', 'partial')),
+        error_details TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+      INSERT OR IGNORE INTO notification_logs_v2 SELECT * FROM notification_logs;
+      DROP TABLE notification_logs;
+      ALTER TABLE notification_logs_v2 RENAME TO notification_logs;
+    `);
+  } catch (e) {}
 
   const progCols = [
     "payout_type TEXT NOT NULL DEFAULT 'Cash Bonus'",

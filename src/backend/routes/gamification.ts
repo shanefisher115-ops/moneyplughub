@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { db, runInTransaction } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { QuestTask, LeaderboardEntry, ApiResponse } from '../../types';
+import { sendCreatorNotification } from '../services/notificationEngine';
 
 const router = Router();
 router.use(authenticateToken);
@@ -189,6 +190,8 @@ router.post('/quests/:id/claim', (req: AuthenticatedRequest, res: Response) => {
     let newXp = 0;
     let newLevel = 1;
     let newTier = 'Novice Plug';
+      let oldLevel = 1;
+      let oldTier = 'Novice Plug';
 
     runInTransaction(() => {
       // 1. Mark task as claimed
@@ -199,6 +202,8 @@ router.post('/quests/:id/claim', (req: AuthenticatedRequest, res: Response) => {
 
       // 2. Fetch current user XP and calculate new Level/Tier
       const currentUser = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
+        oldLevel = Number(currentUser.level || 1);
+        oldTier = currentUser.tier_title || 'Novice Plug';
       newXp = Number(currentUser.xp || 0) + task.reward_xp;
       const computed = computeLevelAndTier(newXp);
       newLevel = computed.level;
@@ -226,6 +231,25 @@ router.post('/quests/:id/claim', (req: AuthenticatedRequest, res: Response) => {
         `).run(txId, userId, userId, task.reward_cents, `Quest Reward: ${task.title}`, now.substring(0, 10), now);
       }
     });
+
+      // Real-time Webhook Alerts
+      sendCreatorNotification(userId, {
+        type: 'quest',
+        quest_title: task.title,
+        reward_xp: task.reward_xp,
+        reward_cents: task.reward_cents,
+      }).catch(err => console.error('[Webhook Trigger Error - Quest Completed]:', err));
+
+      if (newLevel > oldLevel || newTier !== oldTier) {
+        sendCreatorNotification(userId, {
+          type: 'tier_levelup',
+          old_level: oldLevel,
+          new_level: newLevel,
+          old_tier_title: oldTier,
+          new_tier_title: newTier,
+          total_xp: newXp,
+        }).catch(err => console.error('[Webhook Trigger Error - Level Up]:', err));
+      }
 
     res.json({
       success: true,

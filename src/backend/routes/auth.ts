@@ -8,6 +8,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { User, AuthResponse, ApiResponse } from '../../types';
 import { attributeReferralConversion } from './referrals';
 import { processReferralEvent } from './growth';
+import { sendCreatorNotification } from '../services/notificationEngine';
 
 const router = Router();
 
@@ -157,6 +158,15 @@ router.post('/register', (req: Request, res: Response) => {
             status: 'pending'
           }
         );
+
+        // Real-time Webhook Notification
+        sendCreatorNotification(referrer.id, {
+          type: 'commission',
+          amount_cents: config.commissionAmountCents,
+          commission_status: 'pending',
+          referred_user_name: display_name.trim(),
+          program_name: 'MoneyPlugHub Referral',
+        }).catch(err => console.error('[Webhook Trigger Error - Commission Created]:', err));
       }
 
       // Initialize rich financial profile (bank accounts, crypto wallets, debts, budget categories, goals)

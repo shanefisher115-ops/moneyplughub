@@ -4,6 +4,7 @@ import { config } from '../config';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { Achievement, AchievementsSummary, User } from '../../types';
+import { sendCreatorNotification } from '../services/notificationEngine';
 
 const router = Router();
 
@@ -742,6 +743,8 @@ router.post('/claim/:id', authenticateToken, (req: AuthenticatedRequest, res: Re
     let newXp = 0;
     let newLevel = 1;
     let newTierTitle = 'Novice Plug';
+      let oldLevel = 1;
+      let oldTierTitle = 'Novice Plug';
 
     runInTransaction(() => {
       // 1. Mark as claimed and unlocked
@@ -763,6 +766,8 @@ router.post('/claim/:id', authenticateToken, (req: AuthenticatedRequest, res: Re
 
       // 2. Fetch current user XP and add reward XP
       const currentUser = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
+        oldLevel = Number(currentUser?.level || 1);
+        oldTierTitle = currentUser?.tier_title || 'Novice Plug';
       newXp = Number(currentUser?.xp || 0) + achievement.reward_xp;
       const computed = computeLevelAndTier(newXp);
       newLevel = computed.level;
@@ -820,6 +825,17 @@ router.post('/claim/:id', authenticateToken, (req: AuthenticatedRequest, res: Re
         tier: achievement.tier,
       });
     });
+
+    if (newLevel > oldLevel || newTierTitle !== oldTierTitle) {
+      sendCreatorNotification(userId, {
+        type: 'tier_levelup',
+        old_level: oldLevel,
+        new_level: newLevel,
+        old_tier_title: oldTierTitle,
+        new_tier_title: newTierTitle,
+        total_xp: newXp,
+      }).catch(err => console.error('[Webhook Trigger Error - Achievement Level Up]:', err));
+    }
 
     res.json({
       success: true,

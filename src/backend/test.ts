@@ -7,6 +7,12 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import {
+  getNotificationSettings,
+  updateNotificationSettings,
+  sendCreatorNotification,
+  getNotificationLogs,
+} from './services/notificationEngine';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,7 +122,58 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
+  // 10. Discord & Telegram Webhook Real-Time Notification Engine
+  const defaultSettings = getNotificationSettings(alexId);
+  assert.strictEqual(defaultSettings.user_id, alexId);
+  assert.strictEqual(defaultSettings.notify_commissions, true);
+  assert.strictEqual(defaultSettings.notify_quests, true);
+  assert.strictEqual(defaultSettings.notify_tier_levelups, true);
+
+  const updatedSettings = updateNotificationSettings(alexId, {
+    discord_webhook_url: 'https://discord.com/api/webhooks/test/dummy',
+    telegram_bot_token: '123456789:ABCdef-test',
+    telegram_chat_id: '987654321',
+  });
+  assert.strictEqual(updatedSettings.discord_webhook_url, 'https://discord.com/api/webhooks/test/dummy');
+  assert.strictEqual(updatedSettings.telegram_chat_id, '987654321');
+
+  // Test notification dispatch
+  await sendCreatorNotification(alexId, {
+    type: 'test',
+    title: 'Test Webhook Alert',
+    message: 'Testing real-time notification engine',
+  });
+
+  await sendCreatorNotification(alexId, {
+    type: 'commission',
+    amount_cents: 1000,
+    commission_status: 'pending',
+    referred_user_name: 'Test Referral Lead',
+    program_name: 'MoneyPlugHub Referral',
+  });
+
+  await sendCreatorNotification(alexId, {
+    type: 'quest',
+    quest_title: 'Daily Budget Check-in',
+    reward_xp: 75,
+    reward_cents: 50,
+  });
+
+  await sendCreatorNotification(alexId, {
+    type: 'tier_levelup',
+    old_level: 1,
+    new_level: 2,
+    old_tier_title: 'Novice Plug',
+    new_tier_title: 'Budget Apprentice',
+    total_xp: 250,
+  });
+
+  const notifLogs = getNotificationLogs(alexId, 10);
+  assert(notifLogs.length >= 4, 'Must log notification dispatch entries');
+  console.log('✓ Step 10: Verified Discord & Telegram Webhook Notification Engine (Settings, Triggers, Formatting & Audit Logs).');
+
   console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {

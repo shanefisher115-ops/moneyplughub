@@ -4,8 +4,9 @@ import { ReferralLink } from '../components/ReferralLink';
 import { ReferralStats } from '../components/ReferralStats';
 import { CommissionTable } from '../components/CommissionTable';
 import { StatusBadge } from '../components/StatusBadge';
+import { WebhookNotificationSettings } from '../components/WebhookNotificationSettings';
 import { CommissionEntry } from '../../types';
-import { Sparkles, Users, RefreshCw, CreditCard, ShieldCheck, Wallet, ArrowUpRight } from 'lucide-react';
+import { Sparkles, Users, RefreshCw, CreditCard, ShieldCheck, Wallet, Bell } from 'lucide-react';
 
 interface DashboardPageProps {
   onNavigate: (tab: string) => void;
@@ -205,9 +206,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             <Users className="w-3.5 h-3.5" />
             Referred Members ({network.length})
           </button>
+          <button
+            onClick={() => setActiveView('webhooks' as any)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              (activeView as string) === 'webhooks'
+                ? 'bg-plug-accent text-plug-dark shadow-md shadow-plug-accent/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+            }`}
+          >
+            <Bell className="w-3.5 h-3.5" />
+            Webhook Alerts
+          </button>
         </div>
 
-        {activeView === 'ledger' ? (
+        {(activeView as string) === 'webhooks' ? (
+          <WebhookNotificationSettings />
+        ) : activeView === 'ledger' ? (
           <CommissionTable entries={ledger} isLoading={isLoading} />
         ) : (
           <div className="bg-plug-card border border-plug-border rounded-2xl overflow-hidden shadow-xl">
