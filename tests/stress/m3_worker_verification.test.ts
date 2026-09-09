@@ -73,10 +73,11 @@ export async function runWorkerM3VerificationSuite() {
     const testUserId = `usr_test_tier_${Date.now()}`;
     const now = new Date().toISOString();
 
+    const refCode2 = `REF_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
     db.prepare(`
       INSERT INTO users (id, email, password_hash, display_name, referral_code, created_at, updated_at, subscriptionTier, subscriptionActive)
       VALUES (?, ?, 'hash', 'Tier Tester', ?, ?, ?, 'FREE', 0)
-    `).run(testUserId, `${testUserId}@test.local`, `REF_${Date.now()}`, now, now);
+    `).run(testUserId, `${testUserId}@test.local`, refCode2, now, now);
 
     // Test Pro upgrade
     const planPro = 'plan_pro_monthly';
@@ -107,10 +108,11 @@ export async function runWorkerM3VerificationSuite() {
     const txId = `tx_xp_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
     const now = new Date().toISOString();
 
+    const refCode3 = `REF_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
     db.prepare(`
       INSERT INTO users (id, email, password_hash, display_name, referral_code, created_at, updated_at, xp, level)
       VALUES (?, ?, 'hash', 'Sigil Buyer', ?, ?, ?, 100, 1)
-    `).run(testUserId, `${testUserId}@test.local`, `REF_${Date.now()}`, now, now);
+    `).run(testUserId, `${testUserId}@test.local`, refCode3, now, now);
 
     db.prepare(`
       INSERT INTO accounts (id, user_id, name, type, balance_cents, currency, institution, is_liability, created_at, updated_at)
@@ -199,6 +201,7 @@ export async function runWorkerM3VerificationSuite() {
   if (passedCount !== results.length) {
     process.exit(1);
   }
+  process.exit(0);
 }
 
 runWorkerM3VerificationSuite().catch((err) => {

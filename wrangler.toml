@@ -1,8 +1,11 @@
-﻿name = "moneyplughub"
+name = "moneyplughub"
+main = "deploy/worker.ts"
 compatibility_date = "2026-08-27"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist/client"
 
 [vars]
 NODE_ENV = "production"
 APP_NAME = "MoneyPlugHub"
 API_URL = "https://moneyplughub.com/api"
+UPSTREAM_ORIGIN = "https://moneyplughub.com"
