@@ -56,6 +56,7 @@ import referralRealmsRouter from './routes/referralRealms';
 import creatorOsMediaRouter from './routes/creatorOsMedia';
 import { signalRealmRouter } from './routes/signalRealmOutreach';
 import { supabaseRouter } from './supabase';
+import taxComplianceRoutes from './routes/taxCompliance';
 import { unrealRouter } from './routes/unrealEngine';
 import { unrealBridge } from './unreal/unrealBridge';
 
@@ -144,6 +145,7 @@ app.use('/api/phom', signalRealmRouter);
 app.use('/api/apollo', signalRealmRouter);
 app.use('/api/supabase', supabaseRouter);
 app.use('/api/unreal', unrealRouter);
+app.use('/api/tax', taxComplianceRoutes);
 
 // Healthcheck Endpoint with instant in-memory response
 app.get('/api/health', (req: Request, res: Response) => {

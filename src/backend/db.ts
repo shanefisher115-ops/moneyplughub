@@ -806,6 +806,76 @@ export function initDb(): void {
       accent_color TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
+
+    -- TAX COMPLIANCE & W-9 FORMS
+    CREATE TABLE IF NOT EXISTS creator_w9_forms (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL UNIQUE,
+      legal_name TEXT NOT NULL,
+      business_name TEXT DEFAULT '',
+      tax_classification TEXT NOT NULL CHECK(tax_classification IN ('individual_sole_proprietor', 'c_corporation', 's_corporation', 'partnership', 'trust_estate', 'llc', 'other')),
+      llc_tax_classification TEXT DEFAULT '',
+      exempt_payee_code TEXT DEFAULT '',
+      exemption_from_fatca_code TEXT DEFAULT '',
+      address_line1 TEXT NOT NULL,
+      address_line2 TEXT DEFAULT '',
+      city TEXT NOT NULL,
+      state TEXT NOT NULL,
+      zip_code TEXT NOT NULL,
+      tin_type TEXT NOT NULL CHECK(tin_type IN ('ssn', 'ein')),
+      tin_last4 TEXT NOT NULL,
+      tin_encrypted TEXT NOT NULL,
+      digital_signature TEXT NOT NULL,
+      signature_date TEXT NOT NULL,
+      ip_address TEXT NOT NULL,
+      user_agent TEXT DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'verified' CHECK(status IN ('pending', 'verified', 'rejected')),
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_w9_user ON creator_w9_forms(user_id);
+    CREATE INDEX IF NOT EXISTS idx_w9_status ON creator_w9_forms(status);
+
+    -- DIGITAL SIGNATURE AUDIT LOGS
+    CREATE TABLE IF NOT EXISTS tax_signature_logs (
+      id TEXT PRIMARY KEY,
+      w9_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      action TEXT NOT NULL CHECK(action IN ('signed', 'updated', 'revoked', 'admin_override')),
+      digital_signature TEXT NOT NULL,
+      ip_address TEXT NOT NULL,
+      user_agent TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      payload_hash TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (w9_id) REFERENCES creator_w9_forms(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_tax_sig_user ON tax_signature_logs(user_id);
+    CREATE INDEX IF NOT EXISTS idx_tax_sig_w9 ON tax_signature_logs(w9_id);
+
+    -- 1099 REPORTS & FILINGS
+    CREATE TABLE IF NOT EXISTS tax_1099_reports (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      tax_year INTEGER NOT NULL,
+      gross_earnings_cents INTEGER NOT NULL,
+      threshold_cents INTEGER NOT NULL DEFAULT 60000,
+      requires_1099 INTEGER NOT NULL DEFAULT 0,
+      w9_id TEXT,
+      status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'generated', 'filed')),
+      generated_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (w9_id) REFERENCES creator_w9_forms(id) ON DELETE SET NULL,
+      UNIQUE(user_id, tax_year)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_1099_year ON tax_1099_reports(tax_year);
+    CREATE INDEX IF NOT EXISTS idx_1099_user_year ON tax_1099_reports(user_id, tax_year);
   `);
 
   const progCols = [

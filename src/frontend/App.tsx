@@ -38,6 +38,7 @@ import { PricingPage } from './pages/PricingPage';
 import { WhatIsThisPage } from './pages/WhatIsThisPage';
 import { HowItWorksPage } from './pages/HowItWorksPage';
 import { ComplianceSafetyPage } from './pages/ComplianceSafetyPage';
+import { TaxCompliancePage } from './pages/TaxCompliancePage';
 import { BillingTermsPage } from './pages/BillingTermsPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { HelpCenterPage } from './pages/HelpCenterPage';
@@ -221,6 +222,11 @@ export const App: React.FC = () => {
       case 'overview':
       case 'command-center':
         return 'command-radar';
+      case 'tax':
+      case 'tax-compliance':
+      case 'w9':
+      case '1099':
+        return 'vault-security';
       case 'net-worth':
         return 'golden-vault';
       case 'budget':
@@ -325,6 +331,8 @@ export const App: React.FC = () => {
           <HowItWorksPage onNavigate={handleNavigate} />
         ) : currentTab === 'compliance' || currentTab === 'safety' ? (
           <ComplianceSafetyPage onNavigate={handleNavigate} />
+        ) : currentTab === 'tax' || currentTab === 'tax-compliance' || currentTab === 'w9' || currentTab === '1099' ? (
+          <TaxCompliancePage onNavigate={handleNavigate} />
         ) : currentTab === 'billing-terms' || currentTab === 'terms' ? (
           <BillingTermsPage onNavigate={handleNavigate} />
         ) : currentTab === 'privacy' || currentTab === 'privacy-policy' ? (
