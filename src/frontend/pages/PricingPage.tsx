@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Check, X, Zap } from 'lucide-react';
+import { CreatorRoiCalculator } from '../components/CreatorRoiCalculator';
 
 interface PricingPageProps {
   onNavigate: (tab: string) => void;
@@ -104,6 +105,11 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
             Annually <span className="text-xs bg-plug-accent/20 text-plug-accent px-2 py-0.5 rounded-full ml-1">2 months free</span>
           </span>
         </div>
+      </div>
+
+      {/* Interactive Creator ROI Calculator */}
+      <div className="max-w-7xl mx-auto">
+        <CreatorRoiCalculator onNavigate={onNavigate} />
       </div>
 
       {/* Pricing Cards */}
