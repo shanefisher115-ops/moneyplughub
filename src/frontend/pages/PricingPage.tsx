@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Check, X, Zap } from 'lucide-react';
+import { DunningBanner } from '../components/DunningBanner';
 
 interface PricingPageProps {
   onNavigate: (tab: string) => void;
@@ -86,6 +87,9 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
   return (
     <div className="w-full min-h-screen bg-slate-900/50 p-6 space-y-12 text-slate-300">
       
+      {/* Dunning Alert Banner if subscription past due */}
+      <DunningBanner />
+
       {/* Header */}
       <div className="text-center space-y-4 max-w-2xl mx-auto">
         <h1 className="text-4xl font-bold text-white">Simple, transparent pricing</h1>

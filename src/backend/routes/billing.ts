@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { config } from '../config';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
+import { DunningEngine } from '../engine/dunningEngine';
 
 const router = Router();
 
@@ -124,6 +125,62 @@ try {
       stripe_payment_method_id TEXT,
       created_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- Dunning Events for failed payments, automated retry schedule & grace period handling
+    CREATE TABLE IF NOT EXISTS dunning_events (
+      id TEXT PRIMARY KEY,
+      subscription_id TEXT NOT NULL,
+      invoice_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'retrying', 'recovered', 'exhausted', 'canceled')),
+      attempt_count INTEGER NOT NULL DEFAULT 0,
+      max_attempts INTEGER NOT NULL DEFAULT 4,
+      next_retry_at TEXT,
+      last_attempt_at TEXT,
+      grace_period_end TEXT NOT NULL,
+      last_error TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (subscription_id) REFERENCES subscriptions(id),
+      FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_dunning_user ON dunning_events(user_id);
+    CREATE INDEX IF NOT EXISTS idx_dunning_status ON dunning_events(status);
+    CREATE INDEX IF NOT EXISTS idx_dunning_sub ON dunning_events(subscription_id);
+
+    -- Targeted Dunning Offers (Email/SMS/In-App churn prevention)
+    CREATE TABLE IF NOT EXISTS dunning_offers (
+      id TEXT PRIMARY KEY,
+      dunning_event_id TEXT NOT NULL,
+      subscription_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      offer_code TEXT NOT NULL,
+      discount_percent REAL NOT NULL DEFAULT 20.0,
+      channel TEXT NOT NULL DEFAULT 'all' CHECK(channel IN ('email', 'sms', 'in_app', 'all')),
+      status TEXT NOT NULL DEFAULT 'sent' CHECK(status IN ('pending', 'sent', 'accepted', 'declined', 'expired')),
+      sent_at TEXT,
+      accepted_at TEXT,
+      expires_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (dunning_event_id) REFERENCES dunning_events(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_dunning_offers_user ON dunning_offers(user_id);
+
+    -- Dunning Action Logs
+    CREATE TABLE IF NOT EXISTS dunning_logs (
+      id TEXT PRIMARY KEY,
+      dunning_event_id TEXT NOT NULL,
+      action TEXT NOT NULL CHECK(action IN ('payment_failed', 'retry_scheduled', 'retry_attempted', 'retry_succeeded', 'retry_failed', 'grace_period_warning', 'offer_sent', 'offer_accepted', 'subscription_expired')),
+      channel TEXT DEFAULT 'system',
+      message TEXT NOT NULL,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (dunning_event_id) REFERENCES dunning_events(id) ON DELETE CASCADE
     );
 
     -- Seed the 4 pricing tiers
@@ -622,8 +679,15 @@ router.post('/webhook/stripe', (req: Request, res: Response) => {
 
       case 'invoice.payment_failed': {
         const invoice = event.data?.object;
-        const subId = invoice?.metadata?.subscription_id;
-        if (subId) {
+        const subId = invoice?.metadata?.subscription_id || invoice?.subscription;
+        const invoiceId = invoice?.id;
+        const customerId = invoice?.customer;
+        const userRow: any = db.prepare('SELECT id FROM users WHERE email = ? LIMIT 1').get(invoice?.customer_email || '');
+        const userId = userRow?.id || invoice?.metadata?.user_id;
+
+        if (subId && invoiceId && userId) {
+          DunningEngine.handlePaymentFailure(subId, invoiceId, userId, invoice?.last_payment_error?.message || 'Payment failed');
+        } else if (subId) {
           db.prepare(
             "UPDATE subscriptions SET status = 'past_due', updated_at = ? WHERE id = ?"
           ).run(new Date().toISOString(), subId);
@@ -650,6 +714,78 @@ router.post('/webhook/stripe', (req: Request, res: Response) => {
   }
 });
 
+
+// ═══════════════════════════════════════════════════════════════════
+//  8.5 SMART DUNNING API ENDPOINTS
+//     GET  /api/billing/dunning/status       (get user active dunning & offers)
+//     POST /api/billing/dunning/process      (trigger automated dunning check/retry)
+//     POST /api/billing/dunning/accept-offer (accept retention discount offer)
+//     GET  /api/billing/dunning/admin/metrics(admin dunning metrics)
+// ═══════════════════════════════════════════════════════════════════
+
+router.get('/dunning/status', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const dunningData = DunningEngine.getDunningStatusForUser(userId);
+    res.json({ success: true, data: dunningData });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/dunning/process', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { dunning_event_id, simulate_success } = req.body || {};
+    if (dunning_event_id) {
+      if (req.user!.role !== 'admin') {
+        const dunningEvent: any = db.prepare('SELECT user_id FROM dunning_events WHERE id = ?').get(dunning_event_id);
+        if (!dunningEvent || dunningEvent.user_id !== req.user!.id) {
+          res.status(403).json({ success: false, error: 'Unauthorized dunning event access' });
+          return;
+        }
+      }
+      const result = DunningEngine.retryInvoicePayment(dunning_event_id, Boolean(simulate_success));
+      res.json({ success: true, data: result });
+    } else {
+      if (req.user!.role !== 'admin') {
+        res.status(403).json({ success: false, error: 'Admin authorization required for batch scheduled dunning' });
+        return;
+      }
+      const result = DunningEngine.processScheduledDunningJobs();
+      res.json({ success: true, message: 'Processed scheduled dunning retries', data: result });
+    }
+  } catch (err: any) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/dunning/accept-offer', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { offer_id } = req.body || {};
+    if (!offer_id) {
+      res.status(400).json({ success: false, error: 'offer_id is required' });
+      return;
+    }
+    const result = DunningEngine.acceptRetentionOffer(offer_id, userId);
+    res.json({ success: true, data: result });
+  } catch (err: any) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/dunning/admin/metrics', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      res.status(403).json({ success: false, error: 'Admin only' });
+      return;
+    }
+    const metrics = DunningEngine.getDunningMetrics();
+    res.json({ success: true, data: metrics });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════════
 //  9. ADMIN: Revenue Dashboard

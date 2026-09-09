@@ -50,9 +50,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval && typeof walInterval.unref === 'function') {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -876,6 +879,52 @@ export function initDb(): void {
       db.exec(`ALTER TABLE subscriptions ADD COLUMN ${col};`);
     } catch (e) {}
   }
+
+  // Ensure dunning tables exist
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS dunning_events (
+        id TEXT PRIMARY KEY,
+        subscription_id TEXT NOT NULL,
+        invoice_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'retrying', 'recovered', 'exhausted', 'canceled')),
+        attempt_count INTEGER NOT NULL DEFAULT 0,
+        max_attempts INTEGER NOT NULL DEFAULT 4,
+        next_retry_at TEXT,
+        last_attempt_at TEXT,
+        grace_period_end TEXT NOT NULL,
+        last_error TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS dunning_offers (
+        id TEXT PRIMARY KEY,
+        dunning_event_id TEXT NOT NULL,
+        subscription_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        offer_code TEXT NOT NULL,
+        discount_percent REAL NOT NULL DEFAULT 20.0,
+        channel TEXT NOT NULL DEFAULT 'all' CHECK(channel IN ('email', 'sms', 'in_app', 'all')),
+        status TEXT NOT NULL DEFAULT 'sent' CHECK(status IN ('pending', 'sent', 'accepted', 'declined', 'expired')),
+        sent_at TEXT,
+        accepted_at TEXT,
+        expires_at TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS dunning_logs (
+        id TEXT PRIMARY KEY,
+        dunning_event_id TEXT NOT NULL,
+        action TEXT NOT NULL,
+        channel TEXT DEFAULT 'system',
+        message TEXT NOT NULL,
+        details_json TEXT DEFAULT '{}',
+        created_at TEXT NOT NULL
+      );
+    `);
+  } catch (e) {}
 
   // Ensure promo_codes table and columns exist
   try {
