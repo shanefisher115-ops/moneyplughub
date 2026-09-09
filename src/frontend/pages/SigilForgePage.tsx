@@ -1416,7 +1416,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {/* Story Card PNG */}
                   <button
                     onClick={handleExportStoryCard}
@@ -1429,7 +1429,23 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                     ) : (
                       <Smartphone className="w-3.5 h-3.5 text-purple-400" />
                     )}
-                    Story Card (1080p)
+                    Story Card
+                  </button>
+
+                  {/* OpenGraph Social Card */}
+                  <button
+                    onClick={() => {
+                      const ogUrl = `${window.location.origin}/api/og/${referralCode}`;
+                      navigator.clipboard.writeText(ogUrl);
+                      forgeAudio.playTick(1200);
+                      awardXp(15, 'Copied OpenGraph Card URL');
+                      window.open(ogUrl, '_blank');
+                    }}
+                    className="py-2.5 px-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-pink-500/50 text-slate-300 hover:text-white text-[11px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow"
+                    title="Open and copy high-res OpenGraph Social Share Card"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-pink-400" />
+                    OpenGraph
                   </button>
 
                   {/* Embed Snippet Code */}
@@ -1443,7 +1459,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                     ) : (
                       <Code className="w-3.5 h-3.5 text-indigo-400" />
                     )}
-                    {embedCopied ? 'Embed Copied!' : 'Embed Code'}
+                    {embedCopied ? 'Copied' : 'Embed'}
                   </button>
                 </div>
               </div>
