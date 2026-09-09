@@ -28,18 +28,27 @@ export class VoiceEngineKernel {
   private currentGeneration: number = 0;
   private currentAudio: HTMLAudioElement | null = null;
   private activeAbortController: AbortController | null = null;
-  private speechRecognition: any = null;
+  private speechRecognition: {
+    start: () => void;
+    stop: () => void;
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    onresult: (event: { resultIndex: number; results: Array<{ isFinal: boolean; 0: { transcript: string } }> }) => void;
+    onerror: () => void;
+    onend: () => void;
+  } | null = null;
 
   // WebSocket duplex stream support
   private ws: WebSocket | null = null;
   private wsReconnectAttempts: number = 0;
-  private wsHeartbeatInterval: any = null;
+  private wsHeartbeatInterval: ReturnType<typeof setInterval> | null = null;
   private wsUrl: string = '';
 
   private onStateChangeCb?: (state: VoiceState) => void;
   private onTranscriptCb?: (transcript: string, isFinal: boolean) => void;
   private onLatencyCb?: (metrics: LatencyMetrics) => void;
-  private onSwarmAgentCb?: (agent: any) => void;
+  private onSwarmAgentCb?: (agent: Record<string, unknown>) => void;
 
   constructor(config?: Partial<VoiceEngineConfig>) {
     this.config = {
@@ -106,7 +115,7 @@ export class VoiceEngineKernel {
     return this;
   }
 
-  public onSwarmAgent(cb: (agent: any) => void): this {
+  public onSwarmAgent(cb: (agent: Record<string, unknown>) => void): this {
     this.onSwarmAgentCb = cb;
     return this;
   }
@@ -195,7 +204,7 @@ export class VoiceEngineKernel {
     }, delay);
   }
 
-  public sendWsFrame(frame: any): void {
+  public sendWsFrame(frame: Record<string, unknown>): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       try {
         this.ws.send(JSON.stringify(frame));
@@ -203,7 +212,7 @@ export class VoiceEngineKernel {
     }
   }
 
-  private handleServerWsFrame(frame: any): void {
+  private handleServerWsFrame(frame: { type?: string; text?: string; isFinal?: boolean; agentId?: string } & Record<string, unknown>): void {
     switch (frame.type) {
       case 'transcript':
         if (frame.text && this.onTranscriptCb) {
@@ -289,36 +298,45 @@ export class VoiceEngineKernel {
   // -------------------------------------------------------------
   private initWebSpeech(): void {
     if (typeof window === 'undefined') return;
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      this.speechRecognition = new SpeechRecognition();
-      this.speechRecognition.continuous = false;
-      this.speechRecognition.interimResults = true;
-      this.speechRecognition.lang = 'en-US';
+    type RecType = NonNullable<VoiceEngineKernel['speechRecognition']>;
+    const win = window as unknown as {
+      SpeechRecognition?: new () => RecType;
+      webkitSpeechRecognition?: new () => RecType;
+    };
+    const SpeechRecognitionClass = win.SpeechRecognition || win.webkitSpeechRecognition;
+    if (SpeechRecognitionClass) {
+      const rec = new SpeechRecognitionClass();
+      if (rec) {
+        rec.continuous = false;
+        rec.interimResults = true;
+        rec.lang = 'en-US';
 
-      this.speechRecognition.onresult = (event: any) => {
-        let interim = '';
-        let final = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
+        rec.onresult = (event: { resultIndex: number; results: Array<{ isFinal: boolean; 0: { transcript: string } }> }) => {
+          let interim = '';
+          let final = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              final += event.results[i][0].transcript;
+            } else {
+              interim += event.results[i][0].transcript;
+            }
           }
-        }
-        const text = final || interim;
-        if (text && this.onTranscriptCb) {
-          this.onTranscriptCb(text, !!final);
-        }
-      };
+          const text = final || interim;
+          if (text && this.onTranscriptCb) {
+            this.onTranscriptCb(text, !!final);
+          }
+        };
 
-      this.speechRecognition.onerror = () => {
-        if (this.state === 'listening') this.setState('idle');
-      };
+        rec.onerror = () => {
+          if (this.state === 'listening') this.setState('idle');
+        };
 
-      this.speechRecognition.onend = () => {
-        if (this.state === 'listening') this.setState('idle');
-      };
+        rec.onend = () => {
+          if (this.state === 'listening') this.setState('idle');
+        };
+
+        this.speechRecognition = rec;
+      }
     }
   }
 
@@ -420,8 +438,9 @@ export class VoiceEngineKernel {
           this.fallbackSpeak(text, thisGen);
         }
       }
-    } catch (err: any) {
-      if (err.name === 'AbortError' || abortController.signal.aborted || thisGen !== this.currentGeneration) {
+    } catch (err) {
+      const isAbort = (err instanceof Error && err.name === 'AbortError') || abortController.signal.aborted;
+      if (isAbort || thisGen !== this.currentGeneration) {
         return;
       }
       if (thisGen === this.currentGeneration) {

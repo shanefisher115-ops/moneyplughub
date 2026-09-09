@@ -41,7 +41,22 @@ export function getSupabaseClient(): SupabaseClient | null {
 /**
  * 🔄 Sync SQLite User to Supabase
  */
-export async function syncUserToSupabase(user: any): Promise<boolean> {
+export async function syncUserToSupabase(user: {
+  id: string;
+  email: string;
+  display_name: string;
+  role: string;
+  referral_code: string;
+  referrer_user_id?: string | null;
+  referral_count?: number;
+  level?: number;
+  xp?: number;
+  streak_days?: number;
+  tier_title?: string;
+  total_earnings_cents?: number;
+  total_earnings_usd?: number;
+  [key: string]: unknown;
+}): Promise<boolean> {
   const client = getSupabaseAdminClient();
   if (!client) return false;
 
@@ -66,8 +81,9 @@ export async function syncUserToSupabase(user: any): Promise<boolean> {
       return false;
     }
     return true;
-  } catch (err: any) {
-    console.warn('[Supabase Sync] User sync error:', err.message);
+  } catch (err) {
+    const errorObj = err instanceof Error ? err : new Error(String(err));
+    console.warn('[Supabase Sync] User sync error:', errorObj.message);
     return false;
   }
 }
@@ -75,7 +91,18 @@ export async function syncUserToSupabase(user: any): Promise<boolean> {
 /**
  * 🔄 Sync SQLite Transaction to Supabase
  */
-export async function syncTransactionToSupabase(tx: any): Promise<boolean> {
+export async function syncTransactionToSupabase(tx: {
+  id: string;
+  user_id: string;
+  type: string;
+  amount?: number;
+  amount_cents?: number;
+  currency?: string;
+  description?: string;
+  status?: string;
+  created_at?: string;
+  [key: string]: unknown;
+}): Promise<boolean> {
   const client = getSupabaseAdminClient();
   if (!client) return false;
 
@@ -96,8 +123,9 @@ export async function syncTransactionToSupabase(tx: any): Promise<boolean> {
       return false;
     }
     return true;
-  } catch (err: any) {
-    console.warn('[Supabase Sync] Transaction sync error:', err.message);
+  } catch (err) {
+    const errorObj = err instanceof Error ? err : new Error(String(err));
+    console.warn('[Supabase Sync] Transaction sync error:', errorObj.message);
     return false;
   }
 }
