@@ -203,18 +203,79 @@ export interface ProgramClick {
   created_at: string;
 }
 
+export type EarningsTierId = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'cosmic';
+
+export interface EarningsTierInfo {
+  id: EarningsTierId;
+  name: string;
+  min_earnings_cents: number;
+  color: string;
+  badge_icon: string;
+  mrr_bonus_pct: number;
+  description: string;
+}
+
+export type BadgeRarity = 'common' | 'rare' | 'epic' | 'legendary' | 'mythic';
+
+export interface MilestoneBadge {
+  key: string;
+  label: string;
+  icon: string;
+  description: string;
+  rarity: BadgeRarity;
+  animation_effect: 'pulse' | 'glow' | 'bounce' | 'sparkle' | 'shimmer';
+  unlocked_at?: string;
+}
+
 export interface LeaderboardEntry {
   rank: number;
+  previous_rank?: number;
+  rank_change?: 'up' | 'down' | 'same' | 'new';
   user_id: string;
   display_name: string;
   xp: number;
   level: number;
   tier_title: string;
-  streak_days: number;
+  earnings_tier: EarningsTierInfo;
+  total_earnings_cents: number;
+  monthly_mrr_cents: number;
   net_worth_cents: number;
+  streak_days: number;
   referral_count: number;
+  syndicate_id?: string | null;
+  syndicate_tag?: string | null;
+  syndicate_name?: string | null;
+  syndicate_emblem?: string | null;
+  badges: MilestoneBadge[];
   is_current_user?: boolean;
+  avatar_url?: string;
 }
+
+export interface SyndicateLeaderboardEntry {
+  rank: number;
+  id: string;
+  name: string;
+  tag: string;
+  emblem_sigil: string;
+  weekly_score: number;
+  total_net_worth_cents: number;
+  total_referrals: number;
+  member_count: number;
+  streak_days: number;
+  top_creator_name: string;
+  is_user_syndicate?: boolean;
+}
+
+export type LeaderboardWsClientFrame =
+  | { type: 'subscribe'; channel?: 'creators' | 'syndicates' | 'all' }
+  | { type: 'ping'; clientTimestamp?: number };
+
+export type LeaderboardWsServerFrame =
+  | { type: 'snapshot'; timestamp: string; creators: LeaderboardEntry[]; syndicates: SyndicateLeaderboardEntry[]; totalCreators: number }
+  | { type: 'leaderboard_update'; timestamp: string; updatedCreators: LeaderboardEntry[]; topWinner?: LeaderboardEntry }
+  | { type: 'syndicate_update'; timestamp: string; updatedSyndicates: SyndicateLeaderboardEntry[] }
+  | { type: 'pong'; clientTimestamp: number; serverTimestamp: number }
+  | { type: 'error'; message: string };
 
 export interface NetWorthSummary {
   total_assets_cents: number;
