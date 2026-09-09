@@ -42,12 +42,106 @@ db.exec(`
 /**
  * Optional Auth Extractor
  */
+interface UserRow {
+  id: string;
+  display_name: string;
+  email: string;
+  xp: number;
+  level: number;
+  tier_title: string;
+  referral_code?: string;
+}
+
+interface FullUserRow extends UserRow {
+  referral_code: string;
+}
+
+interface UserProfileOsRow {
+  behavior_type?: string;
+  energy_pattern?: string;
+  stress_level?: number;
+}
+
+interface AccountRow {
+  id: string;
+  name: string;
+  type: string;
+  balance_cents: number;
+  institution: string;
+  is_liability: boolean | number;
+}
+
+interface DebtRow {
+  id: string;
+  name: string;
+  total_balance_cents: number;
+  interest_rate: number;
+  minimum_payment_cents: number;
+  strategy: string;
+}
+
+interface BudgetRow {
+  id: string;
+  category: string;
+  monthly_limit_cents: number;
+  month: string;
+}
+
+interface GoalRow {
+  id: string;
+  title: string;
+  target_cents: number;
+  current_cents: number;
+  target_date: string;
+}
+
+interface RecurringRow {
+  id: string;
+  name: string;
+  amount_cents: number;
+  frequency: string;
+  next_due_date: string;
+}
+
+interface ProgramRow {
+  name: string;
+  destination_url: string;
+  payout_amount: string;
+}
+
+interface ConversationRow {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  metadata_json: string | null;
+  created_at: string;
+}
+
+interface OsmiumNodeRow {
+  category: string;
+  summary: string;
+  importance_score: number;
+}
+
+interface CommandReceipt {
+  type: string;
+  amount?: string;
+  from?: string;
+  to?: string;
+  target?: string;
+  remaining?: string;
+  category?: string;
+  newLimit?: string;
+  txId?: string;
+  timestamp?: string;
+}
+
 function extractUserId(req: Request): string {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
     try {
-      const decoded = jwt.verify(token, config.jwtSecret) as any;
+      const decoded = jwt.verify(token, config.jwtSecret) as { id?: string };
       if (decoded && decoded.id) return decoded.id;
     } catch {}
   }
@@ -59,56 +153,56 @@ function extractUserId(req: Request): string {
  */
 function getUserFinancialContext(targetId: string) {
   // 1. User Profile & XP
-  let user: any = null;
-  let osProfile: any = null;
+  let user: UserRow | null = null;
+  let osProfile: UserProfileOsRow | null = null;
   try {
-    user = db.prepare('SELECT id, display_name, email, xp, level, tier_title FROM users WHERE id = ?').get(targetId) as any;
-    osProfile = db.prepare('SELECT * FROM user_profile_os WHERE user_id = ?').get(targetId) as any;
+    user = db.prepare('SELECT id, display_name, email, xp, level, tier_title FROM users WHERE id = ?').get(targetId) as UserRow | undefined || null;
+    osProfile = db.prepare('SELECT * FROM user_profile_os WHERE user_id = ?').get(targetId) as UserProfileOsRow | undefined || null;
   } catch {}
 
   // 2. Balances / Net Worth
-  let accounts: any[] = [];
+  let accounts: AccountRow[] = [];
   try {
-    accounts = db.prepare('SELECT id, name, type, balance_cents, institution, is_liability FROM accounts WHERE user_id = ?').all(targetId) as any[];
+    accounts = db.prepare('SELECT id, name, type, balance_cents, institution, is_liability FROM accounts WHERE user_id = ?').all(targetId) as unknown as AccountRow[];
   } catch {}
   const totalAssetsCents = accounts.filter(a => !a.is_liability).reduce((acc, a) => acc + (a.balance_cents > 0 ? a.balance_cents : 0), 0);
   const totalCashCents = accounts.filter(a => a.type === 'bank' || a.type === 'cash').reduce((acc, a) => acc + a.balance_cents, 0);
 
   // 3. Debts
-  let debts: any[] = [];
+  let debts: DebtRow[] = [];
   try {
-    debts = db.prepare('SELECT id, name, total_balance_cents, interest_rate, minimum_payment_cents, strategy FROM debts WHERE user_id = ?').all(targetId) as any[];
+    debts = db.prepare('SELECT id, name, total_balance_cents, interest_rate, minimum_payment_cents, strategy FROM debts WHERE user_id = ?').all(targetId) as unknown as DebtRow[];
   } catch {}
   const totalDebtCents = debts.reduce((acc, d) => acc + (d.total_balance_cents || 0), 0);
 
   // 4. Monthly Budgets & Spend
-  let budgets: any[] = [];
+  let budgets: BudgetRow[] = [];
   try {
-    budgets = db.prepare('SELECT id, category, monthly_limit_cents, month FROM budgets WHERE user_id = ?').all(targetId) as any[];
+    budgets = db.prepare('SELECT id, category, monthly_limit_cents, month FROM budgets WHERE user_id = ?').all(targetId) as unknown as BudgetRow[];
   } catch {}
   const totalBudgetCents = budgets.reduce((acc, b) => acc + (b.monthly_limit_cents || 0), 0);
 
   // 5. Goals
-  let goals: any[] = [];
+  let goals: GoalRow[] = [];
   try {
-    goals = db.prepare('SELECT id, title, target_cents, current_cents, target_date FROM financial_goals WHERE user_id = ?').all(targetId) as any[];
+    goals = db.prepare('SELECT id, title, target_cents, current_cents, target_date FROM financial_goals WHERE user_id = ?').all(targetId) as unknown as GoalRow[];
   } catch {}
 
   // 6. Subscriptions / Recurring
-  let recurring: any[] = [];
+  let recurring: RecurringRow[] = [];
   try {
-    recurring = db.prepare('SELECT id, name, amount_cents, frequency, next_due_date FROM recurring_bills WHERE user_id = ?').all(targetId) as any[];
+    recurring = db.prepare('SELECT id, name, amount_cents, frequency, next_due_date FROM recurring_bills WHERE user_id = ?').all(targetId) as unknown as RecurringRow[];
   } catch {}
   const totalRecurringMonthlyCents = recurring.reduce((acc, r) => acc + (r.frequency === 'annual' ? Math.round(r.amount_cents / 12) : r.amount_cents), 0);
 
   // 7. Referral Commission & Program Stats
-  let referrals: any = { count: 0 };
-  let commissions: any = { total: 0 };
-  let programs: any[] = [];
+  let referrals: { count: number } = { count: 0 };
+  let commissions: { total: number } = { total: 0 };
+  let programs: ProgramRow[] = [];
   try {
-    referrals = db.prepare('SELECT COUNT(*) as count FROM commission_ledger WHERE referrer_user_id = ?').get(targetId) as any || { count: 0 };
-    commissions = db.prepare('SELECT COALESCE(SUM(amount_cents), 0) as total FROM commission_ledger WHERE referrer_user_id = ?').get(targetId) as any || { total: 0 };
-    programs = db.prepare('SELECT name, destination_url, payout_amount FROM crypto_referral_programs WHERE status = "active" LIMIT 5').all() as any[];
+    referrals = (db.prepare('SELECT COUNT(*) as count FROM commission_ledger WHERE referrer_user_id = ?').get(targetId) as { count: number } | undefined) || { count: 0 };
+    commissions = (db.prepare('SELECT COALESCE(SUM(amount_cents), 0) as total FROM commission_ledger WHERE referrer_user_id = ?').get(targetId) as { total: number } | undefined) || { total: 0 };
+    programs = db.prepare('SELECT name, destination_url, payout_amount FROM crypto_referral_programs WHERE status = "active" LIMIT 5').all() as unknown as ProgramRow[];
   } catch {}
 
   const defaultAssetsCents = totalAssetsCents > 0 ? totalAssetsCents : 425000;
@@ -174,7 +268,7 @@ function tryExecuteFinancialCommand(
   userId: string, 
   prompt: string, 
   context: ReturnType<typeof getUserFinancialContext>
-): { executed: boolean; response: string; receipt?: any } {
+): { executed: boolean; response: string; receipt?: CommandReceipt } {
   const p = prompt.trim();
   const lower = p.toLowerCase();
   const accounts = context.raw.accounts;
@@ -250,10 +344,10 @@ Your updated balances are reflected live across your dashboard and Net Worth ove
             timestamp: now,
           }
         };
-      } catch (err: any) {
+      } catch (err) {
         return {
           executed: true,
-          response: `⚠️ Failed to execute transfer transaction: ${err.message}`,
+          response: `⚠️ Failed to execute transfer transaction: ${(err as Error).message}`,
         };
       }
     }
@@ -314,10 +408,10 @@ This payoff reduces your ongoing interest accrual and accelerates your debt-free
             txId,
           }
         };
-      } catch (err: any) {
+      } catch (err) {
         return {
           executed: true,
-          response: `⚠️ Failed to execute debt payment: ${err.message}`,
+          response: `⚠️ Failed to execute debt payment: ${(err as Error).message}`,
         };
       }
     }
@@ -356,8 +450,8 @@ I have set your **${category}** monthly spending threshold to **$${limitDollars}
           newLimit: `$${limitDollars}.00`,
         }
       };
-    } catch (err: any) {
-      return { executed: true, response: `⚠️ Budget update failed: ${err.message}` };
+    } catch (err) {
+      return { executed: true, response: `⚠️ Budget update failed: ${(err as Error).message}` };
     }
   }
 
@@ -371,7 +465,7 @@ I have set your **${category}** monthly spending threshold to **$${limitDollars}
  */
 function compactAndExtractOsmiumMemory(
   userId: string, 
-  history: any[] = [], 
+  history: Array<{ role: string; content: string }> = [],
   currentPrompt: string
 ): string {
   const now = new Date().toISOString();
@@ -423,7 +517,7 @@ function compactAndExtractOsmiumMemory(
   }
 
   // Retrieve top high-salience knowledge nodes for this user
-  let activeNodes: any[] = [];
+  let activeNodes: OsmiumNodeRow[] = [];
   try {
     activeNodes = db.prepare(`
       SELECT category, summary, importance_score 
@@ -431,7 +525,7 @@ function compactAndExtractOsmiumMemory(
       WHERE user_id = ? 
       ORDER BY importance_score DESC, updated_at DESC 
       LIMIT 8
-    `).all(userId) as any[];
+    `).all(userId) as unknown as OsmiumNodeRow[];
   } catch {}
 
   // Update Infinite Token Compaction Ledger metrics
@@ -463,7 +557,7 @@ function compactAndExtractOsmiumMemory(
 async function callMultiProviderMesh(
   prompt: string, 
   context: ReturnType<typeof getUserFinancialContext>,
-  history: any[] = [],
+  history: Array<{ role: string; content: string }> = [],
   memoryDigest: string = ''
 ): Promise<string | null> {
   const localUrl = process.env.LOCAL_LLM_URL || 'http://127.0.0.1:11434';
@@ -542,7 +636,7 @@ ${memoryDigest ? `=== OSMIUM LONG-TERM MEMORY GRAPH ===\n${memoryDigest}\n` : ''
 
       // Decouple token consumption: only send last 4 turns + system prompt
       const contents = [
-        ...history.slice(-4).map((h: any) => ({
+        ...history.slice(-4).map((h) => ({
           role: h.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: h.content }]
         })),
@@ -633,7 +727,7 @@ function calculateCompoundGrowth(
 async function generateMoneyOSResponse(
   prompt: string, 
   context: ReturnType<typeof getUserFinancialContext>,
-  history: any[] = [],
+  history: Array<{ role: string; content: string }> = [],
   memoryDigest: string = ''
 ): Promise<string> {
   const p = prompt.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -1713,15 +1807,15 @@ router.get('/context', (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
 
     const context = getUserFinancialContext(effectiveUserId);
     res.json({ success: true, data: context });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (err) {
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -1733,7 +1827,7 @@ router.get('/history', (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
@@ -1744,7 +1838,7 @@ router.get('/history', (req: Request, res: Response) => {
       WHERE user_id = ? 
       ORDER BY created_at ASC 
       LIMIT 60
-    `).all(effectiveUserId) as any[];
+    `).all(effectiveUserId) as unknown as ConversationRow[];
 
     res.json({
       success: true,
@@ -1753,7 +1847,7 @@ router.get('/history', (req: Request, res: Response) => {
         metadata: r.metadata_json ? JSON.parse(r.metadata_json) : null,
       })),
     });
-  } catch (err: any) {
+  } catch {
     res.json({ success: true, data: [] });
   }
 });
@@ -1806,7 +1900,7 @@ router.post('/chat', async (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
@@ -1819,7 +1913,7 @@ router.post('/chat', async (req: Request, res: Response) => {
     let context = getUserFinancialContext(effectiveUserId);
 
     // 1.2 Fetch recent conversation history for multi-turn awareness
-    let history: any[] = [];
+    let history: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [];
     try {
       history = db.prepare(`
         SELECT role, content 
@@ -1827,7 +1921,7 @@ router.post('/chat', async (req: Request, res: Response) => {
         WHERE user_id = ? 
         ORDER BY created_at DESC 
         LIMIT 8
-      `).all(effectiveUserId) as any[];
+      `).all(effectiveUserId) as unknown as Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
       history.reverse();
     } catch {}
 
@@ -1841,11 +1935,11 @@ router.post('/chat', async (req: Request, res: Response) => {
     const commandResult = tryExecuteFinancialCommand(effectiveUserId, message.trim(), context);
 
     let aiResponse = '';
-    let receipt: any = null;
+    let receipt: CommandReceipt | null = null;
 
     if (commandResult.executed) {
       aiResponse = commandResult.response;
-      receipt = commandResult.receipt;
+      receipt = commandResult.receipt || null;
       // Re-fetch context to reflect newly executed financial balances
       context = getUserFinancialContext(effectiveUserId);
     } else {
@@ -1886,9 +1980,9 @@ router.post('/chat', async (req: Request, res: Response) => {
         }
       }
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('MoneyOS Chat Error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -1901,20 +1995,28 @@ router.get('/briefing', (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
 
     const context = getUserFinancialContext(effectiveUserId);
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(effectiveUserId) as any || {};
+    const user = (db.prepare('SELECT * FROM users WHERE id = ?').get(effectiveUserId) as FullUserRow | undefined) || {
+      id: effectiveUserId,
+      display_name: 'Creator',
+      email: 'creator@moneyplughub.com',
+      xp: 0,
+      level: 1,
+      tier_title: 'Novice Plug',
+      referral_code: 'CREATOR-PLUG',
+    };
 
     // Get referral count & recent clicks
     let referralCount = 0;
     let recentClicksCount = 0;
     try {
-      referralCount = (db.prepare('SELECT COUNT(*) as count FROM users WHERE referrer_user_id = ?').get(effectiveUserId) as any)?.count || 0;
-      recentClicksCount = (db.prepare('SELECT COUNT(*) as count FROM referral_clicks WHERE referral_code = ?').get(user.referral_code || '') as any)?.count || 0;
+      referralCount = (db.prepare('SELECT COUNT(*) as count FROM users WHERE referrer_user_id = ?').get(effectiveUserId) as { count: number } | undefined)?.count || 0;
+      recentClicksCount = (db.prepare('SELECT COUNT(*) as count FROM referral_clicks WHERE referral_code = ?').get(user.referral_code || '') as { count: number } | undefined)?.count || 0;
     } catch {}
 
     const monthlyReferralIncome = referralCount * 10;
@@ -1992,9 +2094,9 @@ router.get('/briefing', (req: Request, res: Response) => {
         ]
       }
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Briefing error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -2007,7 +2109,7 @@ router.get('/memory', (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
@@ -2017,11 +2119,22 @@ router.get('/memory', (req: Request, res: Response) => {
       FROM osmium_memory_nodes 
       WHERE user_id = ? 
       ORDER BY importance_score DESC, updated_at DESC
-    `).all(effectiveUserId) as any[];
+    `).all(effectiveUserId) as unknown as Array<{
+      id: string;
+      category: string;
+      summary: string;
+      importance_score: number;
+      access_count: number;
+      updated_at: string;
+    }>;
 
-    const ledger = db.prepare(`
+    const ledger = (db.prepare(`
       SELECT * FROM osmium_infinite_tokens_ledger WHERE user_id = ?
-    `).get(effectiveUserId) as any || {
+    `).get(effectiveUserId) as {
+      total_tokens_streamed?: number;
+      total_tokens_saved_by_compaction?: number;
+      compaction_cycles_count?: number;
+    } | undefined) || {
       total_tokens_streamed: 4800,
       total_tokens_saved_by_compaction: 14200,
       compaction_cycles_count: 12,
@@ -2041,8 +2154,8 @@ router.get('/memory', (req: Request, res: Response) => {
         }
       }
     });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (err) {
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -2061,7 +2174,7 @@ router.post('/boardroom', async (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
@@ -2217,9 +2330,9 @@ router.post('/boardroom', async (req: Request, res: Response) => {
         turns,
       }
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Boardroom error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -2231,14 +2344,14 @@ router.delete('/history', (req: Request, res: Response) => {
     let effectiveUserId = extractUserId(req);
     if (effectiveUserId === 'demo_guest_user') {
       try {
-        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+        const u = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
         if (u) effectiveUserId = u.id;
       } catch {}
     }
 
     db.prepare('DELETE FROM moneyos_conversations WHERE user_id = ?').run(effectiveUserId);
     res.json({ success: true, message: 'MoneyOS conversation transcript cleared.' });
-  } catch (err: any) {
+  } catch {
     res.json({ success: true, message: 'Cleared.' });
   }
 });

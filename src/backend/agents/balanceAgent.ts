@@ -137,10 +137,11 @@ export class BalanceAgent {
         event: 'balance.pull_completed',
         message: `Successfully synchronized ${canonicalBalances.length} account balances with asOf: ${asOf}`,
       };
-    } catch (err: any) {
+    } catch (err) {
+      const errorMsg = (err as Error).message || 'BalanceAgent sync failed.';
       console.error('BalanceAgent execution error:', err);
       this.recordEvent(userId, 'balance.pull_failed', {
-        error: err.message,
+        error: errorMsg,
         trigger,
         timestamp: asOf,
       });
@@ -149,7 +150,7 @@ export class BalanceAgent {
         success: false,
         balances: [],
         event: 'balance.pull_failed',
-        message: err.message || 'BalanceAgent sync failed.',
+        message: errorMsg,
       };
     }
   }
@@ -160,7 +161,7 @@ export class BalanceAgent {
   private static recordEvent(
     userId: string,
     eventType: 'balance.pull_started' | 'balance.pull_completed' | 'balance.pull_failed',
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): void {
     const id = `evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     try {

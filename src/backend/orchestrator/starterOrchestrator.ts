@@ -85,29 +85,37 @@ export class StarterOrchestrator {
 
       // 6. Execute Module (INVARIANT: All side effects occur through allowed modules)
       switch (task) {
-        case 'balance_pull':
-          resultData = await BalanceAgent.run(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'balance_pull': {
+          const res = await BalanceAgent.run(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
-        case 'earnings_calc':
-          resultData = await EarningsAgent.run(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'earnings_calc': {
+          const res = await EarningsAgent.run(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
-        case 'referral_suggest':
-          resultData = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', payload?.preferredSlug);
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'referral_suggest': {
+          const res = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', payload?.preferredSlug);
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
         case 'automation_tick':
           resultData = await AutomationAgent.onScheduleTick(userId, 'all');
           break;
 
-        case 'insight_generate':
-          resultData = await InsightAgent.generateDailyInsight(userId, 'manual: user_command');
-          if (!resultData.success) throw new Error(resultData.message);
+        case 'insight_generate': {
+          const res = await InsightAgent.generateDailyInsight(userId, 'manual: user_command');
+          if (!res.success) throw new Error(res.message);
+          resultData = res;
           break;
+        }
 
         case 'daily_loop':
           resultData = await this.runDailyLoop(userId);

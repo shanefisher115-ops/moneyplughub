@@ -224,8 +224,8 @@ try {
   masterCatalog.forEach((item, index) => {
     insertStmt.run(item.id, item.name, item.category, item.rarity, item.cost_xp, item.min_level, item.description, item.preview_accent, item.config_data, index, now);
   });
-} catch (e: any) {
-  console.error('Sigil Market Migration error:', e.message);
+} catch (e) {
+  console.error('Sigil Market Migration error:', (e as Error).message);
 }
 
 export interface SigilCustomConfig {
@@ -1105,16 +1105,58 @@ export function generateSigil(referralCode: string, size: number = 256, customCo
 //  SIGIL FORGE MARKETPLACE ENDPOINTS
 // ═══════════════════════════════════════════════════════════════════
 
+interface SigilUserRow {
+  id: string;
+  display_name: string;
+  xp: number;
+  level: number;
+  referral_code: string;
+  role: string;
+  subscriptionTier?: string;
+  subscriptionActive?: number;
+  created_at?: string;
+  tier_title?: string;
+}
+
+interface SigilItemRow {
+  id: string;
+  name: string;
+  category: string;
+  rarity: string;
+  cost_xp: number;
+  min_level: number;
+  description: string;
+  preview_accent: string;
+  config_data: string;
+  is_active: number;
+  sort_order: number;
+  created_at: string;
+  is_purchased?: number;
+  is_equipped?: number;
+}
+
+interface UserSigilConfigRow {
+  user_id: string;
+  aura?: string | null;
+  glyph?: string | null;
+  ring?: string | null;
+  crest?: string | null;
+  motto?: string | null;
+  monogram?: string | null;
+  handle?: string | null;
+  updated_at?: string;
+}
+
 function extractUserIdOrGuest(req: Request): string {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
     try {
-      const decoded = jwt.verify(token, config.jwtSecret) as any;
-      if (decoded && (decoded.id || decoded.userId)) return decoded.id || decoded.userId;
+      const decoded = jwt.verify(token, config.jwtSecret) as { id?: string; userId?: string };
+      if (decoded && (decoded.id || decoded.userId)) return (decoded.id || decoded.userId)!;
     } catch {}
   }
-  const firstUser = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+  const firstUser = db.prepare('SELECT id FROM users ORDER BY created_at ASC LIMIT 1').get() as { id: string } | undefined;
   return firstUser?.id || 'usr_admin_001';
 }
 
@@ -1138,10 +1180,10 @@ router.get('/market/catalog', (req: Request, res: Response) => {
     LEFT JOIN user_sigil_config cfg ON cfg.user_id = ?
     WHERE m.is_active = 1
     ORDER BY m.sort_order ASC
-  `).all(userId, userId) as any[];
+  `).all(userId, userId) as unknown as SigilItemRow[];
 
-  const user = db.prepare('SELECT id, xp, level, referral_code, role FROM users WHERE id = ?').get(userId) as any;
-  const sigilConfig = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as any || {};
+  const user = db.prepare('SELECT id, xp, level, referral_code, role FROM users WHERE id = ?').get(userId) as SigilUserRow | undefined;
+  const sigilConfig = (db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as UserSigilConfigRow | undefined);
 
   // Check subscription status for paywall gating
   let isPaidPlan = user?.role === 'admin';
@@ -1153,7 +1195,7 @@ router.get('/market/catalog', (req: Request, res: Response) => {
       JOIN billing_plans p ON p.id = s.plan_id
       WHERE s.user_id = ? AND s.status IN ('active', 'trialing')
       ORDER BY s.created_at DESC LIMIT 1
-    `).get(userId) as any;
+    `).get(userId) as { plan_slug?: string; plan_name?: string } | undefined;
 
     if (sub?.plan_slug && sub.plan_slug !== 'free_lite') {
       isPaidPlan = true;
@@ -1171,10 +1213,10 @@ router.get('/market/catalog', (req: Request, res: Response) => {
       is_paid_plan: isPaidPlan,
       plan_name: activePlanName,
       active_config: {
-        aura: sigilConfig.aura || 'aura_cyber_emerald',
-        glyph: sigilConfig.glyph || 'glyph_metatron',
-        ring: sigilConfig.ring || 'ring_celestial_corona',
-        crest: sigilConfig.crest || 'crest_lightning',
+        aura: sigilConfig?.aura || 'aura_cyber_emerald',
+        glyph: sigilConfig?.glyph || 'glyph_metatron',
+        ring: sigilConfig?.ring || 'ring_celestial_corona',
+        crest: sigilConfig?.crest || 'crest_lightning',
       }
     }
   });
@@ -1193,13 +1235,13 @@ router.post('/market/purchase', (req: Request, res: Response) => {
     return;
   }
 
-  const item = db.prepare('SELECT * FROM sigil_market_items WHERE id = ? AND is_active = 1').get(item_id) as any;
+  const item = db.prepare('SELECT * FROM sigil_market_items WHERE id = ? AND is_active = 1').get(item_id) as SigilItemRow | undefined;
   if (!item) {
     res.status(404).json({ success: false, error: 'Item not found in catalog' });
     return;
   }
 
-  const user = db.prepare('SELECT id, xp, display_name FROM users WHERE id = ?').get(userId) as any;
+  const user = db.prepare('SELECT id, xp, display_name FROM users WHERE id = ?').get(userId) as SigilUserRow | undefined;
   if (!user) {
     res.status(404).json({ success: false, error: 'User not found' });
     return;
@@ -1248,14 +1290,14 @@ router.post('/market/purchase', (req: Request, res: Response) => {
     recordAuditLog(userId, 'SIGIL_ITEM_PURCHASED', 'sigil_market_items', item_id, { cost_xp: item.cost_xp, name: item.name });
   });
 
-  const updatedUser = db.prepare('SELECT xp FROM users WHERE id = ?').get(userId) as any;
+  const updatedUser = db.prepare('SELECT xp FROM users WHERE id = ?').get(userId) as { xp: number } | undefined;
 
   res.json({
     success: true,
     message: `🎉 Successfully forged [${item.name}]! Equipped to your Sigil.`,
     data: {
       item,
-      remaining_xp: updatedUser.xp,
+      remaining_xp: updatedUser?.xp || 0,
     }
   });
 });
@@ -1296,7 +1338,7 @@ router.post('/market/equip', (req: Request, res: Response) => {
     `).run(valueToSet, now, userId);
   }
 
-  const activeCfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as any;
+  const activeCfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as UserSigilConfigRow | undefined;
 
   res.json({
     success: true,
@@ -1318,8 +1360,8 @@ router.post('/market/equip', (req: Request, res: Response) => {
  */
 router.get('/config', (req: Request, res: Response) => {
   const userId = extractUserIdOrGuest(req);
-  const cfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as any;
-  const user = db.prepare('SELECT display_name, referral_code FROM users WHERE id = ?').get(userId) as any;
+  const cfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as UserSigilConfigRow | undefined;
+  const user = db.prepare('SELECT display_name, referral_code FROM users WHERE id = ?').get(userId) as SigilUserRow | undefined;
   res.json({
     success: true,
     data: {
@@ -1343,7 +1385,7 @@ router.post('/config/save', (req: Request, res: Response) => {
   const { aura, glyph, ring, crest, motto, monogram, handle } = req.body || {};
   const now = new Date().toISOString();
 
-  const user = db.prepare('SELECT id, level, role, display_name, referral_code FROM users WHERE id = ?').get(userId) as any;
+  const user = db.prepare('SELECT id, level, role, display_name, referral_code FROM users WHERE id = ?').get(userId) as SigilUserRow | undefined;
   const userLevel = user?.level || 1;
   const isAdmin = user?.role === 'admin';
 
@@ -1351,7 +1393,7 @@ router.post('/config/save', (req: Request, res: Response) => {
   const selectedIds = [aura, glyph, ring, crest].filter(Boolean);
   if (!isAdmin && selectedIds.length > 0) {
     const placeholders = selectedIds.map(() => '?').join(',');
-    const lockedItems = db.prepare(`SELECT id, name, min_level FROM sigil_market_items WHERE id IN (${placeholders}) AND min_level > ?`).all(...selectedIds, userLevel) as any[];
+    const lockedItems = db.prepare(`SELECT id, name, min_level FROM sigil_market_items WHERE id IN (${placeholders}) AND min_level > ?`).all(...selectedIds, userLevel) as unknown as Array<{ id: string; name: string; min_level: number }>;
     if (lockedItems.length > 0) {
       res.status(403).json({
         success: false,
@@ -1379,7 +1421,7 @@ router.post('/config/save', (req: Request, res: Response) => {
     `).run(aura || null, glyph || null, ring || null, crest || null, effectiveMotto, effectiveMonogram, effectiveHandle, now, userId);
   }
 
-  const updatedCfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as any;
+  const updatedCfg = db.prepare('SELECT * FROM user_sigil_config WHERE user_id = ?').get(userId) as UserSigilConfigRow | undefined;
 
   res.json({
     success: true,

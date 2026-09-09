@@ -4,14 +4,67 @@ import { db, runInTransaction, recordAuditLog } from '../db';
 
 export const economyRouter = Router();
 
+interface EconomyUserRow {
+  id: string;
+  email: string;
+  display_name: string;
+  xp: number;
+  level: number;
+  tier_title: string;
+}
+
+interface WalletRow {
+  core_units: number;
+  stardust: number;
+  quantum_charges: number;
+  jackpot_tokens: number;
+  total_units_earned: number;
+  total_units_spent: number;
+}
+
+interface MarketListingRow {
+  id: string;
+  seller_id: string;
+  seller_name: string;
+  item_id: string;
+  item_name: string;
+  item_type: string;
+  rarity: string;
+  price_core_units: number;
+  status: string;
+  buyer_id?: string | null;
+  created_at: string;
+  sold_at?: string | null;
+}
+
+interface RecipeRow {
+  id: string;
+  output_item_id: string;
+  output_name: string;
+  output_type: string;
+  output_rarity: string;
+  cost_stardust: number;
+  cost_core_units: number;
+  required_level: number;
+  success_rate_pct: number;
+  description: string;
+  accent_color: string;
+  created_at: string;
+}
+
+interface CosmeticLoadoutRow {
+  equipped_click_ability: string;
+  equipped_pill_background: string;
+}
+
 // Helper: Resolve User ID or fallback to guest
-function resolveUserOrGuest(req: Request): { userId: string; isAuthenticated: boolean; user: any | null } {
+function resolveUserOrGuest(req: Request): { userId: string; isAuthenticated: boolean; user: EconomyUserRow | null } {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
     if (token.startsWith('user_') || token.startsWith('usr_') || token === 'admin') {
       const targetId = token === 'admin' ? 'usr_primary_auditor' : token;
-      const user = db.prepare('SELECT * FROM users WHERE id = ?').get(targetId) as any;
+      const user = db.prepare('SELECT * FROM users WHERE id = ?').get(targetId) as EconomyUserRow | undefined;
       if (user) {
         return { userId: user.id, isAuthenticated: true, user };
       }
@@ -19,7 +72,7 @@ function resolveUserOrGuest(req: Request): { userId: string; isAuthenticated: bo
   }
 
   // Fallback to first user in database
-  const defaultUser = db.prepare('SELECT * FROM users ORDER BY created_at ASC LIMIT 1').get() as any;
+  const defaultUser = db.prepare('SELECT * FROM users ORDER BY created_at ASC LIMIT 1').get() as EconomyUserRow | undefined;
   if (defaultUser) {
     return { userId: defaultUser.id, isAuthenticated: true, user: defaultUser };
   }
@@ -28,17 +81,24 @@ function resolveUserOrGuest(req: Request): { userId: string; isAuthenticated: bo
 }
 
 // Helper: Ensure MPH Wallet exists
-function getOrCreateWallet(userId: string): { core_units: number; stardust: number; quantum_charges: number; jackpot_tokens: number; total_units_earned: number; total_units_spent: number } {
-  let wallet = db.prepare('SELECT * FROM mph_wallets WHERE user_id = ?').get(userId) as any;
+function getOrCreateWallet(userId: string): WalletRow {
+  let wallet = db.prepare('SELECT * FROM mph_wallets WHERE user_id = ?').get(userId) as WalletRow | undefined;
   if (!wallet) {
     const now = new Date().toISOString();
     db.prepare(`
       INSERT OR IGNORE INTO mph_wallets (user_id, core_units, stardust, quantum_charges, jackpot_tokens, total_units_earned, total_units_spent, updated_at)
       VALUES (?, 250, 1000, 5, 2, 250, 0, ?)
     `).run(userId, now);
-    wallet = db.prepare('SELECT * FROM mph_wallets WHERE user_id = ?').get(userId) as any;
+    wallet = db.prepare('SELECT * FROM mph_wallets WHERE user_id = ?').get(userId) as WalletRow | undefined;
   }
-  return wallet;
+  return wallet || {
+    core_units: 250,
+    stardust: 1000,
+    quantum_charges: 5,
+    jackpot_tokens: 2,
+    total_units_earned: 250,
+    total_units_spent: 0,
+  };
 }
 
 // Helper: Append block to Antigravity Ledger
@@ -49,9 +109,9 @@ function appendLedgerBlock(
   itemName: string | null,
   unitsDelta: number,
   stardustDelta: number,
-  details: Record<string, any>
+  details: Record<string, unknown>
 ): { blockId: string; blockHash: string } {
-  const lastBlock = db.prepare('SELECT block_hash FROM antigravity_ledger ORDER BY created_at DESC LIMIT 1').get() as any;
+  const lastBlock = db.prepare('SELECT block_hash FROM antigravity_ledger ORDER BY created_at DESC LIMIT 1').get() as { block_hash?: string } | undefined;
   const prevHash = lastBlock?.block_hash || '00000000000000000000000000000000';
 
   const blockId = `block_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
@@ -89,6 +149,19 @@ economyRouter.get('/overview', (req: Request, res: Response) => {
     const { userId, isAuthenticated, user } = resolveUserOrGuest(req);
     const wallet = getOrCreateWallet(userId);
 
+    interface UserInventoryRow {
+      inventory_id: string;
+      item_id: string;
+      is_equipped: number;
+      purchased_at: string;
+      name: string;
+      category: string;
+      rarity: string;
+      cost_xp: number;
+      preview_accent: string;
+      description: string;
+    }
+
     // Inventory count
     const inventory = db.prepare(`
       SELECT usi.id as inventory_id, usi.item_id, usi.is_equipped, usi.purchased_at,
@@ -97,12 +170,12 @@ economyRouter.get('/overview', (req: Request, res: Response) => {
       JOIN sigil_market_items smi ON usi.item_id = smi.id
       WHERE usi.user_id = ?
       ORDER BY usi.purchased_at DESC
-    `).all(userId) as any[];
+    `).all(userId) as unknown as UserInventoryRow[];
 
     // Market stats
-    const totalListings = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as any)?.c || 0;
-    const totalVolumeUnits = (db.prepare("SELECT COALESCE(SUM(price_core_units), 0) as v FROM marketplace_listings WHERE status = 'sold'").get() as any)?.v || 14250;
-    const totalBlocks = (db.prepare('SELECT COUNT(*) as c FROM antigravity_ledger').get() as any)?.c || 1;
+    const totalListings = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as { c: number } | undefined)?.c || 0;
+    const totalVolumeUnits = (db.prepare("SELECT COALESCE(SUM(price_core_units), 0) as v FROM marketplace_listings WHERE status = 'sold'").get() as { v: number } | undefined)?.v || 14250;
+    const totalBlocks = (db.prepare('SELECT COUNT(*) as c FROM antigravity_ledger').get() as { c: number } | undefined)?.c || 1;
 
     res.json({
       success: true,
@@ -137,9 +210,9 @@ economyRouter.get('/overview', (req: Request, res: Response) => {
         }
       }
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error in /api/economy/overview:', err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 

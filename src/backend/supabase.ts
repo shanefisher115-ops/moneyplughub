@@ -38,10 +38,107 @@ export function getSupabaseClient(): SupabaseClient | null {
   return cachedPublicClient;
 }
 
+interface SupabaseUserSyncRecord {
+  id: string;
+  email: string;
+  display_name: string;
+  role: string;
+  referral_code: string;
+  referrer_user_id?: string | null;
+  referral_count?: number;
+  level?: number;
+  xp?: number;
+  streak_days?: number;
+  tier_title?: string;
+  total_earnings_cents?: number;
+  total_earnings_usd?: number;
+}
+
+interface SupabaseTxSyncRecord {
+  id: string;
+  user_id: string;
+  type: string;
+  amount?: number;
+  amount_cents?: number;
+  currency?: string;
+  description: string;
+  status?: string;
+  created_at: string;
+}
+
+interface SupabaseCommissionRecord {
+  id: string;
+  referrer_user_id: string;
+  referred_user_id: string;
+  amount_cents: number;
+  currency?: string;
+  status?: string;
+  notes?: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+
+interface SupabaseAccountRecord {
+  id: string;
+  user_id: string;
+  name: string;
+  type: string;
+  balance_cents: number;
+  currency?: string;
+  institution: string;
+  is_liability?: boolean | number;
+  created_at: string;
+  updated_at?: string;
+}
+
+interface SupabaseSyndicateRecord {
+  id: string;
+  name: string;
+  tag: string;
+  founder_user_id: string;
+  description: string;
+  level: number;
+  total_xp: number;
+  total_commission_cents: number;
+  member_count: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+interface SupabaseVideoLoopRecord {
+  id: string;
+  user_id: string;
+  title: string;
+  template_id: string;
+  loop_depth: number;
+  max_depth: number;
+  idempotency_hash: string;
+  status: string;
+  antigrav_score: number;
+  last_execution: string;
+  log_json?: string | null;
+  created_at: string;
+}
+
+interface SupabaseMediaAssetRecord {
+  id: string;
+  user_id: string;
+  type: string;
+  prompt: string;
+  title: string;
+  media_url: string;
+  thumbnail_url?: string;
+  aspect_ratio?: string;
+  style_preset?: string;
+  duration_seconds?: number;
+  metadata_json?: string | null;
+  created_at: string;
+}
+
 /**
  * 🔄 Sync SQLite User to Supabase
  */
-export async function syncUserToSupabase(user: any): Promise<boolean> {
+export async function syncUserToSupabase(user: SupabaseUserSyncRecord): Promise<boolean> {
   const client = getSupabaseAdminClient();
   if (!client) return false;
 
@@ -66,8 +163,8 @@ export async function syncUserToSupabase(user: any): Promise<boolean> {
       return false;
     }
     return true;
-  } catch (err: any) {
-    console.warn('[Supabase Sync] User sync error:', err.message);
+  } catch (err) {
+    console.warn('[Supabase Sync] User sync error:', (err as Error).message);
     return false;
   }
 }
@@ -75,7 +172,7 @@ export async function syncUserToSupabase(user: any): Promise<boolean> {
 /**
  * 🔄 Sync SQLite Transaction to Supabase
  */
-export async function syncTransactionToSupabase(tx: any): Promise<boolean> {
+export async function syncTransactionToSupabase(tx: SupabaseTxSyncRecord): Promise<boolean> {
   const client = getSupabaseAdminClient();
   if (!client) return false;
 
@@ -96,8 +193,8 @@ export async function syncTransactionToSupabase(tx: any): Promise<boolean> {
       return false;
     }
     return true;
-  } catch (err: any) {
-    console.warn('[Supabase Sync] Transaction sync error:', err.message);
+  } catch (err) {
+    console.warn('[Supabase Sync] Transaction sync error:', (err as Error).message);
     return false;
   }
 }
@@ -134,7 +231,7 @@ export async function runFullSupabaseSync(): Promise<{
 
   try {
     // 1. Sync Users
-    const users = db.prepare('SELECT * FROM users LIMIT 500').all() as any[];
+    const users = db.prepare('SELECT * FROM users LIMIT 500').all() as unknown as SupabaseUserSyncRecord[];
     for (const u of users) {
       const ok = await syncUserToSupabase(u);
       if (ok) results.syncedUsers++;
@@ -142,7 +239,7 @@ export async function runFullSupabaseSync(): Promise<{
 
     // 2. Sync Commission Ledger
     try {
-      const commissions = db.prepare('SELECT * FROM commission_ledger LIMIT 500').all() as any[];
+      const commissions = db.prepare('SELECT * FROM commission_ledger LIMIT 500').all() as unknown as SupabaseCommissionRecord[];
       if (commissions.length > 0) {
         const payload = commissions.map(c => ({
           id: c.id,
@@ -159,13 +256,13 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Commissions sync: ${error.message}`);
         else results.syncedCommissions = commissions.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Commission sync query notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Commission sync query notice: ${(e as Error).message}`);
     }
 
     // 3. Sync Transactions
     try {
-      const transactions = db.prepare('SELECT * FROM transactions LIMIT 500').all() as any[];
+      const transactions = db.prepare('SELECT * FROM transactions LIMIT 500').all() as unknown as SupabaseTxSyncRecord[];
       if (transactions.length > 0) {
         const payload = transactions.map(t => ({
           id: t.id,
@@ -182,13 +279,13 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Transactions sync: ${error.message}`);
         else results.syncedTransactions = transactions.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Transactions sync notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Transactions sync notice: ${(e as Error).message}`);
     }
 
     // 4. Sync Accounts
     try {
-      const accounts = db.prepare('SELECT * FROM accounts LIMIT 500').all() as any[];
+      const accounts = db.prepare('SELECT * FROM accounts LIMIT 500').all() as unknown as SupabaseAccountRecord[];
       if (accounts.length > 0) {
         const payload = accounts.map(a => ({
           id: a.id,
@@ -206,13 +303,13 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Accounts sync: ${error.message}`);
         else results.syncedAccounts = accounts.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Accounts sync notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Accounts sync notice: ${(e as Error).message}`);
     }
 
     // 5. Sync Syndicates
     try {
-      const syndicates = db.prepare('SELECT * FROM syndicates LIMIT 500').all() as any[];
+      const syndicates = db.prepare('SELECT * FROM syndicates LIMIT 500').all() as unknown as SupabaseSyndicateRecord[];
       if (syndicates.length > 0) {
         const payload = syndicates.map(s => ({
           id: s.id,
@@ -231,13 +328,13 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Syndicates sync: ${error.message}`);
         else results.syncedSyndicates = syndicates.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Syndicates sync notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Syndicates sync notice: ${(e as Error).message}`);
     }
 
     // 6. Sync Video Loops
     try {
-      const loops = db.prepare('SELECT * FROM video_loops LIMIT 500').all() as any[];
+      const loops = db.prepare('SELECT * FROM video_loops LIMIT 500').all() as unknown as SupabaseVideoLoopRecord[];
       if (loops.length > 0) {
         const payload = loops.map(l => ({
           id: l.id,
@@ -257,13 +354,13 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Video Loops sync: ${error.message}`);
         else results.syncedLoops = loops.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Video loops sync notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Video loops sync notice: ${(e as Error).message}`);
     }
 
     // 7. Sync Media Assets
     try {
-      const media = db.prepare('SELECT * FROM media_assets LIMIT 500').all() as any[];
+      const media = db.prepare('SELECT * FROM media_assets LIMIT 500').all() as unknown as SupabaseMediaAssetRecord[];
       if (media.length > 0) {
         const payload = media.map(m => ({
           id: m.id,
@@ -283,12 +380,12 @@ export async function runFullSupabaseSync(): Promise<{
         if (error) results.errors.push(`Media Assets sync: ${error.message}`);
         else results.syncedMedia = media.length;
       }
-    } catch (e: any) {
-      results.errors.push(`Media assets sync notice: ${e.message}`);
+    } catch (e) {
+      results.errors.push(`Media assets sync notice: ${(e as Error).message}`);
     }
 
-  } catch (globalErr: any) {
-    results.errors.push(`Fatal sync engine error: ${globalErr.message}`);
+  } catch (globalErr) {
+    results.errors.push(`Fatal sync engine error: ${(globalErr as Error).message}`);
   }
 
   return results;
@@ -324,20 +421,20 @@ supabaseRouter.get('/status', async (req: Request, res: Response) => {
           connected = true; // Connection handshake ok, schema check
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       latencyMs = Math.round(performance.now() - startTime);
-      statusMessage = `Connection Error: ${err.message}`;
+      statusMessage = `Connection Error: ${(err as Error).message}`;
     }
   }
 
   // Count local SQLite records
   let localStats = { users: 0, transactions: 0, commissions: 0, syndicates: 0, video_loops: 0 };
   try {
-    localStats.users = (db.prepare('SELECT COUNT(*) as count FROM users').get() as any)?.count || 0;
-    localStats.transactions = (db.prepare('SELECT COUNT(*) as count FROM transactions').get() as any)?.count || 0;
-    localStats.commissions = (db.prepare('SELECT COUNT(*) as count FROM commission_ledger').get() as any)?.count || 0;
-    localStats.syndicates = (db.prepare('SELECT COUNT(*) as count FROM syndicates').get() as any)?.count || 0;
-    localStats.video_loops = (db.prepare('SELECT COUNT(*) as count FROM video_loops').get() as any)?.count || 0;
+    localStats.users = (db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number } | undefined)?.count || 0;
+    localStats.transactions = (db.prepare('SELECT COUNT(*) as count FROM transactions').get() as { count: number } | undefined)?.count || 0;
+    localStats.commissions = (db.prepare('SELECT COUNT(*) as count FROM commission_ledger').get() as { count: number } | undefined)?.count || 0;
+    localStats.syndicates = (db.prepare('SELECT COUNT(*) as count FROM syndicates').get() as { count: number } | undefined)?.count || 0;
+    localStats.video_loops = (db.prepare('SELECT COUNT(*) as count FROM video_loops').get() as { count: number } | undefined)?.count || 0;
   } catch {}
 
   res.json({
@@ -382,8 +479,8 @@ supabaseRouter.post('/sync', authenticateToken, async (req: AuthenticatedRequest
       message: 'Dual-direction replication completed.',
       data: syncResults,
     });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (err) {
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 
@@ -400,8 +497,8 @@ supabaseRouter.get('/export-sql', (req: Request, res: Response) => {
     } else {
       res.status(404).json({ success: false, error: 'schema.sql not found.' });
     }
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (err) {
+    res.status(500).json({ success: false, error: (err as Error).message });
   }
 });
 

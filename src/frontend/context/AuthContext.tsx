@@ -20,6 +20,10 @@ const DEFAULT_SOVEREIGN_USER: User = {
   display_name: 'Sovereign Creator',
   role: 'admin',
   referral_code: 'CREATOR777',
+  referrer_user_id: null,
+  referral_count: 128,
+  streak_days: 7,
+  tier_title: 'Celestial Osmium Singularity',
   commission_balance: 14250.00,
   pending_balance: 3820.00,
   lifetime_earnings: 48920.00,
@@ -28,6 +32,7 @@ const DEFAULT_SOVEREIGN_USER: User = {
   level: 10,
   xp: 48500,
   created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
