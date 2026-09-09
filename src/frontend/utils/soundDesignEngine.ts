@@ -15,19 +15,88 @@ class SoundDesignEngine {
   private activeSoundscapeType: SoundscapeType = 'none';
   private soundscapeNodes: { oscs: OscillatorNode[]; gains: GainNode[]; intervals?: any[] } = { oscs: [], gains: [] };
   private masterSoundscapeGain: GainNode | null = null;
+  private analyser: AnalyserNode | null = null;
+  private masterGain: GainNode | null = null;
+  private freqDataArray: Uint8Array | null = null;
 
-  private getContext(): AudioContext | null {
+  public getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
+        this.analyser = this.ctx.createAnalyser();
+        this.analyser.fftSize = 128;
+        this.analyser.smoothingTimeConstant = 0.8;
+
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.setValueAtTime(1.0, this.ctx.currentTime);
+        this.masterGain.connect(this.analyser);
+        this.analyser.connect(this.ctx.destination);
+
+        this.freqDataArray = new Uint8Array(this.analyser.frequencyBinCount);
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
     return this.ctx;
+  }
+
+  public getAnalyserNode(): AnalyserNode | null {
+    this.getContext();
+    return this.analyser;
+  }
+
+  public getMasterNode(): GainNode | null {
+    this.getContext();
+    return this.masterGain;
+  }
+
+  public getFrequencyData(): { low: number; mid: number; high: number; avg: number; raw: Uint8Array } {
+    const ctx = this.getContext();
+    if (!ctx || !this.analyser || !this.freqDataArray) {
+      return { low: 0, mid: 0, high: 0, avg: 0, raw: new Uint8Array(0) };
+    }
+
+    this.analyser.getByteFrequencyData(this.freqDataArray);
+    const len = this.freqDataArray.length;
+    if (len === 0) return { low: 0, mid: 0, high: 0, avg: 0, raw: this.freqDataArray };
+
+    let sumLow = 0;
+    let countLow = 0;
+    let sumMid = 0;
+    let countMid = 0;
+    let sumHigh = 0;
+    let countHigh = 0;
+    let sumAll = 0;
+
+    const lowBinEnd = Math.floor(len * 0.25);
+    const midBinEnd = Math.floor(len * 0.65);
+
+    for (let i = 0; i < len; i++) {
+      const val = this.freqDataArray[i] / 255.0;
+      sumAll += val;
+
+      if (i < lowBinEnd) {
+        sumLow += val;
+        countLow++;
+      } else if (i < midBinEnd) {
+        sumMid += val;
+        countMid++;
+      } else {
+        sumHigh += val;
+        countHigh++;
+      }
+    }
+
+    return {
+      low: countLow > 0 ? sumLow / countLow : 0,
+      mid: countMid > 0 ? sumMid / countMid : 0,
+      high: countHigh > 0 ? sumHigh / countHigh : 0,
+      avg: len > 0 ? sumAll / len : 0,
+      raw: this.freqDataArray,
+    };
   }
 
   /**
@@ -46,7 +115,11 @@ class SoundDesignEngine {
       this.masterSoundscapeGain = ctx.createGain();
       this.masterSoundscapeGain.gain.setValueAtTime(0.0001, ctx.currentTime);
       this.masterSoundscapeGain.gain.exponentialRampToValueAtTime(targetGain, ctx.currentTime + 1.2);
-      this.masterSoundscapeGain.connect(ctx.destination);
+      if (this.masterGain) {
+        this.masterSoundscapeGain.connect(this.masterGain);
+      } else {
+        this.masterSoundscapeGain.connect(ctx.destination);
+      }
 
       if (type === 'vault_hum') {
         // 48Hz Sub-Bass + Low-pass Clockwork
@@ -227,7 +300,8 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      const outputNode = this.masterGain || ctx.destination;
+      gain.connect(outputNode);
       osc.start();
       osc.stop(ctx.currentTime + 0.8);
     } else if (type === 'chamber_reveal') {

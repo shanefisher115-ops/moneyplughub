@@ -4,6 +4,7 @@ import { useLivingRealm } from '../context/LivingRealmContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { PointPackButton } from '../components/PointPackButton';
 import { NiagaraParticleCanvas } from '../components/NiagaraParticleCanvas';
+import { SigilThreeShaderCanvas } from '../components/SigilThreeShaderCanvas';
 import { forgeAudio } from '../utils/forgeAudio';
 import { 
   Compass, Sparkles, Shield, Trophy, Zap, 
@@ -470,6 +471,9 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
   const [embedCopied, setEmbedCopied] = useState<boolean>(false);
   const [isExportingPng, setIsExportingPng] = useState<boolean>(false);
   const [isExportingStoryCard, setIsExportingStoryCard] = useState<boolean>(false);
+
+  // Viewport Render Mode (2D Vector vs Interactive Three.js WebGL Shader)
+  const [viewportMode, setViewportMode] = useState<'vector_2d' | 'three_shader'>('three_shader');
 
   // 3D Tilt Parallax State
   const cardRef = useRef<HTMLDivElement>(null);
@@ -1215,20 +1219,53 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 }}
               />
 
-              {/* HUD Calibration Header */}
-              <div className="flex items-center justify-between relative z-10 text-[10px] font-mono text-slate-400">
+              {/* HUD Calibration Header & Viewport Switcher */}
+              <div className="flex items-center justify-between relative z-10 text-[10px] font-mono text-slate-400 mb-1">
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   CRYPTOGRAPHIC_MATRIX
                 </span>
-                <span className="text-slate-500">
-                  X:{(tilt?.x ?? 0).toFixed(1)}° Y:{(tilt?.y ?? 0).toFixed(1)}°
-                </span>
+
+                {/* 2D Vector / Three.js Shader Mode Switcher */}
+                <div className="flex items-center gap-1 bg-slate-950/80 border border-slate-800 p-0.5 rounded-lg text-[9px] font-mono font-bold">
+                  <button
+                    onClick={() => setViewportMode('three_shader')}
+                    className={`px-2 py-0.5 rounded ${
+                      viewportMode === 'three_shader'
+                        ? 'bg-purple-600 text-white shadow'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    3D SHADER
+                  </button>
+                  <button
+                    onClick={() => setViewportMode('vector_2d')}
+                    className={`px-2 py-0.5 rounded ${
+                      viewportMode === 'vector_2d'
+                        ? 'bg-purple-600 text-white shadow'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    2D VECTOR
+                  </button>
+                </div>
               </div>
 
-              {/* Central Vector Emblem */}
+              {/* Viewport Content: Interactive 3D Three.js WebGL Shader OR 2D Vector */}
               <div className="relative w-full h-[calc(100%-28px)] flex items-center justify-center z-10">
-                {!sigilSvgDataUri && loadingSigil ? (
+                {viewportMode === 'three_shader' ? (
+                  <SigilThreeShaderCanvas
+                    glowColor={activeGlowColor}
+                    rotationSpeed={rotationSpeed}
+                    glowMode={glowMode}
+                    hueShift={hueShift}
+                    triggerBurst={particleBurst}
+                    activeAtmosphere={selectedAtmosphere}
+                    activeSolfeggioHz={activeSolfeggioHz}
+                    sigilSvgDataUri={sigilSvgDataUri}
+                    motto={customMotto}
+                  />
+                ) : !sigilSvgDataUri && loadingSigil ? (
                   <div className="flex flex-col items-center gap-3">
                     <Loader2 className="w-10 h-10 text-plug-accent animate-spin" />
                     <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
