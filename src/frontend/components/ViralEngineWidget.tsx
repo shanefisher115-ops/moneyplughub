@@ -19,8 +19,8 @@ export const ViralEngineWidget: React.FC<{ onNavigate?: (tab: string) => void }>
   const [copiedCardUrl, setCopiedCardUrl] = useState(false);
 
   const referralCode = user?.referral_code || 'FOUNDER-PLUG';
-  const shareCardUrl = `${window.location.origin}/api/growth/share-card/${referralCode}`;
-  const shareCardSvgUrl = `${window.location.origin}/api/growth/share-card/${referralCode}?format=svg&t=${Date.now()}`;
+  const shareCardUrl = `${window.location.origin}/api/og/${referralCode}`;
+  const shareCardSvgUrl = `${window.location.origin}/api/og/${referralCode}?format=svg&t=${Date.now()}`;
 
   const fetchTelemetry = async () => {
     if (!token) return;

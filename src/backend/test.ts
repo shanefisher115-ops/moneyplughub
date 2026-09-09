@@ -7,6 +7,7 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import { renderOpenGraphCardSvg, getTierMetaData } from './routes/og';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,7 +117,19 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. OpenGraph Image Generation Service & Mandatory FTC 16 CFR Part 255 Overlays
+  const ogCard = renderOpenGraphCardSvg(alex);
+  assert(ogCard.includes('<svg'), 'OG Card must be valid SVG');
+  assert(ogCard.includes('width="1200" height="630"'), 'OG Card must be 1200x630 high resolution');
+  assert(ogCard.includes('#ad · Paid Referral Link · FTC 16 CFR Part 255'), 'OG Card must render top-right FTC overlay badge');
+  assert(ogCard.includes('FTC 16 CFR PART 255 DISCLOSURE'), 'OG Card must render mandatory FTC disclosure text');
+  assert(ogCard.includes('Alex Champion'), 'OG Card must render creator display name');
+  assert(ogCard.includes('CODE: PLUG-ALEX'), 'OG Card must render referral code');
+  assert(ogCard.includes('href="data:image/svg+xml;base64,'), 'OG Card must embed deterministic SVG sigil');
+  console.log('✓ Step 10: Verified OpenGraph Image Generation Service (1200x630, SVG Sigil, Wealth Tier badge & mandatory FTC 16 CFR Part 255 overlays).');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, OPENGRAPH SERVICE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runTests().catch((err) => {

@@ -336,13 +336,13 @@ export const GenerateDashboardPage: React.FC = () => {
                   🖼️ Viral Achievement Card
                 </span>
                 <a
-                  href={`/api/growth/share-card/${referralCode}`}
+                  href={`/api/og/${referralCode}`}
                   target="_blank"
                   rel="noreferrer"
                   className="block group relative rounded-xl overflow-hidden border border-slate-800 hover:border-plug-accent transition-all"
                 >
                   <img
-                    src={`/api/growth/share-card/${referralCode}`}
+                    src={`/api/og/${referralCode}`}
                     alt="Share Card"
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform"
                   />
