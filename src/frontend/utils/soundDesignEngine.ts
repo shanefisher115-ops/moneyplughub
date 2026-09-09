@@ -15,6 +15,8 @@ class SoundDesignEngine {
   private activeSoundscapeType: SoundscapeType = 'none';
   private soundscapeNodes: { oscs: OscillatorNode[]; gains: GainNode[]; intervals?: any[] } = { oscs: [], gains: [] };
   private masterSoundscapeGain: GainNode | null = null;
+  private analyser: AnalyserNode | null = null;
+  private freqDataArray: Uint8Array | null = null;
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -22,12 +24,77 @@ class SoundDesignEngine {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
+        this.setupAnalyser();
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
     return this.ctx;
+  }
+
+  private setupAnalyser() {
+    if (!this.ctx) return;
+    try {
+      this.analyser = this.ctx.createAnalyser();
+      this.analyser.fftSize = 128;
+      this.analyser.smoothingTimeConstant = 0.8;
+      this.analyser.connect(this.ctx.destination);
+      this.freqDataArray = new Uint8Array(this.analyser.frequencyBinCount);
+    } catch (e) {
+      console.warn('Analyser setup error:', e);
+    }
+  }
+
+  private connectToOutput(node: AudioNode) {
+    if (this.analyser) {
+      node.connect(this.analyser);
+    } else if (this.ctx) {
+      node.connect(this.ctx.destination);
+    }
+  }
+
+  public getFrequencyData(): Uint8Array {
+    if (this.analyser && this.freqDataArray) {
+      this.analyser.getByteFrequencyData(this.freqDataArray);
+      return this.freqDataArray;
+    }
+    return new Uint8Array(64);
+  }
+
+  public getAudioMetrics(): { bass: number; mid: number; treble: number; overall: number } {
+    const data = this.getFrequencyData();
+    if (!data || data.length === 0) {
+      return { bass: 0, mid: 0, treble: 0, overall: 0 };
+    }
+
+    const len = data.length;
+    const bassBins = Math.floor(len * 0.2);
+    const midBins = Math.floor(len * 0.6);
+
+    let bassSum = 0;
+    let midSum = 0;
+    let trebleSum = 0;
+    let totalSum = 0;
+
+    for (let i = 0; i < len; i++) {
+      const val = data[i] / 255;
+      totalSum += val;
+      if (i < bassBins) {
+        bassSum += val;
+      } else if (i < midBins) {
+        midSum += val;
+      } else {
+        trebleSum += val;
+      }
+    }
+
+    return {
+      bass: bassSum / (bassBins || 1),
+      mid: midSum / ((midBins - bassBins) || 1),
+      treble: trebleSum / ((len - midBins) || 1),
+      overall: totalSum / len,
+    };
   }
 
   /**
@@ -46,7 +113,7 @@ class SoundDesignEngine {
       this.masterSoundscapeGain = ctx.createGain();
       this.masterSoundscapeGain.gain.setValueAtTime(0.0001, ctx.currentTime);
       this.masterSoundscapeGain.gain.exponentialRampToValueAtTime(targetGain, ctx.currentTime + 1.2);
-      this.masterSoundscapeGain.connect(ctx.destination);
+      this.connectToOutput(this.masterSoundscapeGain);
 
       if (type === 'vault_hum') {
         // 48Hz Sub-Bass + Low-pass Clockwork
@@ -227,7 +294,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      this.connectToOutput(gain);
       osc.start();
       osc.stop(ctx.currentTime + 0.8);
     } else if (type === 'chamber_reveal') {
@@ -238,7 +305,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.22, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.4);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      this.connectToOutput(gain);
       osc.start();
       osc.stop(ctx.currentTime + 1.4);
     } else if (type === 'ascension') {
@@ -249,7 +316,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      this.connectToOutput(gain);
       osc.start();
       osc.stop(ctx.currentTime + 1.2);
     } else if (type === 'chime') {
@@ -259,7 +326,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      this.connectToOutput(gain);
       osc.start();
       osc.stop(ctx.currentTime + 0.4);
     } else if (type === 'supernova') {
@@ -269,7 +336,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.25, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      this.connectToOutput(gain);
       osc.start();
       osc.stop(ctx.currentTime + 1.2);
     }

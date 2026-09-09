@@ -4,7 +4,9 @@ import { useLivingRealm } from '../context/LivingRealmContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { PointPackButton } from '../components/PointPackButton';
 import { NiagaraParticleCanvas } from '../components/NiagaraParticleCanvas';
+import { SigilForgeThreeCanvas } from '../components/SigilForgeThreeCanvas';
 import { forgeAudio } from '../utils/forgeAudio';
+import soundDesign, { SoundscapeType } from '../utils/soundDesignEngine';
 import { 
   Compass, Sparkles, Shield, Trophy, Zap, 
   RotateCw, Eye, Check, ShoppingBag, Lock, Crown, Award, 
@@ -443,6 +445,8 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
   const [rotationSpeed, setRotationSpeed] = useState<'off' | 'slow' | 'normal' | 'warp'>('normal');
   const [glowMode, setGlowMode] = useState<'subtle' | 'normal' | 'supernova'>('normal');
   const [particleBurst, setParticleBurst] = useState<boolean>(false);
+  const [viewportMode, setViewportMode] = useState<'three' | 'vector'>('three');
+  const [activeSoundscape, setActiveSoundscape] = useState<SoundscapeType>('sigil_shimmer');
   const [isAudioMuted, setIsAudioMuted] = useState<boolean>(forgeAudio.getMuted());
   const [selectedArchetype, setSelectedArchetype] = useState<string | null>('novice_origin');
   const [lockedNotice, setLockedNotice] = useState<string | null>(null);
@@ -555,10 +559,23 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
     setTilt({ x: 0, y: 0 });
   };
 
+  // ── Soundscape Lifecycle ──────────────────────────────────────────────
+  useEffect(() => {
+    if (isAudioMuted) {
+      soundDesign.stopSoundscape();
+    } else {
+      soundDesign.setSoundscape(activeSoundscape, 0.04);
+    }
+    return () => {
+      soundDesign.stopSoundscape();
+    };
+  }, [activeSoundscape, isAudioMuted]);
+
   // ── Sound & Audio Triggers ────────────────────────────────────────────
   const triggerShockwave = () => {
     setParticleBurst(true);
     forgeAudio.playLaserPulse();
+    soundDesign.playEffect('sigil_glow');
     setTimeout(() => setParticleBurst(false), 800);
   };
 
@@ -950,6 +967,38 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
 
           {/* Quick HUD Controls */}
           <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap">
+            {/* Viewport Render Mode Switcher (Three.js WebGL Shader vs 2D Vector) */}
+            <div className="flex items-center p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono">
+              <button
+                onClick={() => {
+                  setViewportMode('three');
+                  forgeAudio.playTick(1000);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition-all font-bold flex items-center gap-1.5 ${
+                  viewportMode === 'three'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                3D Shader WebGL
+              </button>
+              <button
+                onClick={() => {
+                  setViewportMode('vector');
+                  forgeAudio.playTick(800);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition-all font-bold flex items-center gap-1.5 ${
+                  viewportMode === 'vector'
+                    ? 'bg-slate-800 text-white shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Code className="w-3.5 h-3.5 text-cyan-400" />
+                2D Vector SVG
+              </button>
+            </div>
+
             {/* Audio Toggle */}
             <button
               onClick={() => {
@@ -966,7 +1015,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
               {!isAudioMuted ? (
                 <>
                   <Volume2 className="w-4 h-4 text-purple-400 animate-pulse" />
-                  <span className="hidden sm:inline">528Hz ON</span>
+                  <span className="hidden sm:inline">AUDIO ON</span>
                 </>
               ) : (
                 <>
@@ -1226,9 +1275,28 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 </span>
               </div>
 
-              {/* Central Vector Emblem */}
+              {/* Central Viewport Render: Three.js WebGL Shader Canvas vs 2D Vector */}
               <div className="relative w-full h-[calc(100%-28px)] flex items-center justify-center z-10">
-                {!sigilSvgDataUri && loadingSigil ? (
+                {viewportMode === 'three' ? (
+                  <SigilForgeThreeCanvas
+                    auraColor={activeGlowColor}
+                    selectedAura={selectedAura}
+                    selectedGlyph={selectedGlyph}
+                    selectedRing={selectedRing}
+                    selectedCrest={selectedCrest}
+                    selectedAtmosphere={selectedAtmosphere}
+                    monogram={customMonogram}
+                    motto={customMotto}
+                    rotationSpeed={rotationSpeed}
+                    glowMode={glowMode}
+                    hueShift={hueShift}
+                    triggerBurst={particleBurst}
+                    chromaticAberration={chromaticAberration}
+                    particleDensity={particleDensity}
+                    orbitSpeedFactor={orbitSpeedFactor}
+                    onCanvasClick={() => triggerShockwave()}
+                  />
+                ) : !sigilSvgDataUri && loadingSigil ? (
                   <div className="flex flex-col items-center gap-3">
                     <Loader2 className="w-10 h-10 text-plug-accent animate-spin" />
                     <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
@@ -1333,36 +1401,38 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 </div>
               </div>
 
-              {/* Solfeggio Harmonic Resonance Synth Matrix */}
-              <div className="pt-2 border-t border-slate-800/80">
-                <div className="flex items-center justify-between mb-1.5">
+              {/* Contextual Soundscape & Solfeggio Web Audio Selector */}
+              <div className="pt-2 border-t border-slate-800/80 space-y-2">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
-                    <Music className="w-3.5 h-3.5 text-purple-400" />
-                    Solfeggio Resonance Synth
+                    <Radio className="w-3.5 h-3.5 text-purple-400" />
+                    soundDesign Engine Soundscape
                   </span>
-                  <span className="text-[10px] font-mono text-purple-400">
-                    {activeSolfeggioHz ? `🎵 ${activeSolfeggioHz} Hz ACTIVE` : '4-HARMONICS'}
+                  <span className="text-[10px] font-mono text-purple-400 font-bold uppercase">
+                    {activeSoundscape}
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-1.5 font-mono text-[10px]">
                   {[
-                    { hz: 432, label: '432 Hz', desc: 'Cosmic Flow' },
-                    { hz: 528, label: '528 Hz', desc: 'Miracles' },
-                    { hz: 639, label: '639 Hz', desc: 'Attraction' },
-                    { hz: 963, label: '963 Hz', desc: 'Ascension' },
-                  ].map((s) => (
+                    { id: 'sigil_shimmer', label: '✨ Shimmer' },
+                    { id: 'cyber_pulse', label: '⚡ Cyber' },
+                    { id: 'harmonic_drone', label: '🌌 Drone' },
+                    { id: 'vault_hum', label: '🛡️ Vault' },
+                  ].map((sc) => (
                     <button
-                      key={s.hz}
-                      onClick={() => handlePlaySolfeggio(s.hz)}
-                      className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer ${
-                        activeSolfeggioHz === s.hz
-                          ? 'bg-purple-600 text-white border-purple-400 shadow-lg shadow-purple-500/25 font-bold animate-pulse'
-                          : 'bg-slate-950/70 hover:bg-slate-800 border-slate-800 text-slate-300'
+                      key={sc.id}
+                      onClick={() => {
+                        setActiveSoundscape(sc.id as SoundscapeType);
+                        if (isAudioMuted) setIsAudioMuted(false);
+                        forgeAudio.playTick(1100);
+                      }}
+                      className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer font-bold ${
+                        activeSoundscape === sc.id && !isAudioMuted
+                          ? 'bg-purple-600 text-white border-purple-400 shadow-lg shadow-purple-500/25 animate-pulse'
+                          : 'bg-slate-950/70 hover:bg-slate-800 border-slate-800 text-slate-400'
                       }`}
-                      title={`Play pure ${s.hz} Hz tone (${s.desc})`}
                     >
-                      <div className="font-bold">{s.label}</div>
-                      <div className="text-[8px] text-slate-500 truncate">{s.desc}</div>
+                      {sc.label}
                     </button>
                   ))}
                 </div>
