@@ -8,6 +8,76 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 const router = Router();
 
 // ═══════════════════════════════════════════════════════════════════
+//  GEO-PRICING & PURCHASING POWER PARITY (PPP) REGISTRY & DETECTOR
+// ═══════════════════════════════════════════════════════════════════
+
+export interface CountryPPP {
+  country_code: string;
+  country_name: string;
+  currency_code: string;
+  currency_symbol: string;
+  exchange_rate: number;
+  ppp_factor: number;
+  ppp_discount_percent: number;
+  region: string;
+}
+
+export const COUNTRY_PPP_REGISTRY: Record<string, CountryPPP> = {
+  US: { country_code: 'US', country_name: 'United States', currency_code: 'USD', currency_symbol: '$', exchange_rate: 1.0, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'North America' },
+  CA: { country_code: 'CA', country_name: 'Canada', currency_code: 'CAD', currency_symbol: 'CA$', exchange_rate: 1.36, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'North America' },
+  GB: { country_code: 'GB', country_name: 'United Kingdom', currency_code: 'GBP', currency_symbol: '£', exchange_rate: 0.79, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'Europe' },
+  DE: { country_code: 'DE', country_name: 'Germany', currency_code: 'EUR', currency_symbol: '€', exchange_rate: 0.92, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'Europe' },
+  FR: { country_code: 'FR', country_name: 'France', currency_code: 'EUR', currency_symbol: '€', exchange_rate: 0.92, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'Europe' },
+  AU: { country_code: 'AU', country_name: 'Australia', currency_code: 'AUD', currency_symbol: 'A$', exchange_rate: 1.52, ppp_factor: 1.0, ppp_discount_percent: 0, region: 'Oceania' },
+  JP: { country_code: 'JP', country_name: 'Japan', currency_code: 'JPY', currency_symbol: '¥', exchange_rate: 155.0, ppp_factor: 0.80, ppp_discount_percent: 20, region: 'Asia-Pacific' },
+  IN: { country_code: 'IN', country_name: 'India', currency_code: 'INR', currency_symbol: '₹', exchange_rate: 83.0, ppp_factor: 0.40, ppp_discount_percent: 60, region: 'South Asia' },
+  BR: { country_code: 'BR', country_name: 'Brazil', currency_code: 'BRL', currency_symbol: 'R$', exchange_rate: 5.0, ppp_factor: 0.50, ppp_discount_percent: 50, region: 'Latin America' },
+  MX: { country_code: 'MX', country_name: 'Mexico', currency_code: 'MXN', currency_symbol: 'Mex$', exchange_rate: 17.0, ppp_factor: 0.60, ppp_discount_percent: 40, region: 'Latin America' },
+  NG: { country_code: 'NG', country_name: 'Nigeria', currency_code: 'NGN', currency_symbol: '₦', exchange_rate: 1400.0, ppp_factor: 0.35, ppp_discount_percent: 65, region: 'Africa' },
+  ID: { country_code: 'ID', country_name: 'Indonesia', currency_code: 'IDR', currency_symbol: 'Rp', exchange_rate: 15800.0, ppp_factor: 0.45, ppp_discount_percent: 55, region: 'Asia-Pacific' },
+  PK: { country_code: 'PK', country_name: 'Pakistan', currency_code: 'PKR', currency_symbol: '₨', exchange_rate: 278.0, ppp_factor: 0.35, ppp_discount_percent: 65, region: 'South Asia' },
+  PH: { country_code: 'PH', country_name: 'Philippines', currency_code: 'PHP', currency_symbol: '₱', exchange_rate: 57.0, ppp_factor: 0.45, ppp_discount_percent: 55, region: 'Asia-Pacific' },
+  VN: { country_code: 'VN', country_name: 'Vietnam', currency_code: 'VND', currency_symbol: '₫', exchange_rate: 24800.0, ppp_factor: 0.40, ppp_discount_percent: 60, region: 'Asia-Pacific' },
+  ZA: { country_code: 'ZA', country_name: 'South Africa', currency_code: 'ZAR', currency_symbol: 'R', exchange_rate: 18.5, ppp_factor: 0.55, ppp_discount_percent: 45, region: 'Africa' },
+  KE: { country_code: 'KE', country_name: 'Kenya', currency_code: 'KES', currency_symbol: 'KSh', exchange_rate: 130.0, ppp_factor: 0.40, ppp_discount_percent: 60, region: 'Africa' },
+  TR: { country_code: 'TR', country_name: 'Turkey', currency_code: 'TRY', currency_symbol: '₺', exchange_rate: 32.0, ppp_factor: 0.45, ppp_discount_percent: 55, region: 'Europe/Asia' },
+  BD: { country_code: 'BD', country_name: 'Bangladesh', currency_code: 'BDT', currency_symbol: '৳', exchange_rate: 117.0, ppp_factor: 0.35, ppp_discount_percent: 65, region: 'South Asia' },
+  EG: { country_code: 'EG', country_name: 'Egypt', currency_code: 'EGP', currency_symbol: 'E£', exchange_rate: 47.0, ppp_factor: 0.40, ppp_discount_percent: 60, region: 'Middle East' },
+  AR: { country_code: 'AR', country_name: 'Argentina', currency_code: 'ARS', currency_symbol: 'ARS$', exchange_rate: 890.0, ppp_factor: 0.35, ppp_discount_percent: 65, region: 'Latin America' },
+  CO: { country_code: 'CO', country_name: 'Colombia', currency_code: 'COP', currency_symbol: 'COL$', exchange_rate: 3850.0, ppp_factor: 0.50, ppp_discount_percent: 50, region: 'Latin America' },
+  TH: { country_code: 'TH', country_name: 'Thailand', currency_code: 'THB', currency_symbol: '฿', exchange_rate: 36.5, ppp_factor: 0.55, ppp_discount_percent: 45, region: 'Asia-Pacific' },
+  MY: { country_code: 'MY', country_name: 'Malaysia', currency_code: 'MYR', currency_symbol: 'RM', exchange_rate: 4.7, ppp_factor: 0.60, ppp_discount_percent: 40, region: 'Asia-Pacific' },
+};
+
+export function detectUserCountry(req: Request): { country_code: string; ip: string; detected_via: string } {
+  const queryCountry = (req.query.country || req.query.country_code || '').toString().toUpperCase();
+  if (queryCountry && COUNTRY_PPP_REGISTRY[queryCountry]) {
+    return { country_code: queryCountry, ip: (req.query.ip || 'override').toString(), detected_via: 'query_override' };
+  }
+
+  const cfCountry = req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || req.headers['x-appengine-country'] || req.headers['x-country-code'];
+  if (cfCountry && typeof cfCountry === 'string' && COUNTRY_PPP_REGISTRY[cfCountry.toUpperCase()]) {
+    return { country_code: cfCountry.toUpperCase(), ip: String(req.headers['x-forwarded-for'] || req.ip || '127.0.0.1'), detected_via: 'edge_header' };
+  }
+
+  const rawIp = (req.headers['x-forwarded-for'] as string || req.headers['x-real-ip'] as string || req.ip || '127.0.0.1').split(',')[0].trim();
+
+  if (rawIp.startsWith('103.') || rawIp.startsWith('115.')) return { country_code: 'IN', ip: rawIp, detected_via: 'ip_lookup' };
+  if (rawIp.startsWith('177.') || rawIp.startsWith('191.')) return { country_code: 'BR', ip: rawIp, detected_via: 'ip_lookup' };
+  if (rawIp.startsWith('197.') || rawIp.startsWith('102.')) return { country_code: 'NG', ip: rawIp, detected_via: 'ip_lookup' };
+  if (rawIp.startsWith('82.') || rawIp.startsWith('86.')) return { country_code: 'GB', ip: rawIp, detected_via: 'ip_lookup' };
+  if (rawIp.startsWith('133.') || rawIp.startsWith('150.')) return { country_code: 'JP', ip: rawIp, detected_via: 'ip_lookup' };
+
+  return { country_code: 'US', ip: rawIp, detected_via: 'default' };
+}
+
+export function formatCurrencyAmount(amount: number, currencyCode: string, symbol: string): string {
+  if (amount === 0) return `${symbol}0`;
+  const formattedNum = Math.round(amount).toLocaleString('en-US');
+  return `${symbol}${formattedNum}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
 //  BILLING ENGINE — Creator Money OS
 //  Self-hosted subscription management, invoicing, promo codes,
 //  trial logic, and upgrade/downgrade flows.
@@ -148,6 +218,100 @@ try {
 
 
 // ═══════════════════════════════════════════════════════════════════
+//  0. GEO-PRICING & PPP — Public
+//     GET /api/billing/geo-pricing
+// ═══════════════════════════════════════════════════════════════════
+
+router.get('/geo-pricing', (req: Request, res: Response) => {
+  try {
+    const loc = detectUserCountry(req);
+    const country = COUNTRY_PPP_REGISTRY[loc.country_code] || COUNTRY_PPP_REGISTRY['US'];
+
+    const plans = db.prepare(
+      'SELECT * FROM billing_plans WHERE is_active = 1 ORDER BY sort_order ASC'
+    ).all() as any[];
+
+    const supportedCountries = Object.values(COUNTRY_PPP_REGISTRY).map(c => ({
+      country_code: c.country_code,
+      country_name: c.country_name,
+      currency_code: c.currency_code,
+      currency_symbol: c.currency_symbol,
+      ppp_discount_percent: c.ppp_discount_percent,
+      region: c.region,
+    })).sort((a, b) => a.country_name.localeCompare(b.country_name));
+
+    const localizedPlans = plans.map(p => {
+      const baseMonthlyUsd = p.price_cents_monthly / 100;
+      const baseAnnualUsd = p.price_cents_annual / 100;
+
+      const origMonthlyLocal = baseMonthlyUsd * country.exchange_rate;
+      const pppMonthlyLocal = origMonthlyLocal * country.ppp_factor;
+
+      const origAnnualLocal = baseAnnualUsd * country.exchange_rate;
+      const pppAnnualLocal = origAnnualLocal * country.ppp_factor;
+
+      return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        features: JSON.parse(p.features_json || '[]'),
+        price_cents_monthly_usd: p.price_cents_monthly,
+        price_cents_annual_usd: p.price_cents_annual,
+        local_currency: country.currency_code,
+        local_symbol: country.currency_symbol,
+
+        // Monthly local amounts
+        original_local_monthly: Math.round(origMonthlyLocal),
+        original_local_monthly_formatted: formatCurrencyAmount(origMonthlyLocal, country.currency_code, country.currency_symbol),
+        ppp_local_monthly: Math.round(pppMonthlyLocal),
+        ppp_local_monthly_formatted: formatCurrencyAmount(pppMonthlyLocal, country.currency_code, country.currency_symbol),
+
+        // Annual local amounts
+        original_local_annual: Math.round(origAnnualLocal),
+        original_local_annual_formatted: formatCurrencyAmount(origAnnualLocal, country.currency_code, country.currency_symbol),
+        ppp_local_annual: Math.round(pppAnnualLocal),
+        ppp_local_annual_formatted: formatCurrencyAmount(pppAnnualLocal, country.currency_code, country.currency_symbol),
+        ppp_local_annual_monthly_formatted: formatCurrencyAmount(pppAnnualLocal / 12, country.currency_code, country.currency_symbol),
+
+        ppp_discount_percent: country.ppp_discount_percent,
+      };
+    });
+
+    const hasDiscount = country.ppp_discount_percent > 0;
+    const bannerMessage = hasDiscount
+      ? `We detected you are in ${country.country_name}! An automatic ${country.ppp_discount_percent}% Purchasing Power Parity (PPP) discount has been applied to all plans.`
+      : `Pricing displayed in ${country.country_name} currency (${country.currency_code}).`;
+
+    res.json({
+      success: true,
+      location: {
+        ip: loc.ip,
+        country_code: country.country_code,
+        country_name: country.country_name,
+        detected_via: loc.detected_via,
+      },
+      currency: {
+        code: country.currency_code,
+        symbol: country.currency_symbol,
+        exchange_rate: country.exchange_rate,
+      },
+      ppp: {
+        has_discount: hasDiscount,
+        ppp_factor: country.ppp_factor,
+        discount_percent: country.ppp_discount_percent,
+        banner_message: bannerMessage,
+      },
+      supported_countries: supportedCountries,
+      plans: localizedPlans,
+    });
+  } catch (err: any) {
+    console.error('Error in geo-pricing route:', err);
+    res.status(500).json({ success: false, error: 'GEO_PRICING_ERROR', message: err.message });
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════════════
 //  1. PLANS — Public
 //     GET /api/billing/plans
 // ═══════════════════════════════════════════════════════════════════
@@ -181,10 +345,19 @@ router.get('/plans', (_req: Request, res: Response) => {
 
 router.post('/subscribe', (req: Request, res: Response) => {
   try {
-    const { planId = 'creator-monthly', plan_id, promoCode = '', promo_code } = req.body || {};
+    const {
+      planId = 'creator-monthly', plan_id,
+      promoCode = '', promo_code,
+      countryCode, country_code
+    } = req.body || {};
+
     const effectivePlan = planId || plan_id || 'creator-monthly';
     const rawPromo = promoCode || promo_code || '';
     const cleanPromo = rawPromo.trim().toUpperCase();
+
+    const targetCountryCode = (countryCode || country_code || '').toString().toUpperCase();
+    const detected = detectUserCountry(req);
+    const country = COUNTRY_PPP_REGISTRY[targetCountryCode] || COUNTRY_PPP_REGISTRY[detected.country_code] || COUNTRY_PPP_REGISTRY['US'];
 
     let userId = (req as any).user?.id;
     if (!userId) {
@@ -208,33 +381,38 @@ router.post('/subscribe', (req: Request, res: Response) => {
       return;
     }
 
-    let basePrice = 29.00;
+    let basePriceUsd = 29.00;
     let targetTier = 'CREATOR';
     let newTierTitle = 'Creator Plug';
     const planLower = effectivePlan.toLowerCase();
 
     if (planLower.includes('enterprise')) {
-      basePrice = 499.00;
+      basePriceUsd = 499.00;
       targetTier = 'ENTERPRISE';
       newTierTitle = 'Enterprise Sovereign';
     } else if (planLower.includes('pro')) {
-      basePrice = 149.00;
+      basePriceUsd = 149.00;
       targetTier = 'PRO';
       newTierTitle = 'Pro Master';
     } else if (planLower.includes('creator')) {
-      basePrice = 29.00;
+      basePriceUsd = 29.00;
       targetTier = 'CREATOR';
       newTierTitle = 'Creator Plug';
     }
 
-    let finalPrice = basePrice;
+    let finalPriceUsd = basePriceUsd;
     if (cleanPromo === 'FOUNDING50') {
-      finalPrice = 0.00;
+      finalPriceUsd = 0.00;
     } else if (cleanPromo === 'VIPCREATOR') {
-      finalPrice = basePrice * 0.5;
+      finalPriceUsd = basePriceUsd * 0.5;
     } else if (cleanPromo === 'EARLYBIRD') {
-      finalPrice = basePrice * 0.8;
+      finalPriceUsd = basePriceUsd * 0.8;
+    } else if (country && country.ppp_factor < 1.0) {
+      finalPriceUsd = basePriceUsd * country.ppp_factor;
     }
+
+    const finalLocalPrice = finalPriceUsd * country.exchange_rate;
+    const formattedPrice = formatCurrencyAmount(finalLocalPrice, country.currency_code, country.currency_symbol);
 
     const now = new Date().toISOString();
     const subscriptionId = `sub_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
@@ -264,9 +442,11 @@ router.post('/subscribe', (req: Request, res: Response) => {
           db.prepare(`
             INSERT INTO subscriptions (id, userId, planId, price, promoCode, createdAt)
             VALUES (?, ?, ?, ?, ?, ?)
-          `).run(subscriptionId, userId, effectivePlan, finalPrice, cleanPromo || null, now);
+          `).run(subscriptionId, userId, effectivePlan, finalPriceUsd, cleanPromo || null, now);
         } catch (e2) {}
       }
+
+      const pppNote = country.ppp_discount_percent > 0 ? ` (PPP ${country.ppp_discount_percent}% off, ${country.country_name})` : '';
 
       try {
         db.prepare(`
@@ -275,8 +455,8 @@ router.post('/subscribe', (req: Request, res: Response) => {
         `).run(
           transactionId,
           userId,
-          Math.round(finalPrice * 100),
-          `Creator Money OS Subscription (${effectivePlan}) — Promo: ${cleanPromo || 'NONE'}`,
+          Math.round(finalPriceUsd * 100),
+          `Creator Money OS Subscription (${effectivePlan})${pppNote} — Promo: ${cleanPromo || 'NONE'} [${formattedPrice}]`,
           now.substring(0, 10),
           now
         );
@@ -288,8 +468,8 @@ router.post('/subscribe', (req: Request, res: Response) => {
           `).run(
             transactionId,
             userId,
-            finalPrice,
-            `Creator Money OS Subscription (${effectivePlan}) — Promo: ${cleanPromo || 'NONE'}`,
+            finalPriceUsd,
+            `Creator Money OS Subscription (${effectivePlan})${pppNote} — Promo: ${cleanPromo || 'NONE'} [${formattedPrice}]`,
             now
           );
         } catch (t2) {}
@@ -301,7 +481,12 @@ router.post('/subscribe', (req: Request, res: Response) => {
       success: true,
       tier: targetTier,
       subscriptionActive: true,
-      pricePaid: finalPrice,
+      pricePaidUsd: finalPriceUsd,
+      pricePaidLocal: Math.round(finalLocalPrice),
+      formattedPrice,
+      currency: country.currency_code,
+      country: country.country_name,
+      pppDiscountPercent: country.ppp_discount_percent,
       subscriptionId,
     });
   } catch (error: any) {
