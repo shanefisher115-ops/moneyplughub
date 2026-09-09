@@ -7,6 +7,7 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
+import { runAntiFraudTests } from './test_referral_anti_fraud';
 
 async function runTests() {
   console.log('🧪 Starting Plug In OS v5.0 — Sellable AI Orchestrator & Command Center Test Suite...\n');
@@ -116,10 +117,15 @@ async function runTests() {
   testServer.close();
   console.log('✓ Step 9: Verified Voice Engine v4 (10 base personas, 5 fusions, 8 overlays, WebSocket frame manager & barge-in).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+  // 10. Anti-Fraud Security Middleware & Quarantine Suite
+  await runAntiFraudTests();
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, ANTI-FRAUD SECURITY & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
 }
 
-runTests().catch((err) => {
-  console.error('❌ Test failed:', err);
-  process.exit(1);
-});
+runTests()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error('❌ Test failed:', err);
+    process.exit(1);
+  });

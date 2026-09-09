@@ -8,6 +8,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { User, AuthResponse, ApiResponse } from '../../types';
 import { attributeReferralConversion } from './referrals';
 import { processReferralEvent } from './growth';
+import { generateClientFingerprint, getClientIp, logClientFingerprint } from '../middleware/referralAntiFraud';
 
 const router = Router();
 
@@ -173,12 +174,23 @@ router.post('/register', (req: Request, res: Response) => {
 
     // ── Referral Attribution: Track conversion + fraud check + viral growth mechanics ──
     if (referrer) {
-      const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-      attributeReferralConversion(userId, referrer.id, ip);
-      try {
-        processReferralEvent(referrer.id);
-      } catch (growthErr) {
-        console.error('Growth event processing error:', growthErr);
+      const ip = getClientIp(req);
+      const fingerprint = generateClientFingerprint(req);
+      // Find commission created in transaction
+      const comm = db.prepare('SELECT id FROM commission_ledger WHERE referred_user_id = ?').get(userId) as any;
+
+      const attrResult = attributeReferralConversion(userId, referrer.id, ip, {
+        fingerprint,
+        commissionId: comm?.id,
+        newUserEmail: normalizedEmail,
+      });
+
+      if (!attrResult.isQuarantined) {
+        try {
+          processReferralEvent(referrer.id);
+        } catch (growthErr) {
+          console.error('Growth event processing error:', growthErr);
+        }
       }
     }
 
@@ -269,6 +281,10 @@ router.post('/login', (req: Request, res: Response) => {
   const { password_hash, ...safeUser } = user;
 
   recordAuditLog(user.id, 'USER_LOGIN', 'users', user.id, { role: user.role });
+
+  // Log client fingerprint on successful login
+  const fingerprint = generateClientFingerprint(req);
+  logClientFingerprint(user.id, req, fingerprint);
 
   res.json({
     success: true,
