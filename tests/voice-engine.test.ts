@@ -137,6 +137,7 @@ async function runVoiceEngineTests(): Promise<void> {
   console.log('✓ Test 5 Passed: VoiceEngineKernel generation invalidation verified.');
 
   console.log('\n🎉 ALL VOICE ENGINE & WEBSOCKET PROTOCOL TESTS PASSED WITH 100% SUCCESS!\n');
+  process.exit(0);
 }
 
 runVoiceEngineTests().catch((err) => {

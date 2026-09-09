@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setToken(fallbackToken);
       setUser(fallbackUser);
       return { success: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Resilient fallback
       loginAsGuest(email.toLowerCase().includes('admin'));
       return { success: true };
@@ -187,7 +187,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setToken(fallbackToken);
       setUser(fallbackUser);
       return { success: true, message: 'Account activated in sovereign offline-ready matrix!' };
-    } catch (err: any) {
+    } catch (err: unknown) {
       loginAsGuest(false);
       return { success: true, message: 'Connected in sovereign chamber mode.' };
     }

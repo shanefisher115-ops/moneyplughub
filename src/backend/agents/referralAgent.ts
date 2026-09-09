@@ -1,7 +1,7 @@
 import { db, runInTransaction } from '../db';
 import { 
   CanonicalDailySuggestion, 
-  CanonicalReferralProgram, 
+  CryptoReferralProgram,
   ContentEngineItem 
 } from '../../types';
 
@@ -34,7 +34,7 @@ export class ReferralAgent {
         SELECT * FROM crypto_referral_programs 
         WHERE status = 'active'
         ORDER BY total_clicks DESC, total_earnings_cents DESC
-      `).all() as any[];
+      `).all() as unknown as CryptoReferralProgram[];
 
       if (programs.length === 0) {
         const errorMsg = 'Invariant Error: No active referral programs found in context.world.referrals.';
@@ -177,15 +177,16 @@ export class ReferralAgent {
         event: 'referral.suggestion_created',
         message: `Referral suggestion created and transformed into Content Engine Script Ready format!`,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       console.error('ReferralAgent error:', err);
-      this.recordEvent(userId, 'referral.error', { error: err.message, trigger, timestamp });
+      this.recordEvent(userId, 'referral.error', { error: errorMessage, trigger, timestamp });
       return {
         success: false,
         suggestion: null,
         script: null,
         event: 'referral.error',
-        message: err.message || 'ReferralAgent failed.',
+        message: errorMessage || 'ReferralAgent failed.',
       };
     }
   }
@@ -225,7 +226,7 @@ export class ReferralAgent {
 
     const script = db.prepare(`
       SELECT * FROM content_engine_scripts WHERE id = ? AND user_id = ?
-    `).get(scriptId, userId) as any;
+    `).get(scriptId, userId) as { program: string; platform: string } | undefined;
 
     if (!script) {
       return { success: false, error: 'Script not found' };
@@ -256,7 +257,7 @@ export class ReferralAgent {
       | 'content.idea_created'
       | 'content.script_ready'
       | 'referral.content_posted',
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): void {
     const id = `evt_ref_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     try {

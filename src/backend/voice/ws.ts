@@ -212,7 +212,7 @@ export class VoiceWebSocketManager {
       }
 
       case 'ping': {
-        const clientTs = frame.clientTimestamp || (frame as any).timestamp || Date.now();
+        const clientTs = frame.clientTimestamp || ('timestamp' in frame && typeof frame.timestamp === 'number' ? frame.timestamp : Date.now());
         this.send(ws, {
           type: 'pong',
           clientTimestamp: clientTs,
@@ -222,10 +222,11 @@ export class VoiceWebSocketManager {
       }
 
       default: {
+        const unknownType = (frame as { type?: string }).type || 'unknown';
         this.send(ws, {
           type: 'error',
           code: 'UNKNOWN_FRAME_TYPE',
-          message: 'Unrecognized frame type: ' + (frame as any).type,
+          message: 'Unrecognized frame type: ' + unknownType,
         });
       }
     }

@@ -86,6 +86,7 @@ async function testLootEngine() {
   console.log(`   - Claimed At: ${recordedClaim.claimed_at}`);
 
   console.log('\n🎉 ALL DAILY LOOT CRATE & GACHA TESTS PASSED PERFECTLY!\n');
+  process.exit(0);
 }
 
 testLootEngine().catch((err) => {

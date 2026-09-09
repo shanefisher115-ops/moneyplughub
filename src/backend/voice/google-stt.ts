@@ -72,7 +72,14 @@ export class GoogleSTTPipeline {
         });
 
         if (res.ok) {
-          const data = await res.json() as any;
+          const data = await res.json() as {
+            results?: Array<{
+              alternatives?: Array<{
+                transcript?: string;
+                confidence?: number;
+              }>;
+            }>;
+          };
           const results = data.results || [];
           if (results.length > 0 && results[0].alternatives && results[0].alternatives.length > 0) {
             const best = results[0].alternatives[0];
@@ -103,7 +110,13 @@ export class GoogleSTTPipeline {
             });
 
             if (geminiRes.ok) {
-              const gData = await geminiRes.json() as any;
+              const gData = await geminiRes.json() as {
+                candidates?: Array<{
+                  content?: {
+                    parts?: Array<{ text?: string }>;
+                  };
+                }>;
+              };
               const text = gData.candidates?.[0]?.content?.parts?.[0]?.text || '';
               if (text.trim()) {
                 return {
@@ -117,8 +130,9 @@ export class GoogleSTTPipeline {
             }
           } catch {}
         }
-      } catch (err: any) {
-        console.warn(`[GoogleSTT] Speech transcription error:`, err.message);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.warn(`[GoogleSTT] Speech transcription error:`, errorMessage);
       }
     }
 

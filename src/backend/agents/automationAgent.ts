@@ -42,7 +42,7 @@ export class AutomationAgent {
     const toggle = db.prepare(`
       SELECT * FROM automation_toggles 
       WHERE user_id = ? AND automation_id = ?
-    `).get(userId, automationId) as any;
+    `).get(userId, automationId) as { enabled: number } | undefined;
 
     // INVARIANT 1: Disabled automations must not execute
     if (toggle && toggle.enabled === 0) {
@@ -78,12 +78,12 @@ export class AutomationAgent {
         if (!refResult.success) throw new Error(refResult.message);
       } else if (automationId === 'auto_weekly_insights') {
         // Weekly insights calculation
-        const accounts = db.prepare('SELECT SUM(balance_cents) as total FROM accounts WHERE user_id = ? AND is_liability = 0').get(userId) as any;
-        const debts = db.prepare('SELECT SUM(total_balance_cents) as total FROM debts WHERE user_id = ?').get(userId) as any;
+        const accounts = db.prepare('SELECT SUM(balance_cents) as total FROM accounts WHERE user_id = ? AND is_liability = 0').get(userId) as { total: number | null } | undefined;
+        const debts = db.prepare('SELECT SUM(total_balance_cents) as total FROM debts WHERE user_id = ?').get(userId) as { total: number | null } | undefined;
         // verified
       } else if (automationId === 'auto_monthly_report') {
         // Monthly reconciliation report
-        const monthlyEarnings = db.prepare(`SELECT * FROM earnings_snapshots WHERE user_id = ? AND window = 'monthly'`).get(userId) as any;
+        const monthlyEarnings = db.prepare(`SELECT * FROM earnings_snapshots WHERE user_id = ? AND window = 'monthly'`).get(userId) as { gross_cents?: number } | undefined;
         // verified
       } else {
         throw new Error(`Unknown automation module: ${automationId}`);
@@ -104,15 +104,16 @@ export class AutomationAgent {
       this.recordEvent(userId, 'automation.run_completed', { runId, automationId, status: 'success', endedAt });
 
       return successLog;
-    } catch (err: any) {
+    } catch (err: unknown) {
       const endedAt = new Date().toISOString();
+      const errorMessage = err instanceof Error ? err.message : String(err);
       const failedLog: CanonicalRunLog = {
         runId,
         automationId,
         status: 'failure',
         startedAt,
         endedAt,
-        error: err.message || 'Automation execution failed.',
+        error: errorMessage || 'Automation execution failed.',
       };
 
       // INVARIANT 2: Every run must produce a run log
@@ -131,14 +132,14 @@ export class AutomationAgent {
     scheduleFilter: 'all' | 'daily' | 'weekly' | 'monthly' = 'all'
   ): Promise<CanonicalRunLog[]> {
     let query = `SELECT * FROM automation_toggles WHERE user_id = ? AND enabled = 1`;
-    const params: any[] = [userId];
+    const params: (string | number)[] = [userId];
 
     if (scheduleFilter !== 'all') {
       query += ` AND schedule = ?`;
       params.push(scheduleFilter);
     }
 
-    const enabledToggles = db.prepare(query).all(...params) as any[];
+    const enabledToggles = db.prepare(query).all(...params) as Array<{ automation_id: string }>;
     const runLogs: CanonicalRunLog[] = [];
 
     for (const toggle of enabledToggles) {
@@ -172,7 +173,7 @@ export class AutomationAgent {
   private static recordEvent(
     userId: string,
     eventType: 'automation.run_started' | 'automation.run_completed' | 'automation.run_failed',
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): void {
     const id = `evt_auto_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     try {
