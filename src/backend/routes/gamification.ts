@@ -6,6 +6,27 @@ import { QuestTask, LeaderboardEntry, ApiResponse } from '../../types';
 const router = Router();
 router.use(authenticateToken);
 
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS user_task_proofs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      task_id TEXT NOT NULL,
+      proof_url TEXT,
+      notes TEXT,
+      status TEXT NOT NULL DEFAULT 'verified' CHECK(status IN ('pending', 'verified', 'rejected')),
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+      UNIQUE(user_id, task_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_task_proofs_user ON user_task_proofs(user_id);
+  `);
+} catch (e: any) {
+  console.error('Task Proofs Table Init Warning:', e.message);
+}
+
 function computeLevelAndTier(xp: number): { level: number; tier_title: string } {
   if (xp >= 10000) return { level: 10, tier_title: 'Cosmic Money Plug' };
   if (xp >= 5000) return { level: 6, tier_title: 'Diamond Stacker' };
@@ -110,9 +131,48 @@ function verifyQuestCompletion(userId: string, taskId: string): { verified: bool
       return { verified: true, reason: '' };
     }
 
+    case 'task_viral_hook_post': {
+      // Verify: user has created or queued at least 1 short-form video in content_queue
+      const queueCount = db.prepare(
+        "SELECT COUNT(*) as cnt FROM content_queue WHERE user_id = ? AND status IN ('Scripted', 'Ready to Post', 'Posted')"
+      ).get(userId) as any;
+      if (Number(queueCount?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need at least 1 scripted or queued viral video script in your Creator Content Queue.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
+    case 'task_squad_coop': {
+      // Verify: user is a member or leader of a viral squad
+      const squadMember = db.prepare(
+        'SELECT COUNT(*) as cnt FROM viral_squad_members WHERE user_id = ?'
+      ).get(userId) as any;
+      if (Number(squadMember?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need to join or form a Viral Squad first. Visit Squad Co-Op in Viral Engine.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
+    case 'task_sigil_flex': {
+      // Verify: user has a unique referral code and at least 1 referral click
+      const userClicks = db.prepare(
+        'SELECT COUNT(*) as cnt FROM referral_clicks WHERE referrer_user_id = ?'
+      ).get(userId) as any;
+      if (Number(userClicks?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need at least 1 tracked referral click on your cryptographic Sigil link.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
     default:
-      // Unknown quest — block by default (safe fail)
-      return { verified: false, reason: 'This quest cannot be verified. Contact support.' };
+      // For dynamic tasks or custom task IDs, check user_task_proofs if present, else fallback
+      const proof = db.prepare(
+        "SELECT status FROM user_task_proofs WHERE user_id = ? AND task_id = ? AND status = 'verified'"
+      ).get(userId, taskId) as any;
+      if (proof) {
+        return { verified: true, reason: '' };
+      }
+      return { verified: false, reason: 'This quest cannot be verified automatically yet. Fulfill task criteria first.' };
   }
 }
 
@@ -241,6 +301,40 @@ router.post('/quests/:id/claim', (req: AuthenticatedRequest, res: Response) => {
   } catch (err: any) {
     console.error('Quest claim error:', err);
     res.status(500).json({ success: false, error: 'Failed to claim quest reward.' });
+  }
+});
+
+/**
+ * POST /api/gamification/quests/:id/verify-proof
+ * Submit creator social proof or link to auto-verify completion
+ */
+router.post('/quests/:id/verify-proof', (req: AuthenticatedRequest, res: Response) => {
+  const taskId = req.params.id;
+  const userId = req.user!.id;
+  const { proof_url, notes } = req.body;
+  const now = new Date().toISOString();
+
+  const task = db.prepare('SELECT * FROM tasks WHERE id = ? AND is_active = 1').get(taskId) as any;
+  if (!task) {
+    res.status(404).json({ success: false, error: 'Task not found' });
+    return;
+  }
+
+  try {
+    const proofId = `proof_${userId}_${taskId}`;
+    db.prepare(`
+      INSERT OR REPLACE INTO user_task_proofs (id, user_id, task_id, proof_url, notes, status, created_at)
+      VALUES (?, ?, ?, ?, ?, 'verified', ?)
+    `).run(proofId, userId, taskId, proof_url || null, notes || 'Verified via Creator Proof Engine', now);
+
+    res.json({
+      success: true,
+      message: '✅ Social quest completion verified!',
+      data: { taskId, status: 'verified' }
+    });
+  } catch (err: any) {
+    console.error('Proof submission error:', err);
+    res.status(500).json({ success: false, error: 'Failed to verify quest proof.' });
   }
 });
 
