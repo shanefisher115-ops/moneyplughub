@@ -10,7 +10,7 @@ class ForgeAudioEngine {
   private getContext(): AudioContext | null {
     if (this.isMuted) return null;
     if (!this.ctx) {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioContextClass) {
         this.ctx = new AudioContextClass();
       }

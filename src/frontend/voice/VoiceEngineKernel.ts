@@ -28,18 +28,18 @@ export class VoiceEngineKernel {
   private currentGeneration: number = 0;
   private currentAudio: HTMLAudioElement | null = null;
   private activeAbortController: AbortController | null = null;
-  private speechRecognition: any = null;
+  private speechRecognition: unknown = null;
 
   // WebSocket duplex stream support
   private ws: WebSocket | null = null;
   private wsReconnectAttempts: number = 0;
-  private wsHeartbeatInterval: any = null;
+  private wsHeartbeatInterval: ReturnType<typeof setInterval> | null = null;
   private wsUrl: string = '';
 
   private onStateChangeCb?: (state: VoiceState) => void;
   private onTranscriptCb?: (transcript: string, isFinal: boolean) => void;
   private onLatencyCb?: (metrics: LatencyMetrics) => void;
-  private onSwarmAgentCb?: (agent: any) => void;
+  private onSwarmAgentCb?: (agent: Record<string, unknown>) => void;
 
   constructor(config?: Partial<VoiceEngineConfig>) {
     this.config = {
@@ -106,7 +106,7 @@ export class VoiceEngineKernel {
     return this;
   }
 
-  public onSwarmAgent(cb: (agent: any) => void): this {
+  public onSwarmAgent(cb: (agent: Record<string, unknown>) => void): this {
     this.onSwarmAgentCb = cb;
     return this;
   }
@@ -195,7 +195,7 @@ export class VoiceEngineKernel {
     }, delay);
   }
 
-  public sendWsFrame(frame: any): void {
+  public sendWsFrame(frame: Record<string, unknown>): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       try {
         this.ws.send(JSON.stringify(frame));
@@ -203,10 +203,11 @@ export class VoiceEngineKernel {
     }
   }
 
-  private handleServerWsFrame(frame: any): void {
-    switch (frame.type) {
+  private handleServerWsFrame(frame: Record<string, unknown>): void {
+    const frameType = typeof frame.type === 'string' ? frame.type : '';
+    switch (frameType) {
       case 'transcript':
-        if (frame.text && this.onTranscriptCb) {
+        if (typeof frame.text === 'string' && this.onTranscriptCb) {
           this.onTranscriptCb(frame.text, Boolean(frame.isFinal));
         }
         break;
@@ -289,14 +290,26 @@ export class VoiceEngineKernel {
   // -------------------------------------------------------------
   private initWebSpeech(): void {
     if (typeof window === 'undefined') return;
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      this.speechRecognition = new SpeechRecognition();
-      this.speechRecognition.continuous = false;
-      this.speechRecognition.interimResults = true;
-      this.speechRecognition.lang = 'en-US';
+    const win = window as unknown as Record<string, unknown>;
+    const SpeechRecognitionConstructor = (win.SpeechRecognition || win.webkitSpeechRecognition) as { new (): {
+      continuous: boolean;
+      interimResults: boolean;
+      lang: string;
+      onresult: ((event: { resultIndex: number; results: Array<Array<{ transcript: string }> & { isFinal?: boolean }> }) => void) | null;
+      onerror: (() => void) | null;
+      onend: (() => void) | null;
+      start: () => void;
+      stop: () => void;
+    } } | undefined;
 
-      this.speechRecognition.onresult = (event: any) => {
+    if (SpeechRecognitionConstructor) {
+      const recog = new SpeechRecognitionConstructor();
+      this.speechRecognition = recog;
+      recog.continuous = false;
+      recog.interimResults = true;
+      recog.lang = 'en-US';
+
+      recog.onresult = (event) => {
         let interim = '';
         let final = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -312,11 +325,11 @@ export class VoiceEngineKernel {
         }
       };
 
-      this.speechRecognition.onerror = () => {
+      recog.onerror = () => {
         if (this.state === 'listening') this.setState('idle');
       };
 
-      this.speechRecognition.onend = () => {
+      recog.onend = () => {
         if (this.state === 'listening') this.setState('idle');
       };
     }
@@ -328,7 +341,7 @@ export class VoiceEngineKernel {
 
     if (this.speechRecognition) {
       try {
-        this.speechRecognition.start();
+        (this.speechRecognition as { start: () => void }).start();
       } catch {}
     }
   }
@@ -336,7 +349,7 @@ export class VoiceEngineKernel {
   public stopListening(): void {
     if (this.speechRecognition) {
       try {
-        this.speechRecognition.stop();
+        (this.speechRecognition as { stop: () => void }).stop();
       } catch {}
     }
     if (this.state === 'listening') {
@@ -420,8 +433,9 @@ export class VoiceEngineKernel {
           this.fallbackSpeak(text, thisGen);
         }
       }
-    } catch (err: any) {
-      if (err.name === 'AbortError' || abortController.signal.aborted || thisGen !== this.currentGeneration) {
+    } catch (err: unknown) {
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      if (isAbort || abortController.signal.aborted || thisGen !== this.currentGeneration) {
         return;
       }
       if (thisGen === this.currentGeneration) {

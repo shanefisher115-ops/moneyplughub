@@ -13,13 +13,13 @@ export type SoundscapeType = 'vault_hum' | 'sigil_shimmer' | 'cyber_pulse' | 'ha
 class SoundDesignEngine {
   private ctx: AudioContext | null = null;
   private activeSoundscapeType: SoundscapeType = 'none';
-  private soundscapeNodes: { oscs: OscillatorNode[]; gains: GainNode[]; intervals?: any[] } = { oscs: [], gains: [] };
+  private soundscapeNodes: { oscs: OscillatorNode[]; gains: GainNode[]; intervals?: ReturnType<typeof setInterval>[] } = { oscs: [], gains: [] };
   private masterSoundscapeGain: GainNode | null = null;
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
