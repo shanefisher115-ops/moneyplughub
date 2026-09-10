@@ -139,12 +139,11 @@ export class AutomationAgent {
     }
 
     const enabledToggles = db.prepare(query).all(...params) as any[];
-    const runLogs: CanonicalRunLog[] = [];
 
-    for (const toggle of enabledToggles) {
-      const log = await this.runAutomation(userId, toggle.automation_id, 'orchestrator: on_schedule_tick');
-      runLogs.push(log);
-    }
+    const promises = enabledToggles.map(toggle =>
+      this.runAutomation(userId, toggle.automation_id, 'orchestrator: on_schedule_tick')
+    );
+    const runLogs = await Promise.all(promises);
 
     return runLogs;
   }
