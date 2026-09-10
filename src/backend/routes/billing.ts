@@ -1,11 +1,16 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import Stripe from 'stripe';
+
 import { config } from '../config';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
+
+const stripeSecretKey = config.stripe.secretKey;
+const stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-06-20' as any });
 
 // ═══════════════════════════════════════════════════════════════════
 //  BILLING ENGINE — Creator Money OS
@@ -591,11 +596,32 @@ router.post('/invoices/:id/mark-paid', authenticateToken, (req: AuthenticatedReq
 // ═══════════════════════════════════════════════════════════════════
 
 router.post('/webhook/stripe', (req: Request, res: Response) => {
-  // TODO: Add Stripe webhook signature verification
-  // const sig = req.headers['stripe-signature'];
-  // const event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  const event = req.body;
+  let event;
+  try {
+    if (webhookSecret) {
+      if (!sig) {
+        res.status(400).json({ error: 'Missing stripe-signature header' });
+        return;
+      }
+      const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+      event = stripe.webhooks.constructEvent(rawBody, sig as string, webhookSecret);
+    } else {
+      // In dev or test environments without signature, accept structured Stripe event payload
+      console.warn('[Billing Stripe Webhook] Missing STRIPE_WEBHOOK_SECRET, falling back to trusting req.body');
+      event = req.body;
+      if (!event || !event.type) {
+        res.status(400).json({ error: 'Invalid Stripe event structure' });
+        return;
+      }
+    }
+  } catch (err: any) {
+    console.error('[Billing Stripe Webhook] Signature verification failed:', err.message);
+    res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    return;
+  }
 
   try {
     switch (event.type) {
