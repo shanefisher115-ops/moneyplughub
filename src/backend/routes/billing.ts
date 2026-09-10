@@ -592,8 +592,6 @@ router.post('/invoices/:id/mark-paid', authenticateToken, (req: AuthenticatedReq
 
 router.post('/webhook/stripe', (req: Request, res: Response) => {
   // TODO: Add Stripe webhook signature verification
-  // const sig = req.headers['stripe-signature'];
-  // const event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
 
   const event = req.body;
 
