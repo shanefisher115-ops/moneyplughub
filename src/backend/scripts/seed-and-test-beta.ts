@@ -1,4 +1,4 @@
-import { db, runInTransaction } from '../db';
+import { db } from '../db';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
