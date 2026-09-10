@@ -9,7 +9,7 @@ async function checkLinks() {
 
   console.log('🔍 Testing Starter Set destination links for live reachability...\n');
 
-  for (const item of links) {
+  await Promise.all(links.map(async (item) => {
     const start = Date.now();
     try {
       const controller = new AbortController();
@@ -28,7 +28,7 @@ async function checkLinks() {
     } catch (e: any) {
       console.log(`⚠️ ${item.name.padEnd(12)}: ${e.message}`);
     }
-  }
+  }));
 }
 
 checkLinks();
