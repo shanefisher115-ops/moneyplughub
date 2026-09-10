@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { calculateXPWithMultipliers } from './growth';
