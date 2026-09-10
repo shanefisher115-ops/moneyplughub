@@ -4,7 +4,9 @@ import { useLivingRealm } from '../context/LivingRealmContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { PointPackButton } from '../components/PointPackButton';
 import { NiagaraParticleCanvas } from '../components/NiagaraParticleCanvas';
+import { ThreeSigilShaderCanvas } from '../components/ThreeSigilShaderCanvas';
 import { forgeAudio } from '../utils/forgeAudio';
+import { soundDesign, SoundscapeType } from '../utils/soundDesignEngine';
 import { 
   Compass, Sparkles, Shield, Trophy, Zap, 
   RotateCw, Eye, Check, ShoppingBag, Lock, Crown, Award, 
@@ -439,6 +441,8 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
   const [customMonogram, setCustomMonogram] = useState<string>('');
 
   // Creative & Immersion Controls
+  const [viewportMode, setViewportMode] = useState<'three' | '2d'>('three');
+  const [activeSoundscape, setActiveSoundscape] = useState<SoundscapeType>('sigil_shimmer');
   const [hueShift, setHueShift] = useState<number>(0);
   const [rotationSpeed, setRotationSpeed] = useState<'off' | 'slow' | 'normal' | 'warp'>('normal');
   const [glowMode, setGlowMode] = useState<'subtle' | 'normal' | 'supernova'>('normal');
@@ -1226,7 +1230,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 </span>
               </div>
 
-              {/* Central Vector Emblem */}
+              {/* Central Vector Emblem (3D Three.js WebGL Shader vs 2D Fallback) */}
               <div className="relative w-full h-[calc(100%-28px)] flex items-center justify-center z-10">
                 {!sigilSvgDataUri && loadingSigil ? (
                   <div className="flex flex-col items-center gap-3">
@@ -1235,6 +1239,19 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                       Synthesizing Geometry...
                     </span>
                   </div>
+                ) : viewportMode === 'three' ? (
+                  <ThreeSigilShaderCanvas
+                    svgDataUri={sigilSvgDataUri}
+                    glowColor={activeGlowColor}
+                    rotationSpeed={rotationSpeed}
+                    glowMode={glowMode}
+                    hueShift={hueShift}
+                    triggerBurst={particleBurst}
+                    chromaticAberration={chromaticAberration}
+                    audioReactive={true}
+                    activeSoundscape={activeSoundscape}
+                    onCanvasClick={() => triggerShockwave()}
+                  />
                 ) : sigilSvgDataUri ? (
                   <div 
                     className={`relative w-full h-full flex items-center justify-center transition-all ${getRotationClass()}`}
@@ -1276,6 +1293,59 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
             {/* Viewport Controls Bar */}
             <div className="w-full max-w-[420px] mt-3 p-4 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-3.5">
               
+              {/* Viewport Renderer Mode Switcher (Three.js WebGL vs 2D Vector) */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                  Shader Canvas
+                </span>
+                <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
+                  {[
+                    { id: 'three', label: 'Three.js 3D' },
+                    { id: '2d', label: '2D Flat' },
+                  ].map((mode) => (
+                    <button
+                      key={mode.id}
+                      onClick={() => {
+                        setViewportMode(mode.id as any);
+                        forgeAudio.playTick(1100);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg capitalize transition-colors font-bold ${
+                        viewportMode === mode.id
+                          ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Web Audio Soundscape Selector */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
+                  <Radio className="w-3.5 h-3.5 text-purple-400" />
+                  Web Audio Realm
+                </span>
+                <select
+                  value={activeSoundscape}
+                  onChange={(e) => {
+                    const sc = e.target.value as SoundscapeType;
+                    setActiveSoundscape(sc);
+                    soundDesign.setSoundscape(sc);
+                    forgeAudio.playTick(900);
+                  }}
+                  className="bg-slate-950 border border-slate-800 text-purple-300 font-mono text-[11px] py-1 px-2 rounded-xl focus:outline-none focus:border-purple-500"
+                >
+                  <option value="sigil_shimmer">528Hz Sigil Shimmer</option>
+                  <option value="vault_hum">48Hz Vault Sub-Bass</option>
+                  <option value="cyber_pulse">Cyber Telemetry Pulse</option>
+                  <option value="harmonic_drone">Cosmic Swell Drone</option>
+                  <option value="none">Mute Ambient</option>
+                </select>
+              </div>
+
               {/* Glow Mode Selector */}
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../src/frontend/context/AuthContext';
 import { useLivingRealm } from '../../src/frontend/context/LivingRealmContext';
 import { PointPackButton } from '../components/PointPackButton';
+import { ThreeSigilShaderCanvas } from '../../../src/frontend/components/ThreeSigilShaderCanvas';
+import { soundDesign, SoundscapeType } from '../../../src/frontend/utils/soundDesignEngine';
 import { 
   Compass, Sparkles, Shield, Trophy, Zap, 
   RotateCw, Eye, Check, ShoppingBag, Lock, Crown, Award, 
-  ExternalLink, Maximize2, RefreshCw, Loader2
+  ExternalLink, Maximize2, RefreshCw, Loader2, Radio
 } from 'lucide-react';
 
 interface SigilForgePageProps {
@@ -24,6 +26,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
   const [isRotating, setIsRotating] = useState<boolean>(true);
   const [userXp, setUserXp] = useState<number>(user?.xp || 2500);
   const [glowMode, setGlowMode] = useState<'subtle' | 'normal' | 'supernova'>('normal');
+  const [activeSoundscape, setActiveSoundscape] = useState<SoundscapeType>('sigil_shimmer');
   const [sigilSvgDataUri, setSigilSvgDataUri] = useState<string>('');
   const [loadingSigil, setLoadingSigil] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -221,15 +224,16 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 style={{ animationDuration: glowMode === 'supernova' ? '12s' : '24s' }}
               />
 
-              {/* Live Deterministic Sigil Image Canvas */}
+              {/* Live Deterministic Sigil Image Canvas (Three.js WebGL Shader Viewport) */}
               <div className="relative w-52 h-52 sm:w-56 sm:h-56 rounded-full bg-slate-950 border border-slate-800 p-2 flex items-center justify-center overflow-hidden shadow-inner group">
                 {sigilSvgDataUri ? (
-                  <img
-                    src={sigilSvgDataUri}
-                    alt={`Cryptographic Sigil ${referralCode}`}
-                    className={`w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 ${
-                      isRotating ? 'animate-slow-spin' : 'hover:scale-105'
-                    }`}
+                  <ThreeSigilShaderCanvas
+                    svgDataUri={sigilSvgDataUri}
+                    glowColor={glowMode === 'supernova' ? '#f59e0b' : '#3b82f6'}
+                    rotationSpeed={isRotating ? 'normal' : 'off'}
+                    glowMode={glowMode}
+                    audioReactive={true}
+                    activeSoundscape={activeSoundscape}
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs font-mono animate-pulse gap-2">
@@ -250,7 +254,7 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
             </div>
 
             {/* Orbit & Glow Controls */}
-            <div className="flex items-center gap-2 z-10 w-full">
+            <div className="flex items-center gap-2 z-10 w-full flex-wrap">
               <button
                 onClick={() => setIsRotating(!isRotating)}
                 className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-300 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
@@ -270,6 +274,22 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
                 <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
                 <span className="uppercase">{glowMode}</span>
               </button>
+
+              <select
+                value={activeSoundscape}
+                onChange={(e) => {
+                  const sc = e.target.value as SoundscapeType;
+                  setActiveSoundscape(sc);
+                  soundDesign.setSoundscape(sc);
+                }}
+                className="py-2.5 px-2 bg-slate-900 border border-slate-800 text-purple-300 font-mono text-xs rounded-xl focus:outline-none focus:border-purple-500"
+              >
+                <option value="sigil_shimmer">🎵 528Hz</option>
+                <option value="vault_hum">🎵 48Hz</option>
+                <option value="cyber_pulse">🎵 Cyber</option>
+                <option value="harmonic_drone">🎵 Drone</option>
+                <option value="none">🔇 Off</option>
+              </select>
             </div>
           </div>
 

@@ -6,15 +6,25 @@
  * 2. Spatial Stereo Panning (-0.35 to +0.35)
  * 3. Mythic Realm Shimmer Reverb & Harmonic Saturator
  * 4. Procedural Chimes, Supernovas, and Voice Ritual Sequences
+ * 5. Real-Time Web Audio Analyser & Frequency Metrics for WebGL Shaders
  */
 
 export type SoundscapeType = 'vault_hum' | 'sigil_shimmer' | 'cyber_pulse' | 'harmonic_drone' | 'none';
 
+export interface AudioMetrics {
+  bass: number;     // Normalized 0.0 - 1.0 (sub-bass and bass)
+  mid: number;      // Normalized 0.0 - 1.0 (mids)
+  treble: number;   // Normalized 0.0 - 1.0 (highs)
+  average: number;  // Overall average volume 0.0 - 1.0
+}
+
 class SoundDesignEngine {
   private ctx: AudioContext | null = null;
+  private analyserNode: AnalyserNode | null = null;
   private activeSoundscapeType: SoundscapeType = 'none';
   private soundscapeNodes: { oscs: OscillatorNode[]; gains: GainNode[]; intervals?: any[] } = { oscs: [], gains: [] };
   private masterSoundscapeGain: GainNode | null = null;
+  private freqDataBuffer: Uint8Array = new Uint8Array(64);
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -22,12 +32,85 @@ class SoundDesignEngine {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
+        this.analyserNode = this.ctx.createAnalyser();
+        this.analyserNode.fftSize = 128;
+        this.analyserNode.smoothingTimeConstant = 0.8;
+        this.analyserNode.connect(this.ctx.destination);
+        this.freqDataBuffer = new Uint8Array(this.analyserNode.frequencyBinCount);
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
     return this.ctx;
+  }
+
+  /**
+   * Returns destination node for connecting oscillators/sources directly to the analyser & master output.
+   */
+  public getDestination(): AudioNode | null {
+    const ctx = this.getContext();
+    if (!ctx) return null;
+    return this.analyserNode || ctx.destination;
+  }
+
+  /**
+   * Returns real-time Web Audio AnalyserNode instance
+   */
+  public getAnalyser(): AnalyserNode | null {
+    this.getContext();
+    return this.analyserNode;
+  }
+
+  /**
+   * Retrieves raw Web Audio frequency data byte array
+   */
+  public getFrequencyData(): Uint8Array {
+    if (this.analyserNode) {
+      if (this.freqDataBuffer.length !== this.analyserNode.frequencyBinCount) {
+        this.freqDataBuffer = new Uint8Array(this.analyserNode.frequencyBinCount);
+      }
+      this.analyserNode.getByteFrequencyData(this.freqDataBuffer as any);
+    }
+    return this.freqDataBuffer;
+  }
+
+  /**
+   * Calculates normalized bass, mid, treble, and average volume for Three.js shaders & physics
+   */
+  public getAudioMetrics(): AudioMetrics {
+    const data = this.getFrequencyData();
+    if (!data || data.length === 0) {
+      return { bass: 0, mid: 0, treble: 0, average: 0 };
+    }
+
+    const binCount = data.length;
+    const bassBins = Math.floor(binCount * 0.25);
+    const midBins = Math.floor(binCount * 0.65);
+
+    let bassSum = 0;
+    let midSum = 0;
+    let trebleSum = 0;
+    let totalSum = 0;
+
+    for (let i = 0; i < binCount; i++) {
+      const val = data[i] / 255.0;
+      totalSum += val;
+      if (i < bassBins) {
+        bassSum += val;
+      } else if (i < midBins) {
+        midSum += val;
+      } else {
+        trebleSum += val;
+      }
+    }
+
+    return {
+      bass: bassBins > 0 ? bassSum / bassBins : 0,
+      mid: (midBins - bassBins) > 0 ? midSum / (midBins - bassBins) : 0,
+      treble: (binCount - midBins) > 0 ? trebleSum / (binCount - midBins) : 0,
+      average: totalSum / binCount,
+    };
   }
 
   /**
@@ -43,10 +126,11 @@ class SoundDesignEngine {
     if (!ctx) return;
 
     try {
+      const dest = this.getDestination() || ctx.destination;
       this.masterSoundscapeGain = ctx.createGain();
       this.masterSoundscapeGain.gain.setValueAtTime(0.0001, ctx.currentTime);
       this.masterSoundscapeGain.gain.exponentialRampToValueAtTime(targetGain, ctx.currentTime + 1.2);
-      this.masterSoundscapeGain.connect(ctx.destination);
+      this.masterSoundscapeGain.connect(dest);
 
       if (type === 'vault_hum') {
         // 48Hz Sub-Bass + Low-pass Clockwork
@@ -175,6 +259,7 @@ class SoundDesignEngine {
     if (!ctx) return;
 
     try {
+      const dest = this.getDestination() || ctx.destination;
       const source = ctx.createMediaElementSource(audioEl);
       const panner = (ctx.createStereoPanner ? ctx.createStereoPanner() : null);
       
@@ -196,14 +281,14 @@ class SoundDesignEngine {
         delay.connect(wetGain);
 
         source.connect(delay);
-        wetGain.connect(ctx.destination);
+        wetGain.connect(dest);
       }
 
       if (panner) {
         source.connect(panner);
-        panner.connect(ctx.destination);
+        panner.connect(dest);
       } else {
-        source.connect(ctx.destination);
+        source.connect(dest);
       }
     } catch (e) {
       // already attached
@@ -217,6 +302,7 @@ class SoundDesignEngine {
     const ctx = this.getContext();
     if (!ctx) return;
 
+    const dest = this.getDestination() || ctx.destination;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
@@ -227,7 +313,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start();
       osc.stop(ctx.currentTime + 0.8);
     } else if (type === 'chamber_reveal') {
@@ -238,7 +324,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.22, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.4);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start();
       osc.stop(ctx.currentTime + 1.4);
     } else if (type === 'ascension') {
@@ -249,7 +335,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start();
       osc.stop(ctx.currentTime + 1.2);
     } else if (type === 'chime') {
@@ -259,7 +345,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start();
       osc.stop(ctx.currentTime + 0.4);
     } else if (type === 'supernova') {
@@ -269,7 +355,7 @@ class SoundDesignEngine {
       gain.gain.setValueAtTime(0.25, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start();
       osc.stop(ctx.currentTime + 1.2);
     }
