@@ -5,6 +5,9 @@ dotenv.config({ override: true });
 
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
+  cors: {
+    allowedOrigins: (process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',').map(o => o.trim()),
+  },
   nodeEnv: process.env.NODE_ENV || 'development',
   isProd: process.env.NODE_ENV === 'production',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
