@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { db, runInTransaction, recordAuditLog, initializeUserFinancialProfile } from '../db';
 import { config } from '../config';
@@ -26,12 +27,9 @@ const loginSchema = z.object({
 });
 
 function generateReferralCode(): string {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let code = 'PLUG-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
+  // Using 3 bytes gives 6 hex characters. Very fast and high entropy.
+  // DB UNIQUE constraint handles practically impossible collisions.
+  return 'PLUG-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
 /**
