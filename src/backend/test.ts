@@ -7,6 +7,9 @@ import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
 import { generateOpenGraphSvg } from './routes/og';
 import { generateSigil } from './routes/sigil';
+import { McpIdentityGateway } from './voice-os/mcp/McpIdentityGateway';
+import { EventEmitter } from 'events';
+
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
 
@@ -139,7 +142,56 @@ async function runTests() {
   assert(ogCardSvg.includes('FTC 16 CFR PART 255 DISCLOSURE'), 'OpenGraph SVG must include FTC Part 255 disclosure text');
   console.log('✓ Step 10: Verified OpenGraph Dynamic Image Generation Service (1200x630, Sigil, Wealth Tier, FTC Part 255 overlays).');
 
-  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, OPENGRAPH SERVICE & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
+
+  // 11. McpIdentityGateway Tests
+  const bus = new EventEmitter();
+  const gateway = new McpIdentityGateway(bus);
+
+  const userId = 'user_123';
+  const beforeTime = Date.now();
+  const tokenResult = gateway.issueServiceToken(userId);
+  const afterTime = Date.now();
+
+  assert.strictEqual(typeof tokenResult.token, 'string', 'Token should be a string');
+  assert.strictEqual(tokenResult.token.length > 0, true, 'Token should not be empty');
+  assert.strictEqual(typeof tokenResult.expiresAt, 'number', 'expiresAt should be a number');
+  assert.ok(tokenResult.expiresAt >= beforeTime + 5 * 60 * 1000, 'expiresAt should be at least 5 mins from call time');
+  assert.ok(tokenResult.expiresAt <= afterTime + 5 * 60 * 1000, 'expiresAt should be at most 5 mins from return time');
+
+  const validPosture = { warpConnected: true, diskEncrypted: true, firewallEnabled: true, trustScore: 85 };
+  assert.strictEqual(gateway.validateDevicePosture(validPosture), true, 'Valid posture should return true');
+
+  const missingWarp = { diskEncrypted: true, firewallEnabled: true, trustScore: 85 };
+  assert.strictEqual(gateway.validateDevicePosture(missingWarp), false, 'Missing warpConnected should return false');
+
+  const exactScorePosture = { warpConnected: true, diskEncrypted: true, firewallEnabled: true, trustScore: 80 };
+  assert.strictEqual(gateway.validateDevicePosture(exactScorePosture), true, 'Trust score of exactly 80 should return true');
+
+  const missingAll = {};
+  assert.strictEqual(gateway.validateDevicePosture(missingAll), false, 'Empty posture should return false');
+
+  const sessionId = 'session_456';
+  const identity = { userId: 'user_123', devicePosture: validPosture, serviceToken: 'token_abc', confidence: 0.99 };
+
+  let emittedEvent: any = null;
+  bus.once('MCP_IDENTITY', (payload) => {
+    emittedEvent = payload;
+  });
+
+  const bindResult = gateway.bindIdentity(sessionId, identity);
+
+  assert.strictEqual(bindResult.sessionId, sessionId, 'Payload should include sessionId');
+  assert.strictEqual(bindResult.userId, identity.userId, 'Payload should include userId');
+  assert.deepStrictEqual(bindResult.devicePosture, identity.devicePosture, 'Payload should include devicePosture');
+  assert.strictEqual(bindResult.serviceToken, identity.serviceToken, 'Payload should include serviceToken');
+  assert.strictEqual(bindResult.identityConfidence, identity.confidence, 'Payload should include confidence as identityConfidence');
+
+  assert.ok(emittedEvent !== null, 'MCP_IDENTITY event should be emitted');
+  assert.deepStrictEqual(emittedEvent, bindResult, 'Emitted payload should match returned payload');
+
+  console.log('✓ Step 11: Verified McpIdentityGateway token issue, device posture validation, and identity binding.');
+
+  console.log('\n🎉 ALL 12 AI MODULES, 6 MODEL FAMILIES, MONEYOS AI, VOICE ENGINE, OPENGRAPH SERVICE, MCP & SAAS SUITE VERIFIED WITH 100% SUCCESS!\n');
   process.exit(0);
 }
 
