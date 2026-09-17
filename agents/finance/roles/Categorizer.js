@@ -3,9 +3,14 @@ export function Categorizer(transaction = {}, categories = [], rules = []) {
   if (!transaction || !transaction.description) return insights;
   const desc = transaction.description.toLowerCase();
 
+  const categoryMap = new Map();
+  for (const c of categories) {
+    categoryMap.set(c.id, c);
+  }
+
   for (const rule of rules) {
     if (rule.pattern && desc.includes(rule.pattern.toLowerCase())) {
-      const category = categories.find(c => c.id === rule.category_id);
+      const category = categoryMap.get(rule.category_id);
       insights.push({
         agent: "Categorizer",
         type: "categorization",
