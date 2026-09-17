@@ -50,6 +50,7 @@ import { AchievementsPage } from './pages/AchievementsPage';
 import { SyndicatesPage } from './pages/SyndicatesPage';
 import { PrimordiaOSDashboardPage } from './pages/PrimordiaOSDashboardPage';
 import { PrimordiaRealityEnginePage } from './pages/PrimordiaRealityEnginePage';
+import { AgentSwarmPage } from './pages/AgentSwarmPage';
 import { PrimordiaWarpGateModal } from './components/PrimordiaWarpGateModal';
 import { MagicalMouseClickCanvas } from './components/MagicalMouseClickCanvas';
 import { OnboardingWizardModal } from './components/OnboardingWizardModal';
@@ -68,6 +69,7 @@ import { FloatingXpContainer } from './components/FloatingXpContainer';
 import { PeerPushBanner } from './components/PeerPushBanner';
 import { usePeerSignal } from './context/PeerPushContext';
 import { useAdaptiveProfile } from './context/AdaptiveProfileContext';
+import { AgentSwarmCockpit } from './components/AgentSwarmCockpit';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -385,6 +387,8 @@ export const App: React.FC = () => {
           <PrimordiaRealityEnginePage onNavigate={handleNavigate} initialSubChamber="swarm-brain" />
         ) : currentTab === 'black-hole' || currentTab === 'entropy' || currentTab === 'singularity' ? (
           <PrimordiaRealityEnginePage onNavigate={handleNavigate} initialSubChamber="black-hole" />
+        ) : currentTab === 'agent-swarm' || currentTab === 'agents' || currentTab === 'agent' || currentTab === 'protocol' ? (
+          <AgentSwarmPage onNavigate={handleNavigate} />
         ) : currentTab === 'primordia' || currentTab === 'primordiaos' || currentTab === 'v5' || currentTab === 'swarm' || currentTab === 'orchestrator' ? (
           <PrimordiaOSDashboardPage onNavigate={handleNavigate} />
         ) : currentTab === 'affiliate' ? (
@@ -509,6 +513,9 @@ export const App: React.FC = () => {
 
       {/* Real-Time PeerPush Social Proof & Trust Engine */}
       <PeerPushBanner />
+
+      {/* Autonomous Multi-Agent Swarm Directive Cockpit HUD (Cmd+K) */}
+      <AgentSwarmCockpit onNavigate={handleNavigate} />
 
       <Footer onNavigate={handleNavigate} />
     </div>

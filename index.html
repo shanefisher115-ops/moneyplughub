@@ -1,54 +1,3585 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="theme-color" content="#00ff66" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ff66' stroke='%2300ff66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'></polygon></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>🟢 Creator Money OS — MoneyPlugHub Protocol</title>
-    <meta name="description" content="The autonomous financial operating system built specifically for creators, affiliates, and digital entrepreneurs." />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <link rel="canonical" href="https://moneyplughub.com/" />
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoneyOS — Holographic Command Cockpit // moneyplughub.com</title>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://moneyplughub.com/" />
-    <meta property="og:title" content="Creator Money OS — MoneyPlugHub Protocol" />
-    <meta property="og:description" content="The autonomous financial operating system built specifically for creators, affiliates, and digital entrepreneurs." />
-    <meta property="og:image" content="https://moneyplughub.com/moneyplughub_emblem.png" />
-    <meta property="og:site_name" content="MoneyPlugHub" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://moneyplughub.com/" />
-    <meta name="twitter:title" content="Creator Money OS — MoneyPlugHub Protocol" />
-    <meta name="twitter:description" content="The autonomous financial operating system built specifically for creators, affiliates, and digital entrepreneurs." />
-    <meta name="twitter:image" content="https://moneyplughub.com/moneyplughub_emblem.png" />
+  <style>
+    :root {
+      --bg-deep: #020612;
+      --cockpit-hull: #030a1a;
+      --panel-bg: rgba(6, 14, 28, 0.88);
+      --panel-border: rgba(0, 240, 255, 0.32);
+      --panel-border-bright: rgba(0, 240, 255, 0.75);
+      --panel-glow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 0 16px rgba(0, 240, 255, 0.08);
+      --neon-cyan: #00f0ff;
+      --neon-green: #00ff88;
+      --neon-purple: #b026ff;
+      --neon-gold: #ffb703;
+      --neon-red: #ff3366;
+      --font-hud: 'Orbitron', -apple-system, sans-serif;
+      --font-body: 'Rajdhani', -apple-system, sans-serif;
+      --font-mono: 'Fira Code', Consolas, monospace;
+    }
 
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "MoneyPlugHub - Creator Money OS",
-      "url": "https://moneyplughub.com/",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "All",
-      "description": "Autonomous financial operating system and creator commission network.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-deep);
+      color: #e2e8f0;
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(0, 240, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(0, 180, 255, 0.08) 0%, transparent 50%);
+      user-select: none;
+    }
+
+    /* Baseline Standard Scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* View Transitions API */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) {
+      animation-duration: 0.22s;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    }
+
+    /* ==========================================================================
+       HOLOGRAPHIC COCKPIT CANOPY ARCHITECTURE (3D PERSPECTIVE)
+       ========================================================================== */
+    .cockpit-canopy {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 30%, rgba(4, 18, 38, 0.7) 0%, #01040d 95%);
+      box-shadow: inset 0 0 100px rgba(0, 240, 255, 0.12);
+    }
+
+    /* Top Curved Canopy Arch */
+    .canopy-arch-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      border-bottom: 2px solid rgba(0, 240, 255, 0.35);
+      background: linear-gradient(180deg, rgba(0, 240, 255, 0.08) 0%, transparent 100%);
+      border-radius: 0 0 50% 50% / 0 0 25px 25px;
+      pointer-events: none;
+      box-shadow: 0 5px 25px rgba(0, 240, 255, 0.15);
+      z-index: 10;
+    }
+
+    /* ==========================================================================
+       TOP NAVIGATION BAR
+       ========================================================================== */
+    .cockpit-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 36px;
+      position: relative;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      background: rgba(2, 6, 18, 0.85);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .brand-hex {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      animation: hexPulse 3s infinite ease-in-out;
+    }
+    @keyframes hexPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
+    }
+    .brand-title {
+      font-family: var(--font-hud);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+    }
+    .brand-title span { color: var(--neon-cyan); }
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      background: rgba(0, 255, 136, 0.1);
+      letter-spacing: 1px;
+    }
+
+    .nav-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(4, 12, 28, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 20px;
+      padding: 6px 16px;
+      width: 360px;
+      transition: all 0.2s;
+    }
+    .nav-search:focus-within {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .nav-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      width: 100%;
+    }
+    .nav-search input::placeholder { color: #64748b; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-pill-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: var(--neon-cyan);
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 7px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .nav-pill-btn:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+      transform: translateY(-1px);
+    }
+    .nav-pill-btn.gold {
+      background: rgba(255, 183, 3, 0.12);
+      border-color: var(--neon-gold);
+      color: var(--neon-gold);
+    }
+    .nav-pill-btn.gold:hover {
+      background: rgba(255, 183, 3, 0.25);
+      box-shadow: 0 0 14px rgba(255, 183, 3, 0.6);
+    }
+
+    /* ==========================================================================
+       CATEGORY A, B, C NAVBAR ARCHITECTURE & SEMANTIC PILLS
+       ========================================================================== */
+    .cockpit-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 32px;
+      position: relative;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      background: rgba(2, 6, 18, 0.92);
+      gap: 16px;
+    }
+
+    /* Category A: Navigation (Flat, Minimal Pill / Underline Hover) */
+    .nav-links-flat {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-flat-link {
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 6px 4px;
+      position: relative;
+      transition: color 0.2s ease;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      outline: none;
+      white-space: nowrap;
+    }
+    .nav-flat-link:hover, .nav-flat-link.active {
+      color: #ffffff;
+    }
+    .nav-flat-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+      transition: width 0.2s ease;
+      border-radius: 2px;
+    }
+    .nav-flat-link:hover::after, .nav-flat-link.active::after {
+      width: 100%;
+    }
+    .nav-divider {
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      user-select: none;
+    }
+
+    /* Right Navbar Group: Category B (Inventory Badge) + Category C (Primary Action) */
+    .nav-right-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-left: auto;
+    }
+
+    /* Category B: User Inventory / Vault (Segmented Split Badge) */
+    .badge-segmented {
+      display: flex;
+      align-items: center;
+      background: rgba(4, 14, 30, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 24px;
+      padding: 2px 4px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .badge-segmented:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+    }
+    .badge-segment {
+      background: transparent;
+      border: none;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #e2e8f0;
+      transition: background 0.15s, color 0.15s;
+      border-radius: 18px;
+    }
+    .badge-segment:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+    .segment-separator {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .segment-icon { font-size: 12px; }
+    .segment-label { color: #94a3b8; font-weight: 600; }
+    .segment-value { font-weight: 700; color: #ffffff; }
+    .segment-sub { color: #94a3b8; font-size: 10px; }
+
+    /* Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) */
+    .nav-actions-auth {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-ghost-signin {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #e2e8f0;
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 7px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .btn-ghost-signin:hover {
+      border-color: #ffffff;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .btn-solid-start {
+      background: var(--neon-green);
+      color: #020612;
+      border: none;
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 18px rgba(0, 255, 136, 0.45);
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .btn-solid-start:hover {
+      background: #33ff99;
+      box-shadow: 0 0 24px rgba(0, 255, 136, 0.7);
+      transform: translateY(-1px) scale(1.02);
+    }
+    .btn-solid-start .btn-arrow {
+      font-weight: 900;
+      transition: transform 0.15s;
+    }
+    .btn-solid-start:hover .btn-arrow {
+      transform: translateX(2px);
+    }
+
+    /* ==========================================================================
+       2. LIVE TELEMETRY SUB-BAR: THE "STATUS PILL" RULE
+       [ STATUS ] [ METRIC NAME ]: [ VALUE ]
+       ========================================================================== */
+    .cockpit-telemetry-subbar {
+      width: 100%;
+      background: linear-gradient(90deg, rgba(2, 6, 18, 0.96), rgba(4, 16, 36, 0.96), rgba(2, 6, 18, 0.96));
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding: 8px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 15;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      overflow-x: auto;
+    }
+    .telemetry-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Semantic CSS Pill Architecture: Read-Only Metric Pill */
+    .pill-metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(3, 12, 28, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1;
+      white-space: nowrap;
+      user-select: none;
+      box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.05);
+      transition: border-color 0.2s;
+    }
+    .pill-metric:hover {
+      border-color: rgba(0, 240, 255, 0.5);
+    }
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .pill-dot.live {
+      background: var(--neon-green);
+      box-shadow: 0 0 8px var(--neon-green);
+      animation: pillDotPulse 1.8s infinite ease-in-out;
+    }
+    @keyframes pillDotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+    .pill-label {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .pill-value {
+      font-weight: 700;
+      color: #ffffff;
+      transition: transform 0.2s ease;
+    }
+    .pill-value.text-green { color: var(--neon-green); text-shadow: 0 0 6px rgba(0, 255, 136, 0.4); }
+    .pill-value.text-cyan { color: var(--neon-cyan); }
+    .pill-value.text-gold { color: var(--neon-gold); }
+    .pill-value.text-white { color: #ffffff; }
+
+    /* Semantic CSS Pill Architecture: Interactive Trigger Pill */
+    .pill-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+    .pill-action:hover {
+      background: var(--neon-cyan);
+      color: #020612;
+      box-shadow: 0 0 18px var(--neon-cyan);
+      transform: translateY(-1px);
+    }
+    .pill-action .pill-icon {
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    /* ==========================================================================
+       3. FLOATING MICRO-DOCKS (BOTTOM CORNERS)
+       ========================================================================== */
+    .micro-dock-bottom-left {
+      position: fixed;
+      bottom: 22px;
+      left: 28px;
+      z-index: 100;
+      font-family: var(--font-mono);
+    }
+    .micro-dock-bottom-right {
+      position: fixed;
+      bottom: 22px;
+      right: 28px;
+      z-index: 100;
+      font-family: var(--font-mono);
+    }
+    .micro-dock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(2, 6, 18, 0.92);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 24px;
+      padding: 8px 18px;
+      cursor: pointer;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(0, 240, 255, 0.18);
+      color: #e2e8f0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .micro-dock-pill:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 8px 36px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 240, 255, 0.35);
+      transform: translateY(-2px);
+      color: #ffffff;
+    }
+    .micro-dock-pill.vault-dock {
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+    .micro-dock-pill.vault-dock:hover {
+      border-color: var(--neon-green);
+      box-shadow: 0 8px 36px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 255, 136, 0.4);
+    }
+    .micro-dock-label {
+      color: #94a3b8;
+    }
+    .micro-dock-status {
+      font-weight: 800;
+    }
+    .micro-dock-status.text-green {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+    }
+    .micro-dock-val {
+      color: var(--neon-green);
+      font-weight: 800;
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+    }
+    .vault-chevron {
+      color: var(--neon-green);
+      font-size: 13px;
+      transition: transform 0.2s;
+    }
+    .micro-dock-pill:hover .vault-chevron {
+      transform: translateY(-2px);
+    }
+    .voice-waves-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 2.5px;
+      height: 12px;
+      margin-left: 2px;
+    }
+    .wave-mini {
+      width: 2.5px;
+      height: 6px;
+      background: var(--neon-green);
+      border-radius: 1px;
+      animation: waveMiniDance 1.2s infinite ease-in-out alternate;
+    }
+    .wave-mini:nth-child(2) { animation-delay: 0.2s; height: 11px; }
+    .wave-mini:nth-child(3) { animation-delay: 0.4s; height: 8px; }
+    .wave-mini:nth-child(4) { animation-delay: 0.15s; height: 12px; }
+    @keyframes waveMiniDance {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    /* ==========================================================================
+       3D CURVED COCKPIT BRIDGE GRID
+       ========================================================================== */
+    .cockpit-viewport {
+      perspective: 1600px;
+      perspective-origin: 50% 45%;
+      width: 100%;
+      padding: 10px 24px 30px;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .cockpit-cluster {
+      display: grid;
+      grid-template-columns: 280px 290px 370px 290px 280px;
+      gap: 16px;
+      max-width: 1640px;
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 3D Column Rotations for Holographic Surround Effect */
+    .col-outer-left {
+      transform: rotateY(13deg) translateZ(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-mid-left {
+      transform: rotateY(6deg) translateZ(25px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-center-hero {
+      transform: translateZ(45px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-mid-right {
+      transform: rotateY(-6deg) translateZ(25px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-outer-right {
+      transform: rotateY(-13deg) translateZ(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Responsive Flat Mode for smaller screens */
+    @media (max-width: 1540px) {
+      .cockpit-viewport { perspective: none; }
+      .cockpit-cluster {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        transform-style: flat;
+      }
+      .col-outer-left, .col-mid-left, .col-center-hero, .col-mid-right, .col-outer-right {
+        transform: none !important;
       }
     }
-    </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-plug-dark text-slate-100 min-h-[100dvh] antialiased selection:bg-plug-accent selection:text-plug-dark overflow-x-hidden w-full max-w-full">
-    <div id="root"></div>
-    <script type="module" src="/src/frontend/main.tsx"></script>
-  </body>
+    /* ==========================================================================
+       HOLOGRAPHIC COCKPIT WINDOW PANELS
+       ========================================================================== */
+    .cockpit-window {
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--panel-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .cockpit-window::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      opacity: 0.6;
+    }
+    .cockpit-window:hover {
+      border-color: var(--panel-border-bright);
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+    .window-title {
+      font-family: var(--font-hud);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+    .window-title .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+    .window-title .dot.green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+    .window-title .dot.gold { background: var(--neon-gold); box-shadow: 0 0 8px var(--neon-gold); }
+    .window-title .dot.purple { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+
+    .window-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 1. Live Ticker Stream */
+    .ticker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ticker-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: rgba(3, 10, 22, 0.6);
+      border-left: 2px solid var(--neon-cyan);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ticker-item:hover { background: rgba(0, 240, 255, 0.12); }
+    .ticker-sym { color: #fff; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .ticker-val { color: var(--neon-green); font-weight: 700; }
+    .ticker-val.down { color: var(--neon-red); }
+
+    /* 2. Mountain Chart Area */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      margin-top: 4px;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .chart-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+    .chart-pills {
+      display: flex;
+      gap: 4px;
+    }
+    .chart-pill {
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      cursor: pointer;
+    }
+    .chart-pill.active {
+      background: var(--neon-cyan);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* 3. Radial Multi-Ring Gauge */
+    .gauge-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+    .gauge-svg-box {
+      width: 110px;
+      height: 110px;
+      position: relative;
+    }
+    .gauge-svg-box svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .gauge-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .gauge-num {
+      font-family: var(--font-hud);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    .gauge-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
+    .gauge-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .gauge-stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .gauge-stat-val { color: #fff; font-weight: 700; }
+
+    /* 4. Swarm Syndicates List ('MY ARMS') */
+    .syndicate-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .syndicate-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(2, 9, 20, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .syndicate-card:hover, .syndicate-card.active {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.12);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+    }
+    .synd-info { display: flex; align-items: center; gap: 8px; }
+    .synd-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(0,240,255,0.3), rgba(176,38,255,0.3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .synd-name { font-family: var(--font-hud); font-size: 11px; font-weight: 700; color: #fff; }
+    .synd-role { font-family: var(--font-mono); font-size: 9px; color: #94a3b8; }
+    .synd-status {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--neon-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 5. Autonomous Velocity & Dual Sliders */
+    .slider-box {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    .slider-head span:last-child { color: var(--neon-cyan); font-weight: 700; }
+    input[type=range].hud-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      background: #0f172a;
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type=range].hud-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      cursor: pointer;
+    }
+
+    /* 6. Center Hero Window */
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .hero-avatar-ring {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      border: 3px solid var(--neon-cyan);
+      padding: 3px;
+      background: radial-gradient(circle, rgba(0,240,255,0.3) 0%, transparent 70%);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .hero-avatar-ring .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #091a33;
+      font-family: var(--font-hud);
+      font-size: 28px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    .hero-name-title {
+      text-align: center;
+      font-family: var(--font-hud);
+      font-size: 21px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1.5px;
+      margin-bottom: 2px;
+      text-shadow: 0 0 14px rgba(0, 240, 255, 0.7);
+    }
+    .hero-level-sub {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Gold Commission Shield Badge */
+    .commission-badge-shield {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(90deg, rgba(255,183,3,0.15) 0%, rgba(255,183,3,0.05) 50%, rgba(255,183,3,0.15) 100%);
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin-bottom: 14px;
+    }
+    .shield-icon {
+      font-size: 24px;
+      filter: drop-shadow(0 0 8px var(--neon-gold));
+    }
+    .shield-text-big {
+      font-family: var(--font-hud);
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--neon-gold);
+      letter-spacing: 1px;
+    }
+    .shield-text-sub {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    /* Dual Balance Boxes */
+    .dual-balance-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .balance-box {
+      background: rgba(2, 8, 20, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .balance-label {
+      font-size: 10px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      font-family: var(--font-hud);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .balance-amt {
+      font-family: var(--font-hud);
+      font-size: 21px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .balance-amt.cyan { color: var(--neon-cyan); text-shadow: 0 0 12px var(--neon-cyan); }
+    .balance-amt.green { color: var(--neon-green); text-shadow: 0 0 12px var(--neon-green); }
+
+    /* Primary CTA Buttons */
+    .hero-btn-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cta-claim-now {
+      width: 100%;
+      background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+      color: #000;
+      font-family: var(--font-hud);
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 183, 3, 0.6), inset 0 0 10px rgba(255,255,255,0.4);
+      transition: all 0.2s;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .cta-claim-now:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 0 35px rgba(255, 183, 3, 0.9);
+      filter: brightness(1.1);
+    }
+    .cta-claim-now:active { transform: scale(0.98); }
+
+    .cta-crate-sub {
+      width: 100%;
+      background: rgba(176, 38, 255, 0.15);
+      border: 1px solid var(--neon-purple);
+      color: #e2e8f0;
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .cta-crate-sub:hover {
+      background: rgba(176, 38, 255, 0.3);
+      box-shadow: 0 0 16px rgba(176, 38, 255, 0.5);
+    }
+
+    /* 7. Center Matrix 3D Sigil Canvas Window */
+    .sigil-canvas-box {
+      width: 100%;
+      height: 180px;
+      background: radial-gradient(circle at center, rgba(0,240,255,0.08) 0%, #01040b 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #forge-sigil-canvas { width: 100%; height: 180px; display: block; cursor: grab; }
+    #forge-sigil-canvas:active { cursor: grabbing; }
+    .sigil-canvas-overlay {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--neon-cyan);
+      display: flex;
+      gap: 12px;
+      z-index: 5;
+    }
+    .sigil-archetype-pills {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .archetype-pill {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--neon-cyan);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .archetype-pill.active, .archetype-pill:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* 8. RETIREE AGE Donut Window */
+    .donut-gauge-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .donut-svg-box {
+      width: 110px;
+      height: 110px;
+      position: relative;
+    }
+    .donut-svg-box svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .donut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .donut-num {
+      font-family: var(--font-hud);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+    }
+    .donut-sub {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #94a3b8;
+    }
+    .fire-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .fire-row { display: flex; justify-content: space-between; gap: 12px; }
+    .fire-row span:last-child { color: #fff; font-weight: 700; }
+
+    /* 9. Layered Hexagon Window ('EOVENTTARES' / ANTIGRAV) */
+    .hex-matrix-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 6px 0;
+    }
+    .hex-svg-box {
+      width: 90px;
+      height: 90px;
+    }
+    .hex-nodes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .hex-node-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hex-node-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+    .hex-node-circle.gold { background: var(--neon-gold); box-shadow: 0 0 8px var(--neon-gold); }
+    .hex-node-circle.purple { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+
+    /* 10. High-Volatility Line Chart ('POREIALE') */
+    .vol-chart-box {
+      width: 100%;
+      height: 110px;
+      position: relative;
+    }
+
+    /* 11. Circular Sonar Radar Window */
+    .radar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 0;
+    }
+    .radar-sweep-box {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+      position: relative;
+      overflow: hidden;
+    }
+    .radar-sweep-line {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-green));
+      transform-origin: 0% 0%;
+      animation: sweepRadar 3s infinite linear;
+    }
+    @keyframes sweepRadar {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .radar-channels {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+    .channel-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .channel-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    }
+
+    /* 12. Multi-colored Daily Bar Matrix */
+    .daily-bars-grid {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 80px;
+      padding-top: 10px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      margin-bottom: 8px;
+    }
+    .matrix-bar-col {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .matrix-bar-fill {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, var(--neon-cyan), rgba(0,240,255,0.3));
+      transition: all 0.2s;
+    }
+    .matrix-bar-col:hover .matrix-bar-fill {
+      background: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+    .matrix-bar-lbl {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #64748b;
+    }
+
+    /* ==========================================================================
+       BOTTOM PERSPECTIVE GRID FLOOR & PEDESTAL
+       ========================================================================== */
+    .cockpit-pedestal-floor {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-top: 1px solid rgba(0, 240, 255, 0.25);
+      background: linear-gradient(180deg, rgba(2, 8, 20, 0.9) 0%, #000208 100%);
+      z-index: 10;
+    }
+
+    /* 3D Wireframe Perspective Floor Grid */
+    .floor-grid-plane {
+      position: absolute;
+      top: 0;
+      left: -20%;
+      right: -20%;
+      bottom: -40%;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.18) 1px, transparent 1px);
+      background-size: 32px 32px;
+      transform: perspective(350px) rotateX(68deg);
+      transform-origin: 50% 0%;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    /* Glowing Pedestal Floor Text */
+    .floor-glow-title {
+      font-family: var(--font-hud);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      text-shadow: 
+        0 0 15px rgba(0, 240, 255, 0.9),
+        0 0 35px rgba(0, 240, 255, 0.5),
+        0 0 60px rgba(0, 240, 255, 0.3);
+      position: relative;
+      z-index: 2;
+      animation: pedestalBreathe 4s infinite ease-in-out;
+    }
+    @keyframes pedestalBreathe {
+      0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(0,240,255,0.7)); }
+      50% { filter: brightness(1.3) drop-shadow(0 0 25px rgba(0,240,255,1)); }
+    }
+    .floor-subline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #94a3b8;
+      margin-top: 4px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Persistent Voice Audio Bar in Footer */
+    .voice-dock-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(4, 14, 30, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 30px;
+      padding: 6px 20px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    }
+    .voice-mic-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 0 12px var(--neon-cyan);
+      transition: transform 0.15s;
+    }
+    .voice-mic-btn:hover { transform: scale(1.1); }
+    .voice-waves {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+    }
+    .wave-bar {
+      width: 3px;
+      height: 8px;
+      background: var(--neon-green);
+      border-radius: 2px;
+      animation: waveDance 1.2s infinite ease-in-out alternate;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; height: 14px; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; height: 16px; }
+    .wave-bar:nth-child(5) { animation-delay: 0.3s; height: 8px; }
+    @keyframes waveDance {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    /* ==========================================================================
+       TOP LAYER NATIVE <dialog> MODALS (@starting-style)
+       ========================================================================== */
+    dialog.modern-dialog {
+      margin: auto;
+      background: rgba(3, 10, 24, 0.95);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 240, 255, 0.3);
+      color: #e2e8f0;
+      padding: 28px 32px;
+      max-width: 460px;
+      width: 90%;
+      outline: none;
+      backdrop-filter: blur(20px);
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+      opacity: 0;
+      transform: scale(0.92) translateY(15px);
+    }
+    dialog.modern-dialog[open] {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    @starting-style {
+      dialog.modern-dialog[open] {
+        opacity: 0;
+        transform: scale(0.92) translateY(15px);
+      }
+    }
+    dialog.modern-dialog::backdrop {
+      background: rgba(1, 4, 10, 0.85);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.25s ease-out, overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+      opacity: 0;
+    }
+    dialog.modern-dialog[open]::backdrop {
+      opacity: 1;
+    }
+    @starting-style {
+      dialog.modern-dialog[open]::backdrop {
+        opacity: 0;
+      }
+    }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+      padding-bottom: 12px;
+    }
+    .dialog-title {
+      font-family: var(--font-hud);
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .dialog-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .dialog-close:hover { color: var(--neon-cyan); }
+
+    /* Sovereign Terminal Dialog (PSH) */
+    dialog.modern-dialog.terminal-dialog {
+      max-width: 760px;
+      width: 95%;
+      background: rgba(2, 6, 18, 0.98);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 50px rgba(0, 240, 255, 0.4), inset 0 0 30px rgba(0, 240, 255, 0.05);
+    }
+    .terminal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .terminal-telemetry {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 8px 12px;
+      background: rgba(0, 240, 255, 0.06);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .terminal-viewport {
+      background: #01040a;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 8px;
+      padding: 14px;
+      height: 240px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+    }
+    .terminal-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+    .terminal-prompt {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--neon-cyan);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .terminal-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .terminal-quick-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .terminal-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .terminal-pill:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: #fff;
+    }
+
+    /* Living Wealth Vault Dialog Styles */
+    dialog.modern-dialog.vault-dialog {
+      max-width: 860px;
+      width: 95%;
+      background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, rgba(2, 6, 18, 0.98) 70%);
+      border: 1px solid var(--neon-green);
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.35);
+    }
+    .vault-tier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 680px) {
+      .vault-tier-grid { grid-template-columns: 1fr; }
+    }
+    .vault-tier-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .vault-tier-card:hover, .vault-tier-card.active {
+      transform: translateY(-2px);
+      border-color: var(--tier-accent, var(--neon-green));
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .vault-tier-card.active {
+      outline: 2px solid var(--tier-accent, var(--neon-green));
+    }
+    .vault-progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 8px 0;
+    }
+    .vault-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+
+    /* 3D Sigil Forge Studio Dialog Styles */
+    dialog.modern-dialog.sigil-dialog {
+      max-width: 920px;
+      width: 95%;
+      background: radial-gradient(circle at 20% 30%, rgba(176, 38, 255, 0.2) 0%, rgba(2, 6, 18, 0.98) 75%);
+      border: 1px solid var(--neon-purple);
+      box-shadow: 0 0 60px rgba(176, 38, 255, 0.4);
+    }
+    .sigil-studio-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    @media (max-width: 780px) {
+      .sigil-studio-layout { grid-template-columns: 1fr; }
+    }
+    .sigil-preview-viewport {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(3, 8, 20, 0.8);
+      border: 1px solid rgba(176, 38, 255, 0.3);
+      border-radius: 16px;
+      box-shadow: inset 0 0 30px rgba(176, 38, 255, 0.15);
+      perspective: 800px;
+    }
+    .sigil-svg-holder {
+      transition: transform 0.2s ease-out;
+      filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.35));
+    }
+    .sigil-svg-holder:hover {
+      transform: scale(1.04) rotate(2deg);
+    }
+    .forge-controls-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .control-group-title {
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .forge-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .forge-pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .forge-pill-btn:hover {
+      background: rgba(176, 38, 255, 0.2);
+      border-color: var(--neon-purple);
+      color: #fff;
+    }
+    .forge-pill-btn.active {
+      background: var(--neon-purple);
+      color: #fff;
+      font-weight: 700;
+      border-color: var(--neon-purple);
+      box-shadow: 0 0 12px var(--neon-purple);
+    }
+
+    .dialog-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-field label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #cbd5e1;
+      letter-spacing: 1px;
+    }
+    .input-field input {
+      background: rgba(2, 6, 18, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .dialog-btn-primary {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+      color: #000;
+      font-family: var(--font-hud);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-top: 6px;
+      transition: all 0.2s;
+    }
+    .dialog-btn-primary:hover {
+      box-shadow: 0 0 20px var(--neon-cyan);
+      transform: translateY(-1px);
+    }
+
+    /* Floating Toast */
+    .toast-hud {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(3, 12, 28, 0.95);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.4);
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-hud.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Unboxing Loot Crate Animation */
+    .crate-box-spin {
+      width: 100px;
+      height: 100px;
+      margin: 16px auto;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #7928ca, #ff0080);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      box-shadow: 0 0 30px rgba(255, 0, 128, 0.6);
+      cursor: pointer;
+      animation: crateFloat 3s infinite ease-in-out;
+      transition: transform 0.2s;
+    }
+    .crate-box-spin:hover { transform: scale(1.1) rotate(5deg); }
+    @keyframes crateFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cockpit-canopy">
+  <!-- Top Curved Canopy Arch Framework -->
+  <div class="canopy-arch-top"></div>
+
+  <!-- Top Cockpit Header Navigation: Group by Purpose -->
+  <header class="cockpit-nav">
+    <!-- Brand / System Identity -->
+    <div class="brand-section" onclick="triggerOmnisearchFocus()">
+      <div class="brand-hex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="brand-title">MONEY<span>OS</span></div>
+      <span class="brand-badge" id="backend-status-badge">SOVEREIGN // STANDALONE</span>
+    </div>
+
+    <!-- Category A: Navigation (Flat, Minimal Pill / Underline Hover) -->
+    <nav class="nav-links-flat">
+      <a href="#moneyos" class="nav-flat-link active" onclick="event.preventDefault(); highlightWindow('win-chart-area');">MoneyOS</a>
+      <span class="nav-divider">|</span>
+      <a href="#primordia" class="nav-flat-link" onclick="event.preventDefault(); openTerminalDialog();">PrimordiaOS</a>
+      <span class="nav-divider">|</span>
+      <a href="#simulator" class="nav-flat-link" onclick="event.preventDefault(); openLivingVaultDialog();">Simulator</a>
+      <span class="nav-divider">|</span>
+      <a href="#sigil-forge" class="nav-flat-link" onclick="event.preventDefault(); openSigilForgeDialog();">Sigil Forge</a>
+      <span class="nav-divider">|</span>
+      <a href="#pricing" class="nav-flat-link" onclick="event.preventDefault(); openPricingDialog();">Pricing</a>
+    </nav>
+
+    <!-- Omnisearch Quick Bar -->
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="cockpit-omnisearch" placeholder="Search features, yield..." oninput="filterCockpitWindows(this.value)" />
+      <span style="font-family: var(--font-mono); font-size: 10px; color: #64748b;">⌘K</span>
+    </div>
+
+    <!-- Right Controls: Category B (Segmented Badge) + Category C (Actions) -->
+    <div class="nav-right-group">
+      <!-- Category B: User Inventory / Vault (Segmented Pill) -->
+      <div class="badge-segmented" id="user-inventory-badge">
+        <button class="badge-segment" onclick="openLootDialog()" title="Daily Mystery Loot Crate">
+          <span class="segment-icon">📦</span>
+          <span class="segment-label">Crates:</span>
+          <span class="segment-value" id="crate-count-val">1</span>
+        </button>
+        <div class="segment-separator"></div>
+        <button class="badge-segment" onclick="openProfileDialog()" title="Creator Level &amp; Experience">
+          <span class="segment-icon" style="color: var(--neon-gold);">⚡</span>
+          <span class="segment-value">Lv.4</span>
+          <span class="segment-sub">| 1,250 XP</span>
+        </button>
+        <div class="segment-separator"></div>
+        <button class="badge-segment" onclick="openLivingVaultDialog()" title="Claimable Revenue">
+          <span class="segment-icon" style="color: var(--neon-green);">🪙</span>
+          <span class="segment-value" id="claimable-cash-val">$0.00</span>
+          <span class="segment-sub">Claimable</span>
+        </button>
+      </div>
+
+      <!-- Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) -->
+      <div class="nav-actions-auth">
+        <button class="btn-ghost-signin" onclick="openProfileDialog()">
+          Sign In
+        </button>
+        <button class="btn-solid-start" onclick="openWizardDialog()">
+          <span>Start Free</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Live Telemetry Strip (Sub-Bar): The "Status Pill" Rule -->
+  <section class="cockpit-telemetry-subbar" aria-label="Live Telemetry Bar">
+    <div class="telemetry-pills-row">
+      <!-- Metric 1: Live Stream -->
+      <div class="pill-metric">
+        <span class="pill-dot live"></span>
+        <span class="pill-label">Live Stream:</span>
+        <span class="pill-value text-green" id="telemetry-live-yield">+$0.0006/s</span>
+      </div>
+
+      <!-- Metric 2: Burn / Earn -->
+      <div class="pill-metric">
+        <span class="pill-icon" style="color: var(--neon-gold);">⚡</span>
+        <span class="pill-label">Burn/Earn:</span>
+        <span class="pill-value text-cyan" id="telemetry-burn-earn">+$0.0012/s</span>
+      </div>
+
+      <!-- Metric 3: Run Rate -->
+      <div class="pill-metric">
+        <span class="pill-icon" style="color: var(--neon-cyan);">📈</span>
+        <span class="pill-label">Run Rate:</span>
+        <span class="pill-value text-white" id="telemetry-run-rate">$360/yr</span>
+      </div>
+
+      <!-- Metric 4: Multiplier -->
+      <div class="pill-metric">
+        <span class="pill-icon" style="color: var(--neon-gold);">🔥</span>
+        <span class="pill-label">Multiplier:</span>
+        <span class="pill-value text-gold" id="telemetry-multiplier">1.25x</span>
+      </div>
+
+      <!-- Interactive Trigger Pill -->
+      <button class="pill-action" onclick="boostVelocityRate()" title="Boost Cashflow Velocity Multiplier">
+        <span class="pill-icon">⚡</span>
+        <span class="pill-label">Boost Rate +</span>
+      </button>
+    </div>
+
+    <!-- Right Telemetry Stream Mode -->
+    <div style="display: flex; align-items: center; gap: 8px; color: #64748b; font-size: 10px;">
+      <span>QUANTUM HARMONIC:</span>
+      <span style="color: var(--neon-green); font-weight: 700;">528Hz ACTIVE</span>
+    </div>
+  </section>
+
+  <!-- 3D Curved Cockpit Bridge Cluster -->
+  <main class="cockpit-viewport">
+    <div class="cockpit-cluster">
+
+      <!-- ====================================================================
+           COLUMN 1 (OUTER LEFT - ANGLED INWARD)
+           ==================================================================== -->
+      <div class="col-outer-left">
+        <!-- Window 1: Live Ticker Stream -->
+        <section class="cockpit-window" id="win-tickers">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> LIVE TICKERS</div>
+            <span class="window-tag" id="ticker-counter">24/s</span>
+          </div>
+          <div class="ticker-list" id="ticker-container">
+            <div class="ticker-item" onclick="copyTickerHash('0x9a4f...7b12')">
+              <span class="ticker-sym"><span style="color:var(--neon-gold)">●</span> SOL / USDC</span>
+              <span class="ticker-val">$184.20 <small style="color:#64748b">(+6.4%)</small></span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x4e21...98c3')">
+              <span class="ticker-sym"><span style="color:var(--neon-cyan)">●</span> AFF / RAKUTEN</span>
+              <span class="ticker-val">+$48.50/s</span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x12bb...881f')">
+              <span class="ticker-sym"><span style="color:var(--neon-green)">●</span> SWARM YIELD</span>
+              <span class="ticker-val">+$1,420/d</span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x9910...aa41')">
+              <span class="ticker-sym"><span style="color:var(--neon-purple)">●</span> ETH / ARB</span>
+              <span class="ticker-val">$3,412.80</span>
+            </div>
+          </div>
+          <div style="margin-top: 8px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: #64748b;">
+            <span>STREAM: AGENT-PULSE</span>
+            <span style="color: var(--neon-green)">LATENCY: 14ms</span>
+          </div>
+        </section>
+
+        <!-- Window 2: Mountain Area Chart (PAX LANDER) -->
+        <section class="cockpit-window" id="win-chart-area">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> PAX LANDER</div>
+            <div class="chart-pills">
+              <span class="chart-pill active" onclick="setChartRange(this, '1W')">1W</span>
+              <span class="chart-pill" onclick="setChartRange(this, '1M')">1M</span>
+              <span class="chart-pill" onclick="setChartRange(this, 'ALL')">ALL</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <svg class="chart-svg" viewBox="0 0 240 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              <!-- Filled mountain polygon -->
+              <polygon id="chart-poly" points="0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12 240,100 0,100" fill="url(#areaGrad)" />
+              <!-- Top neon stroke line -->
+              <polyline id="chart-line" points="0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="chart-meta">
+            <span>2018: $1.2K</span>
+            <span style="color: var(--neon-cyan); font-weight: 700;">2026: $48.9K</span>
+          </div>
+        </section>
+
+        <!-- Window 3: Radial Multi-Ring Gauge (58%) -->
+        <section class="cockpit-window" id="win-radial-gauge">
+          <div class="window-header">
+            <div class="window-title"><span class="dot gold"></span> ATTRIBUTION</div>
+            <span class="window-tag">COOKIE 30D</span>
+          </div>
+          <div class="gauge-wrapper">
+            <div class="gauge-svg-box">
+              <svg viewBox="0 0 100 100">
+                <!-- Outer background track -->
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                <!-- Outer colored ring (58%) -->
+                <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gaugeGrad)" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="110" stroke-linecap="round"/>
+                <!-- Inner secondary ring -->
+                <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(0,255,136,0.2)" stroke-width="4"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#00ff88" stroke-width="4" stroke-dasharray="188" stroke-dashoffset="50" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#00f0ff"/>
+                    <stop offset="100%" stop-color="#ffb703"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-center-text">
+                <div class="gauge-num" id="gauge-percent">58%</div>
+                <div class="gauge-label">CONV. RATIO</div>
+              </div>
+            </div>
+            <div class="gauge-stats">
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">Streak:</span>
+                <span class="gauge-stat-val" style="color:var(--neon-green)">1.50x</span>
+              </div>
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">Clicks:</span>
+                <span class="gauge-stat-val">12,480</span>
+              </div>
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">EPC:</span>
+                <span class="gauge-stat-val" style="color:var(--neon-gold)">$3.42</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ====================================================================
+           COLUMN 2 (MID LEFT)
+           ==================================================================== -->
+      <div class="col-mid-left">
+        <!-- Window 4: Swarm & Channels List ('MY ARMS') -->
+        <section class="cockpit-window" id="win-arms">
+          <div class="window-header">
+            <div class="window-title"><span class="dot purple"></span> MY ARMS // SWARM</div>
+            <span class="window-tag">4 ACTIVE</span>
+          </div>
+          <div class="syndicate-list">
+            <div class="syndicate-card active" onclick="selectSyndicate('VRTX')">
+              <div class="synd-info">
+                <div class="synd-icon">🐉</div>
+                <div>
+                  <div class="synd-name">[VORTEX] Cyber</div>
+                  <div class="synd-role">Autonomous Syndication</div>
+                </div>
+              </div>
+              <div class="synd-status">● 142K XP</div>
+            </div>
+            <div class="syndicate-card" onclick="selectSyndicate('APEX')">
+              <div class="synd-info">
+                <div class="synd-icon">👑</div>
+                <div>
+                  <div class="synd-name">[APEX] Capital</div>
+                  <div class="synd-role">High-Ticket Vault</div>
+                </div>
+              </div>
+              <div class="synd-status">● 118K XP</div>
+            </div>
+            <div class="syndicate-card" onclick="selectSyndicate('PLSE')">
+              <div class="synd-info">
+                <div class="synd-icon">⚡</div>
+                <div>
+                  <div class="synd-name">[PULSE] TikTok</div>
+                  <div class="synd-role">Viral Video Loop</div>
+                </div>
+              </div>
+              <div class="synd-status">● 95K XP</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Window 5: Autonomous Velocity Engine ('NIOIDES') -->
+        <section class="cockpit-window" id="win-velocity">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> VELOCITY ENGINE</div>
+            <span class="window-tag" id="worker-count-badge">8 WORKERS</span>
+          </div>
+          <div class="slider-box">
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Autonomous Frequency</span>
+                <span id="slider-freq-val">60s</span>
+              </div>
+              <input type="range" class="hud-range" min="10" max="120" value="60" oninput="updateVelocityFreq(this.value)" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Yield Multiplier</span>
+                <span id="slider-mult-val">2.4x</span>
+              </div>
+              <input type="range" class="hud-range" min="1" max="5" step="0.1" value="2.4" oninput="updateYieldMult(this.value)" />
+            </div>
+          </div>
+          <button class="nav-pill-btn" style="width: 100%; margin-top: 12px; justify-content: center;" onclick="pulseSubstrate()">
+            ⚡ PULSE SUBSTRATE
+          </button>
+        </section>
+      </div>
+
+      <!-- ====================================================================
+           COLUMN 3 (CENTER HERO STAGE)
+           ==================================================================== -->
+      <div class="col-center-hero">
+        <!-- Window 6: Avatar Card, Gold Shield, Dual Balances & Primary CTA -->
+        <section class="cockpit-window" id="win-hero-stage" style="border-color: rgba(0,240,255,0.5);">
+          <div class="hero-card">
+            <!-- Glowing Avatar Ring -->
+            <div class="hero-avatar-ring">
+              <div class="avatar-fallback">👑</div>
+            </div>
+            <div class="hero-name-title">SHANE</div>
+            <div class="hero-level-sub">SOVEREIGN TIER 0 // CORE OPERATOR</div>
+
+            <!-- Gold Commission Shield Badge -->
+            <div class="commission-badge-shield">
+              <div class="shield-icon">🛡️</div>
+              <div>
+                <div class="shield-text-big">10% COMMISSION ACTIVE</div>
+                <div class="shield-text-sub">LIFETIME SOVEREIGN ATTRIBUTION</div>
+              </div>
+            </div>
+
+            <!-- Dual Balance Boxes -->
+            <div class="dual-balance-row">
+              <div class="balance-box">
+                <div class="balance-label">Daily Balance</div>
+                <div class="balance-amt cyan" id="harvest-amt">$13,800.00</div>
+              </div>
+              <div class="balance-box">
+                <div class="balance-label">Pending Vault</div>
+                <div class="balance-amt green" id="vault-amt">$17,852.40</div>
+              </div>
+            </div>
+
+            <!-- Primary Claim CTA -->
+            <div class="hero-btn-stack">
+              <button class="cta-claim-now" id="claim-button" onclick="executeHarvestClaim()">
+                <span>⚡</span> CLAIM NOW <span>$13,800</span>
+              </button>
+              <button class="cta-crate-sub" onclick="openLootDialog()">
+                <span>🎁</span> OPEN DAILY MYSTERY LOOT CRATE
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Window 7: Center Matrix 3D Sigil Forge Window -->
+        <section class="cockpit-window" id="win-sigil-matrix">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> 3D SIGIL FORGE MATRIX</div>
+            <span class="window-tag" id="sigil-status-tag" onclick="playSolfeggioTone()" style="cursor: pointer;">🔊 528Hz SOLFEGGIO</span>
+          </div>
+          <div class="sigil-canvas-box" onclick="openSigilForgeDialog()" style="cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; min-height: 185px;" title="Click to Open Full Sigil Forge Studio">
+            <div class="sigil-canvas-overlay">
+              <span>SIGIL: <span id="sigil-rot-lbl">GOLD CROWN</span></span>
+              <span>LUMEN: 99.4%</span>
+              <span style="color:var(--neon-green)">AUTHENTIC SHA-256</span>
+            </div>
+            <div id="sigil-medallion-window" class="sigil-svg-holder" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 180px;">
+              <!-- Deterministic SVG injected by initSigilEngine() -->
+            </div>
+          </div>
+          <div class="sigil-archetype-pills">
+            <span class="archetype-pill active" onclick="switchCockpitSigilTheme('aura_primordial_gold', 'crest_crown', 'glyph_octagram', this)">GOLD CROWN</span>
+            <span class="archetype-pill" onclick="switchCockpitSigilTheme('aura_cyber_emerald', 'crest_dragon_horns', 'glyph_metatron', this)">EMERALD DRAGON</span>
+            <span class="archetype-pill" onclick="switchCockpitSigilTheme('aura_osmium_diamond', 'crest_omni_sovereign', 'glyph_quantum_hex', this)">OSMIUM OMNI</span>
+            <span class="archetype-pill" onclick="openSigilForgeDialog()" style="color: var(--neon-purple); border-color: var(--neon-purple); font-weight: bold;">🔮 STUDIO</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- ====================================================================
+           COLUMN 4 (MID RIGHT)
+           ==================================================================== -->
+      <div class="col-mid-right">
+        <!-- Window 8: RETIREE AGE Donut & FIRE Freedom Clock -->
+        <section class="cockpit-window" id="win-retiree-donut">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> RETIREE AGE // FIRE</div>
+            <span class="window-tag">9.4 YRS</span>
+          </div>
+          <div class="donut-gauge-box">
+            <div class="donut-svg-box">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#00ff88" stroke-width="8" stroke-dasharray="238" stroke-dashoffset="60" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-center-text">
+                <div class="donut-num" id="retire-age-val">41.4</div>
+                <div class="donut-sub">TARGET AGE</div>
+              </div>
+            </div>
+            <div class="fire-details">
+              <div class="fire-row">
+                <span style="color:#94a3b8">Goal Nest:</span>
+                <span>$1.875M</span>
+              </div>
+              <div class="fire-row">
+                <span style="color:#94a3b8">Monte Carlo:</span>
+                <span style="color:var(--neon-green)">98.6%</span>
+              </div>
+              <div class="fire-row">
+                <span style="color:#94a3b8">Passive Mo:</span>
+                <span style="color:var(--neon-gold)">$7,800</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 0 4px 6px;">
+            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: #94a3b8; margin-bottom: 4px;">
+              <span>Target Retirement Age</span>
+              <span id="fire-age-label" style="color:var(--neon-green); font-weight: 700;">41 yrs</span>
+            </div>
+            <input type="range" class="hud-range" min="30" max="65" value="41" oninput="updateFireTarget(this.value)" />
+          </div>
+        </section>
+
+        <!-- Window 9: ANTIGRAV Hexagon Window ('EOVENTTARES') -->
+        <section class="cockpit-window" id="win-antigrav-hex">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> EOVENTTARES</div>
+            <span class="window-tag">ANTIGRAV()</span>
+          </div>
+          <div class="hex-matrix-box">
+            <div class="hex-svg-box">
+              <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                <polygon points="50,5 90,27 90,73 50,95 10,73 10,27" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.4)" stroke-width="2"/>
+                <polygon points="50,18 80,34 80,66 50,82 20,66 20,34" fill="none" stroke="var(--neon-cyan)" stroke-width="1.5" stroke-dasharray="6,3"/>
+                <circle cx="50" cy="50" r="14" fill="rgba(0,240,255,0.2)" stroke="var(--neon-cyan)" stroke-width="2"/>
+                <text x="50" y="54" font-family="'Orbitron', sans-serif" font-size="10" font-weight="900" fill="#fff" text-anchor="middle">94</text>
+              </svg>
+            </div>
+            <div class="hex-nodes-list">
+              <div class="hex-node-item">
+                <div class="hex-node-circle"></div>
+                <span style="color:#cbd5e1">15% Sync Substrate</span>
+              </div>
+              <div class="hex-node-item">
+                <div class="hex-node-circle gold"></div>
+                <span style="color:#cbd5e1">30% Deploy Loop</span>
+              </div>
+              <div class="hex-node-item">
+                <div class="hex-node-circle purple"></div>
+                <span style="color:#cbd5e1">294% Supercritical</span>
+              </div>
+            </div>
+          </div>
+          <button class="nav-pill-btn" style="width: 100%; margin-top: 6px; justify-content: center;" onclick="runAntigravAudit()">
+            🛡️ RUN SOVEREIGN AUDIT
+          </button>
+        </section>
+      </div>
+
+      <!-- ====================================================================
+           COLUMN 5 (OUTER RIGHT - ANGLED INWARD)
+           ==================================================================== -->
+      <div class="col-outer-right">
+        <!-- Window 10: High-Volatility Line Chart ('POREIALE') -->
+        <section class="cockpit-window" id="win-chart-poreiale">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> POREIALE // YIELD</div>
+            <span class="window-tag">+14.8% APY</span>
+          </div>
+          <div class="vol-chart-box">
+            <svg viewBox="0 0 240 90" style="width: 100%; height: 100%;">
+              <path d="M0,80 Q30,75 60,65 T120,40 T180,25 T240,8" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M0,85 Q40,82 80,75 T160,65 T240,55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4,4"/>
+              <circle cx="240" cy="8" r="4" fill="#00ff88" filter="drop-shadow(0 0 6px #00ff88)"/>
+            </svg>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: #64748b;">
+            <span>Linear: $22K</span>
+            <span style="color: var(--neon-cyan); font-weight: 700;">Compounded: $68.4K</span>
+          </div>
+        </section>
+
+        <!-- Window 11: Circular Sonar Radar Window -->
+        <section class="cockpit-window" id="win-radar">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> PAYOUT RADAR</div>
+            <span class="window-tag">TRACKING</span>
+          </div>
+          <div class="radar-wrapper">
+            <div class="radar-sweep-box">
+              <div class="radar-sweep-line"></div>
+              <div style="position: absolute; top: 25%; left: 65%; width: 5px; height: 5px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green);"></div>
+              <div style="position: absolute; top: 70%; left: 30%; width: 4px; height: 4px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan);"></div>
+            </div>
+            <div class="radar-channels">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>MaxBounty</span>
+                  <span style="color: #fff">$5,840</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 85%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>Rakuten</span>
+                  <span style="color: #fff">$4,120</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 62%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>Direct Conduit</span>
+                  <span style="color: #fff">$1,650</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 38%;"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Window 12: Multi-colored Daily Bar Matrix -->
+        <section class="cockpit-window" id="win-daily-matrix">
+          <div class="window-header">
+            <div class="window-title"><span class="dot gold"></span> 14D MATRIX // TAX</div>
+            <span class="window-tag">-$924 SAVED</span>
+          </div>
+          <div class="daily-bars-grid" id="matrix-bars-container">
+            <!-- 14 dynamic bars rendered via JS -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px;">
+            <span style="color:#94a3b8">Sched C Write-Off:</span>
+            <span style="color:var(--neon-green); font-weight:700;">$3,850.00</span>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Perspective Grid Floor & Pedestal -->
+  <footer class="cockpit-pedestal-floor">
+    <div class="floor-grid-plane"></div>
+    <div class="floor-glow-title">MONEYPLUGHUB.COM</div>
+    <div class="floor-subline">CREATOR FINANCIAL OPERATING SYSTEM // ALL WINDOWS LIVE</div>
+
+    <!-- Interactive AI Voice Control Bar -->
+    <div class="voice-dock-bar">
+      <button class="voice-mic-btn" id="voice-btn" onclick="toggleVoiceOS()">
+        🎙️
+      </button>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: #fff;">
+        <span id="voice-status-text">MoneyOS Neural Voice: Ready</span>
+      </div>
+      <div class="voice-waves">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 3. Floating Micro-Docks (Bottom Corners) -->
+  <!-- Bottom-Left (MoneyOS AI Live Voice): [ 🎙️ MoneyOS Voice: Active ] -->
+  <aside class="micro-dock-bottom-left" id="micro-dock-voice" onclick="toggleVoiceOS()">
+    <button class="micro-dock-pill voice-dock" id="micro-voice-pill" title="Toggle MoneyOS Voice AI (Click to activate/mute)">
+      <span class="voice-mic-icon">🎙️</span>
+      <span class="micro-dock-label">MoneyOS Voice:</span>
+      <span class="micro-dock-status text-green" id="micro-voice-status">Active</span>
+      <div class="voice-waves-mini" id="voice-waves-mini">
+        <span class="wave-mini"></span>
+        <span class="wave-mini"></span>
+        <span class="wave-mini"></span>
+        <span class="wave-mini"></span>
+      </div>
+    </button>
+  </aside>
+
+  <!-- Bottom-Right (Living Vault): [ 🏦 Living Vault: $2,450 ▴ ] -->
+  <aside class="micro-dock-bottom-right" id="micro-dock-vault" onclick="openLivingVaultDialog()">
+    <button class="micro-dock-pill vault-dock" id="micro-vault-pill" title="Expand Living Wealth Vault">
+      <span class="vault-icon">🏦</span>
+      <span class="micro-dock-label">Living Vault:</span>
+      <span class="micro-dock-val text-green" id="micro-vault-val">$2,450</span>
+      <span class="vault-chevron">▴</span>
+    </button>
+  </aside>
+</div>
+
+<!-- ==========================================================================
+     NATIVE <dialog> MODALS (Top Layer)
+     ========================================================================== -->
+
+<!-- 1. Profile / Sovereign Modal -->
+<dialog class="modern-dialog" id="profile-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">SOVEREIGN IDENTITY // TIER 0</div>
+    <button class="dialog-close" onclick="closeDialog('profile-dialog')">✕</button>
+  </div>
+  <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #0b1e38; border: 2px solid var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 28px;">
+      👑
+    </div>
+    <div>
+      <h3 style="font-family: var(--font-hud); font-size: 18px; color: #fff;">SHANE</h3>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: var(--neon-cyan);">Operator ID: PRIM-T0-9942-SHN</p>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: var(--neon-green);">Commission: 10% Gold Lifetime</p>
+    </div>
+  </div>
+  <div style="background: rgba(2,6,18,0.7); border: 1px solid rgba(0,240,255,0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-family: var(--font-mono); font-size: 11px; line-height: 1.6;">
+    <div><strong>Vault Balance:</strong> $17,852.40 USD</div>
+    <div><strong>Compounding Yield:</strong> +8.4% Annual APY</div>
+    <div><strong>Antigravity Score:</strong> 94.2 / 100 (Passes All Gates)</div>
+    <div><strong>Connected Edge:</strong> moneyplughub.com</div>
+  </div>
+  <button class="dialog-btn-primary" style="width:100%" onclick="closeDialog('profile-dialog')">CONFIRM & CLOSE</button>
+</dialog>
+
+<!-- 2. Protocol / API Key Manager Modal -->
+<dialog class="modern-dialog" id="wizard-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">PROTOCOL & API CONDUIT</div>
+    <button class="dialog-close" onclick="closeDialog('wizard-dialog')">✕</button>
+  </div>
+  <form class="dialog-form" onsubmit="event.preventDefault(); saveProtocolSettings();">
+    <div class="input-field">
+      <label>LOCAL BACKEND URL (PORT 3000 / 3001)</label>
+      <input type="text" id="cfg-backend-url" value="http://localhost:3000" />
+    </div>
+    <div class="input-field">
+      <label>AFFILIATE NETWORK CONDUIT KEY</label>
+      <input type="password" id="cfg-aff-key" value="prim_live_9481726a4b" />
+    </div>
+    <div class="input-field">
+      <label>SOLFEGGIO HARMONIC FREQUENCY</label>
+      <input type="text" id="cfg-freq" value="528 Hz (Sacred Transformation)" />
+    </div>
+    <button type="submit" class="dialog-btn-primary">SAVE PROTOCOL SETTINGS</button>
+  </form>
+</dialog>
+
+<!-- 3. Daily Mystery Loot Crate Modal -->
+<dialog class="modern-dialog" id="loot-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">DAILY MYSTERY LOOT CRATE</div>
+    <button class="dialog-close" onclick="closeDialog('loot-dialog')">✕</button>
+  </div>
+  <div style="text-align: center;">
+    <div class="crate-box-spin" id="crate-box" onclick="openLootCrate()">
+      📦
+    </div>
+    <div id="loot-result-text" style="font-family: var(--font-hud); font-size: 14px; color: var(--neon-gold); min-height: 24px; margin-top: 8px;">
+      CLICK THE CRATE TO CRACK OPEN
+    </div>
+    <p style="font-family: var(--font-mono); font-size: 11px; color: #94a3b8; margin-top: 8px;">
+      Resets daily at 00:00 UTC. Guaranteed Sovereign XP or Yield Multipliers.
+    </p>
+  </div>
+  <button class="dialog-btn-primary" style="width:100%; margin-top: 20px;" onclick="closeDialog('loot-dialog')">DONE</button>
+</dialog>
+
+<!-- 4. PrimordiaOS Sovereign Terminal Shell (PSH) Modal -->
+<dialog class="modern-dialog terminal-dialog" id="terminal-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title" style="display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--neon-cyan);">⟐</span> PRIMORDIA-OS SOVEREIGN TERMINAL SHELL (PSH v4.2)
+    </div>
+    <button class="dialog-close" onclick="closeDialog('terminal-dialog')">✕</button>
+  </div>
+  <div class="terminal-body">
+    <div class="terminal-telemetry">
+      <span style="color: var(--neon-cyan);">STABILITY: 94%</span>
+      <span style="color: var(--neon-green);">COHERENCE: 98%</span>
+      <span style="color: var(--neon-gold);">ENTROPY: 12%</span>
+      <span style="color: var(--neon-purple);">MODE: STABLE</span>
+      <span style="color: #94a3b8;">OPERATOR: Shane (T0)</span>
+    </div>
+    <div class="terminal-viewport" id="psh-viewport">⟐ PrimordiaOS Sovereign Terminal Shell initialized.
+Kernel v4.2 • Human Command Layer (HCL) Active.
+Speak in plain English to execute disk &amp; system commands.
+Type 'help' for full guide or click quick pills below.</div>
+    <form onsubmit="event.preventDefault(); submitTerminalInput();" class="terminal-input-row">
+      <span class="terminal-prompt" id="psh-prompt-lbl">⚡ PRIMORDIA &gt;</span>
+      <input type="text" id="psh-command-input" class="terminal-input" placeholder="Type plain English command (e.g. 'show disk space', 'show swarm status', 'check memory')..." autocomplete="off" />
+      <button type="submit" class="nav-pill-btn" style="padding: 4px 12px; font-size: 11px;">RUN</button>
+    </form>
+    <div class="terminal-quick-pills">
+      <span class="terminal-pill" onclick="runPshPill('show disk space')">show disk space</span>
+      <span class="terminal-pill" onclick="runPshPill('check memory usage')">check memory usage</span>
+      <span class="terminal-pill" onclick="runPshPill('show swarm status')">show swarm status</span>
+      <span class="terminal-pill" onclick="runPshPill('show running node processes')">show running node processes</span>
+      <span class="terminal-pill" onclick="runPshPill('ignite origin fire')">ignite origin fire</span>
+      <span class="terminal-pill" onclick="runPshPill('count all json files')">count all json files</span>
+    </div>
+  </div>
+</dialog>
+
+<!-- 5. The Living Wealth Vault (6-Tier Ascension Engine) Modal -->
+<dialog class="modern-dialog vault-dialog" id="living-vault-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title" style="display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--neon-green);">🏛️</span> THE LIVING WEALTH VAULT // 6-TIER ASCENSION ENGINE
+    </div>
+    <button class="dialog-close" onclick="closeDialog('living-vault-dialog')">✕</button>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+    <!-- Vault Header Status & Controls -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; background: rgba(0,0,0,0.4); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.25);">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; text-transform: uppercase;">Active Vault Instrument:</span>
+          <span id="vault-sim-badge" style="background: rgba(16, 185, 129, 0.2); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 2px 8px; border-radius: 20px; font-family: var(--font-mono); font-size: 10px; font-weight: 700;">● LIVE ACID VAULT</span>
+        </div>
+        <h2 id="vault-tier-title" style="font-family: var(--font-hud); font-size: 22px; color: #fff; margin-top: 2px;">
+          Tier III • Crypto Matrix Vault
+        </h2>
+      </div>
+      <div style="text-align: right; display: flex; align-items: center; gap: 12px;">
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8;">GROUNDED NET WORTH</div>
+          <div id="vault-live-networth" style="font-family: var(--font-mono); font-size: 22px; font-weight: 900; color: var(--neon-cyan);">$17,852.40</div>
+        </div>
+        <button class="nav-pill-btn" style="background: rgba(255, 183, 3, 0.15); border-color: var(--neon-gold); color: var(--neon-gold);" onclick="triggerVaultShockwave()">
+          ⚡ SHOCKWAVE BURST
+        </button>
+      </div>
+    </div>
+
+    <!-- Tier Milestone Progress Meter -->
+    <div>
+      <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: #94a3b8; margin-bottom: 4px;">
+        <span>Current: <strong style="color: #fff;" id="vault-prog-current">$17,852</strong></span>
+        <span>Next Tier Milestone: <strong style="color: var(--neon-gold);" id="vault-prog-next">$50,000 (Bullion Chamber)</strong></span>
+        <span id="vault-prog-pct" style="color: var(--neon-green); font-weight: 700;">35.7%</span>
+      </div>
+      <div class="vault-progress-track">
+        <div class="vault-progress-fill" id="vault-progress-bar" style="width: 35.7%;"></div>
+      </div>
+    </div>
+
+    <!-- Interactive Simulation Slider -->
+    <div style="background: rgba(2, 6, 18, 0.6); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 12px;">
+      <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: #94a3b8; margin-bottom: 6px;">
+        <span>⚡ Interactive Net Worth Simulator:</span>
+        <span id="sim-slider-val" style="color: var(--neon-cyan); font-weight: 700;">$17,852 USD</span>
+      </div>
+      <input type="range" class="hud-range" id="vault-sim-range" min="1000" max="1500000" step="2500" value="17852" oninput="onVaultSimulationSlide(this.value)" />
+    </div>
+
+    <!-- 6-Tier Grid -->
+    <div class="vault-tier-grid">
+      <div class="vault-tier-card" id="vt-card-1" onclick="selectVaultTier(1)" style="--tier-accent: #f97316;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">🥉</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #f97316; font-weight: 700;">$0 - $1.5K</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Starter Seed</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">Raw liquidity ground &amp; initial friction barrier.</div>
+      </div>
+
+      <div class="vault-tier-card" id="vt-card-2" onclick="selectVaultTier(2)" style="--tier-accent: #10b981;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">🟢</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #10b981; font-weight: 700;">$1.5K - $10K</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Builder River</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">Dynamic affiliate channels &amp; viral liquidity flow.</div>
+      </div>
+
+      <div class="vault-tier-card active" id="vt-card-3" onclick="selectVaultTier(3)" style="--tier-accent: #00f0ff;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">💎</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #00f0ff; font-weight: 700;">$10K - $50K</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Crypto Matrix</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">Automated multi-chain yield &amp; SOL conduits.</div>
+      </div>
+
+      <div class="vault-tier-card" id="vt-card-4" onclick="selectVaultTier(4)" style="--tier-accent: #ffb703;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">🟡</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #ffb703; font-weight: 700;">$50K - $250K</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Bullion Chamber</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">24K physical gold reserves &amp; treasury shield.</div>
+      </div>
+
+      <div class="vault-tier-card" id="vt-card-5" onclick="selectVaultTier(5)" style="--tier-accent: #b026ff;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">👑</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #b026ff; font-weight: 700;">$250K - $1M</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Sovereign Vault</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">Tier 0 autonomy, osmium vault &amp; zero counterparty.</div>
+      </div>
+
+      <div class="vault-tier-card" id="vt-card-6" onclick="selectVaultTier(6)" style="--tier-accent: #38bdf8;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px;">🌌</span>
+          <span style="font-family: var(--font-mono); font-size: 9px; color: #38bdf8; font-weight: 700;">$1M+</span>
+        </div>
+        <div style="font-family: var(--font-hud); font-size: 13px; font-weight: 700; color: #fff;">Celestial Singularity</div>
+        <div style="font-family: var(--font-mono); font-size: 10px; color: #94a3b8; line-height: 1.4;">Hyper-compounding capital matrix &amp; eternal orbit.</div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 6. The 3D Sigil Forge & Vector Customizer Studio Modal -->
+<dialog class="modern-dialog sigil-dialog" id="sigil-forge-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title" style="display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--neon-purple);">🔮</span> 3D SIGIL FORGE &amp; VECTOR CUSTOMIZER STUDIO
+    </div>
+    <button class="dialog-close" onclick="closeDialog('sigil-forge-dialog')">✕</button>
+  </div>
+  <div class="sigil-studio-layout">
+    <!-- Left: Live Authentic SVG Medallion Preview -->
+    <div class="sigil-preview-viewport">
+      <div id="forge-studio-svg-viewport" class="sigil-svg-holder" style="width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;">
+        <!-- Injected Live Authentic SVG -->
+      </div>
+      <div style="margin-top: 14px; text-align: center;">
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--neon-gold); font-weight: 700;">
+          • SHA-256 DETERMINISTIC SEAL •
+        </div>
+        <div id="forge-active-hash-label" style="font-family: var(--font-mono); font-size: 9px; color: #94a3b8; margin-top: 2px;">
+          PRIM-T0-9942-SHN // 528Hz HARMONIC
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px; width: 100%;">
+        <button class="nav-pill-btn" style="flex: 1; justify-content: center;" onclick="playSolfeggioTone()">
+          🔊 528Hz TONE
+        </button>
+        <button class="nav-pill-btn gold" style="flex: 1; justify-content: center;" onclick="mintCreatorPassport()">
+          👑 MINT PASSPORT
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Studio Customization Controls -->
+    <div class="forge-controls-stack">
+      <!-- 1. Aura Theme -->
+      <div>
+        <div class="control-group-title">AURA THEME SHADER:</div>
+        <div class="forge-btn-group">
+          <button class="forge-pill-btn active" onclick="updateForgeConfig('aura', 'aura_primordial_gold', this)">🟡 Primordial Gold</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('aura', 'aura_cyber_emerald', this)">🟢 Cyber Emerald</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('aura', 'aura_osmium_diamond', this)">💎 Osmium Diamond</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('aura', 'aura_cosmic_nebula', this)">🌌 Cosmic Nebula</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('aura', 'aura_hyper_violet', this)">🟣 Hyper Violet</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('aura', 'aura_solfeggio_528', this)">✨ Solfeggio 528</button>
+        </div>
+      </div>
+
+      <!-- 2. Sacred Glyph -->
+      <div>
+        <div class="control-group-title">SACRED CENTER GLYPH:</div>
+        <div class="forge-btn-group">
+          <button class="forge-pill-btn active" onclick="updateForgeConfig('glyph', 'glyph_octagram', this)">Octagram Star</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('glyph', 'glyph_metatron', this)">Metatron Cube</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('glyph', 'glyph_quantum_hex', this)">Quantum Hex</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('glyph', 'glyph_flower_of_life', this)">Flower of Life</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('glyph', 'glyph_dragon', this)">Dragon Sigil</button>
+        </div>
+      </div>
+
+      <!-- 3. Radial Ring FX -->
+      <div>
+        <div class="control-group-title">RADIAL RING ARCHITECTURE:</div>
+        <div class="forge-btn-group">
+          <button class="forge-pill-btn active" onclick="updateForgeConfig('ring', 'ring_circuit_traces', this)">Circuit Traces</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('ring', 'ring_celestial_corona', this)">Celestial Corona</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('ring', 'ring_rune_encryption', this)">Runic Cipher</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('ring', 'ring_laser_scanlines', this)">Laser Scanlines</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('ring', 'ring_hex_shield_grid', this)">Hex Shield</button>
+        </div>
+      </div>
+
+      <!-- 4. Imperial Crest -->
+      <div>
+        <div class="control-group-title">IMPERIAL CREST / APEX:</div>
+        <div class="forge-btn-group">
+          <button class="forge-pill-btn active" onclick="updateForgeConfig('crest', 'crest_crown', this)">👑 Imperial Crown</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('crest', 'crest_dragon_horns', this)">🐉 Dragon Horns</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('crest', 'crest_omni_sovereign', this)">⭐ Omni Sovereign</button>
+          <button class="forge-pill-btn" onclick="updateForgeConfig('crest', 'crest_angel_wings', this)">🪽 Seraphim Wings</button>
+        </div>
+      </div>
+
+      <!-- 5. Inscription & Monogram -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+        <div class="input-field">
+          <label>MONOGRAM</label>
+          <input type="text" id="forge-cfg-monogram" value="SHAN" maxlength="4" oninput="updateForgeConfig('monogram', this.value.toUpperCase())" />
+        </div>
+        <div class="input-field">
+          <label>SOVEREIGN MOTTO</label>
+          <input type="text" id="forge-cfg-motto" value="AUTONOMOUS WEALTH PROTOCOL" oninput="updateForgeConfig('motto', this.value.toUpperCase())" />
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 7. Pricing Matrix Dialog -->
+<dialog class="modern-dialog" id="pricing-dialog" style="max-width: 800px; width: 90%;">
+  <div class="dialog-header">
+    <div class="dialog-title" style="display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--neon-gold);">👑</span> SOVEREIGN TIER PRICING &amp; PROTOCOL ACCESS
+    </div>
+    <button class="dialog-close" onclick="closeDialog('pricing-dialog')">✕</button>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 14px;">
+    <div style="background: rgba(4,14,30,0.8); border: 1px solid rgba(0,240,255,0.3); border-radius: 16px; padding: 20px; text-align: center;">
+      <div style="font-family: var(--font-hud); font-size: 14px; color: #fff;">STARTER SEED</div>
+      <div style="font-family: var(--font-hud); font-size: 28px; color: var(--neon-green); font-weight: 800; margin: 10px 0;">$0 <small style="font-size: 12px; color: #94a3b8;">/mo</small></div>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: #94a3b8; line-height: 1.5;">Unlimited referral links, basic Living Vault geometry, 1 daily loot crate, 14-day voice trial.</p>
+      <button class="btn-solid-start" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="closeDialog('pricing-dialog'); openWizardDialog();">Start Free</button>
+    </div>
+    <div style="background: rgba(4,14,30,0.95); border: 2px solid var(--neon-cyan); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 0 24px rgba(0,240,255,0.25);">
+      <div style="display: inline-block; font-family: var(--font-mono); font-size: 9px; padding: 2px 8px; border-radius: 10px; background: var(--neon-cyan); color: #020612; font-weight: 800; margin-bottom: 4px;">MOST POPULAR</div>
+      <div style="font-family: var(--font-hud); font-size: 14px; color: #fff;">CREATOR PRO</div>
+      <div style="font-family: var(--font-hud); font-size: 28px; color: var(--neon-cyan); font-weight: 800; margin: 10px 0;">$29 <small style="font-size: 12px; color: #94a3b8;">/mo</small></div>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: #94a3b8; line-height: 1.5;">Full 3D Sigil Forge Studio, uncapped ElevenLabs Voice AI, real-time SOL yield conduits.</p>
+      <button class="btn-solid-start" style="width: 100%; justify-content: center; margin-top: 16px; background: var(--neon-cyan);" onclick="closeDialog('pricing-dialog'); showToast('Creator Pro selected — checkout initialized', '💎');">Upgrade Pro</button>
+    </div>
+    <div style="background: rgba(4,14,30,0.8); border: 1px solid rgba(176,38,255,0.4); border-radius: 16px; padding: 20px; text-align: center;">
+      <div style="font-family: var(--font-hud); font-size: 14px; color: #fff;">SOVEREIGN ENTERPRISE</div>
+      <div style="font-family: var(--font-hud); font-size: 28px; color: var(--neon-purple); font-weight: 800; margin: 10px 0;">$99 <small style="font-size: 12px; color: #94a3b8;">/mo</small></div>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: #94a3b8; line-height: 1.5;">Dedicated agent swarm cluster, Unreal Engine 5.4 bridge, unlimited minting, Tier 0 SLA.</p>
+      <button class="btn-ghost-signin" style="width: 100%; justify-content: center; margin-top: 16px; border-color: var(--neon-purple); color: var(--neon-purple);" onclick="closeDialog('pricing-dialog'); openTerminalDialog();">Deploy Enterprise</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Floating HUD Toast -->
+<div class="toast-hud" id="hud-toast">
+  <span id="toast-icon">⚡</span>
+  <span id="toast-msg">Harvest Claim Initiated</span>
+</div>
+
+<!-- ==========================================================================
+     INTERACTIVE ENGINES, 3D SIGIL CANVAS & AUDIO SYNTHESIS
+     ========================================================================== -->
+<script>
+  // Global State
+  const state = {
+    vaultBalance: 17852.40,
+    dailyBalance: 13800.00,
+    claimed: false,
+    solfeggioFreq: 528,
+    activeSyndicate: 'VRTX',
+    sigilArchetype: 'DRAGON',
+    voiceActive: false,
+    audioCtx: null
+  };
+
+  // 1. Toast Notification Helper
+  function showToast(msg, icon = '⚡') {
+    const t = document.getElementById('hud-toast');
+    document.getElementById('toast-msg').innerText = msg;
+    document.getElementById('toast-icon').innerText = icon;
+    t.classList.add('show');
+    playTone(880, 'sine', 0.1);
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // 2. WebAudio Synthesizer for UI feedback (zero external audio files needed)
+  function getAudioContext() {
+    if (!state.audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) state.audioCtx = new AudioContext();
+    }
+    if (state.audioCtx && state.audioCtx.state === 'suspended') {
+      state.audioCtx.resume();
+    }
+    return state.audioCtx;
+  }
+
+  function playTone(freq = 440, type = 'sine', duration = 0.15) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch (e) {
+      console.warn('Audio tone error:', e);
+    }
+  }
+
+  function playSolfeggioTone() {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(528, ctx.currentTime);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.8);
+      showToast('Emitting 528Hz Solfeggio Aura Resonator', '🔮');
+    } catch (e) {
+      console.warn('Solfeggio audio error:', e);
+    }
+  }
+
+  // 3. Primary Harvest Claim Interaction
+  function executeHarvestClaim() {
+    if (state.claimed) {
+      showToast('Daily Harvest already secured for today!', '🛡️');
+      return;
+    }
+
+    state.claimed = true;
+    state.vaultBalance += state.dailyBalance;
+    state.dailyBalance = 0.00;
+
+    // Visual Updates
+    document.getElementById('harvest-amt').innerText = '$0.00';
+    document.getElementById('vault-amt').innerText = '$' + state.vaultBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    const btn = document.getElementById('claim-button');
+    btn.innerHTML = '<span>✔</span> HARVEST CLAIMED ($13,800.00)';
+    btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00f0ff 100%)';
+    btn.style.boxShadow = '0 0 30px rgba(0,255,136,0.8)';
+
+    // Play triumphant chime
+    playTone(528, 'triangle', 0.2);
+    setTimeout(() => playTone(660, 'triangle', 0.25), 120);
+    setTimeout(() => playTone(880, 'triangle', 0.4), 240);
+
+    showToast('Success! $13,800.00 deposited into Sovereign Vault.', '💰');
+  }
+
+  // 4. Daily Mystery Loot Crate
+  function openLootCrate() {
+    const box = document.getElementById('crate-box');
+    const res = document.getElementById('loot-result-text');
+    box.style.transform = 'scale(1.25) rotate(15deg)';
+    playTone(330, 'square', 0.1);
+    
+    setTimeout(() => {
+      box.innerText = '✨';
+      box.style.transform = 'scale(1)';
+      const rewards = [
+        '+500 XP Reactor Boost // Level 43 Unlocked',
+        '2x Sovereign Multiplier for 24h',
+        'Golden Affiliate Pass: 15% Tier Bump',
+        '528Hz Sacred Solfeggio Shield Equipped'
+      ];
+      const pick = rewards[Math.floor(Math.random() * rewards.length)];
+      res.innerText = 'UNLOCKED: ' + pick;
+      res.style.color = 'var(--neon-green)';
+      playTone(528, 'sine', 0.3);
+      showToast('Loot Reward Claimed: ' + pick, '🎁');
+    }, 400);
+  }
+
+  // 5. Native Dialog Handlers
+  function openProfileDialog() {
+    document.getElementById('profile-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function openWizardDialog() {
+    document.getElementById('wizard-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function openLootDialog() {
+    document.getElementById('loot-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function openTerminalDialog() {
+    document.getElementById('terminal-dialog').showModal();
+    playTone(528, 'sine', 0.08);
+    setTimeout(() => {
+      const inp = document.getElementById('psh-command-input');
+      if (inp) inp.focus();
+    }, 50);
+  }
+  function closeDialog(id) {
+    document.getElementById(id).close();
+    playTone(400, 'sine', 0.08);
+  }
+
+  function runPshPill(cmd) {
+    const inp = document.getElementById('psh-command-input');
+    if (inp) {
+      inp.value = cmd;
+      submitTerminalInput();
+    }
+  }
+
+  function appendPshOutput(text) {
+    const vp = document.getElementById('psh-viewport');
+    if (vp) {
+      vp.innerText += (vp.innerText ? '\n' : '') + text;
+      vp.scrollTop = vp.scrollHeight;
+    }
+  }
+
+  async function submitTerminalInput() {
+    const inp = document.getElementById('psh-command-input');
+    if (!inp) return;
+    const cmd = inp.value.trim();
+    if (!cmd) return;
+    inp.value = '';
+    appendPshOutput(`\n⚡ > ${cmd}`);
+    playTone(528, 'sine', 0.08);
+
+    try {
+      const res = await fetch('http://localhost:3000/api/terminal/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: cmd, cwd: 'C:\\primordiaos' }),
+        signal: AbortSignal.timeout(2500)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const text = data.output || data.stdout || data.message || JSON.stringify(data, null, 2);
+        appendPshOutput(text);
+        return;
+      }
+    } catch (_) {}
+
+    // Standalone Deterministic Semantic Fallback
+    appendPshOutput(simulatePshOffline(cmd));
+  }
+
+  function simulatePshOffline(cmd) {
+    const lower = cmd.toLowerCase();
+    if (lower.includes('disk') || lower.includes('space')) {
+      return `[DISK TELEMETRY] Partition C: (NTFS Fixed)\nTotal: 476.81 GB | Free: 184.22 GB | Used: 292.59 GB (61.3%)\nSector Health: 100% [STABLE]`;
+    }
+    if (lower.includes('memory') || lower.includes('ram')) {
+      return `[RAM METRICS] Memory Core Allocation\nPhysical Total: 32.00 GB | Available: 18.45 GB | Committed: 13.55 GB (42.3%)\nBuffer Cache: 8.2 GB | Pagefile: 4.0 GB`;
+    }
+    if (lower.includes('swarm')) {
+      return `[PRIMORDIA SWARM] Fleet: 10 Autonomous Agents Active\n• Vortex Cyber (Syndication Engine) - 142K XP [HEALTHY]\n• Apex Capital (Treasury Allocator) - 118K XP [HEALTHY]\n• Pulse TikTok (Viral Video Loop) - 95K XP [HEALTHY]\n• Antigrav Guardian (Structural Integrity) - 94.2 Score [SUPERCRITICAL]`;
+    }
+    if (lower.includes('node') || lower.includes('process')) {
+      return `[PROCESS TELEMETRY] Running Node.js Instances\nPID 14280: node server/sync.js (Port 3000, 48MB RAM)\nPID 8892: node primordia-executor.mjs (Idle, 32MB RAM)`;
+    }
+    if (lower.includes('ignite') || lower.includes('fire')) {
+      return `[SOVEREIGN CORE] 🔥 Origin Fire ignited.\nSubstrate awakened. WorldState: CHARGED\nStability: 96% | Coherence: 99% | Anomaly Density: 0.0%`;
+    }
+    if (lower.includes('count') || lower.includes('json')) {
+      return `[SCAN METRICS] Scanned C:\\primordiaos\nFound 148 JSON configuration files across 60 active directories.`;
+    }
+    if (lower.includes('help')) {
+      return `[PSH COMMAND PALETTE]\n• show disk space\n• check memory usage\n• show swarm status\n• show running node processes\n• count all json files\n• ignite origin fire\n• Tip: Run Open_Primordia_Shell.bat for live OS command execution.`;
+    }
+    return `[HCL DISPATCH] Interpreted: "${cmd}"\nSemantic Target: Executed in Primordia Sovereign Substrate.\nLaunch Open_Primordia_Shell.bat in File Explorer for interactive live system shell.`;
+  }
+
+  // Close dialog on outside backdrop click
+  document.querySelectorAll('dialog.modern-dialog').forEach(d => {
+    d.addEventListener('click', (e) => {
+      const rect = d.getBoundingClientRect();
+      const inDialog = (
+        rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+      );
+      if (!inDialog) d.close();
+    });
+  });
+
+  // 6. Interactive Controls & Range Sliders
+  function updateVelocityFreq(val) {
+    document.getElementById('slider-freq-val').innerText = val + 's';
+  }
+  function updateYieldMult(val) {
+    document.getElementById('slider-mult-val').innerText = val + 'x';
+  }
+  function updateFireTarget(val) {
+    document.getElementById('fire-age-label').innerText = val + ' yrs';
+    document.getElementById('retire-age-val').innerText = val;
+  }
+  function setChartRange(el, range) {
+    document.querySelectorAll('.chart-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    playTone(550, 'sine', 0.06);
+
+    // Morph the SVG chart line according to range
+    const poly = document.getElementById('chart-poly');
+    const line = document.getElementById('chart-line');
+    if (range === '1W') {
+      line.setAttribute('points', '0,80 30,65 70,72 110,40 150,50 190,30 240,15');
+      poly.setAttribute('points', '0,80 30,65 70,72 110,40 150,50 190,30 240,15 240,100 0,100');
+    } else if (range === '1M') {
+      line.setAttribute('points', '0,90 35,75 75,55 120,60 160,35 200,20 240,8');
+      poly.setAttribute('points', '0,90 35,75 75,55 120,60 160,35 200,20 240,8 240,100 0,100');
+    } else {
+      line.setAttribute('points', '0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12');
+      poly.setAttribute('points', '0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12 240,100 0,100');
+    }
+  }
+
+  function selectSyndicate(tag) {
+    state.activeSyndicate = tag;
+    document.querySelectorAll('.syndicate-card').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    showToast(`Syndicate Switched to [${tag}]`, '🐉');
+  }
+
+  function pulseSubstrate() {
+    playTone(700, 'triangle', 0.2);
+    showToast('⚡ Autonomous Pulse Broadcasted to Local Workers', '⚡');
+    const badge = document.getElementById('worker-count-badge');
+    badge.innerText = 'SYNCING...';
+    badge.style.color = 'var(--neon-gold)';
+    setTimeout(() => {
+      badge.innerText = '8 WORKERS ACTIVE';
+      badge.style.color = 'var(--neon-green)';
+    }, 1200);
+  }
+
+  function runAntigravAudit() {
+    playTone(800, 'sine', 0.15);
+    showToast('Running ANTIGRAV() Sovereign Integrity Check...', '🛡️');
+    setTimeout(() => {
+      showToast('ANTIGRAV() Score: 94.2/100 (Zero Passive Collapse)', '✔');
+    }, 1000);
+  }
+
+  function copyTickerHash(hash) {
+    showToast(`Conduit Tx Hash: ${hash}`, '📋');
+  }
+
+  function toggleVoiceOS() {
+    state.voiceActive = !state.voiceActive;
+    const txt = document.getElementById('voice-status-text');
+    const btn = document.getElementById('voice-btn');
+    const microTxt = document.getElementById('micro-voice-status');
+    const microPill = document.getElementById('micro-voice-pill');
+    const miniWaves = document.getElementById('voice-waves-mini');
+
+    if (state.voiceActive) {
+      if (txt) {
+        txt.innerText = 'MoneyOS Neural Voice: LISTENING...';
+        txt.style.color = 'var(--neon-green)';
+      }
+      if (btn) btn.style.background = 'var(--neon-green)';
+      if (microTxt) {
+        microTxt.innerText = 'Active';
+        microTxt.style.color = 'var(--neon-green)';
+      }
+      if (microPill) {
+        microPill.style.borderColor = 'var(--neon-green)';
+        microPill.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
+      }
+      if (miniWaves) miniWaves.style.display = 'inline-flex';
+      playTone(660, 'sine', 0.1);
+      showToast('MoneyOS Voice Activated: Listening for commands...', '🎙️');
+    } else {
+      if (txt) {
+        txt.innerText = 'MoneyOS Neural Voice: Ready';
+        txt.style.color = '#fff';
+      }
+      if (btn) btn.style.background = 'var(--neon-cyan)';
+      if (microTxt) {
+        microTxt.innerText = 'Standby';
+        microTxt.style.color = '#94a3b8';
+      }
+      if (microPill) {
+        microPill.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+        microPill.style.boxShadow = '';
+      }
+      if (miniWaves) miniWaves.style.display = 'none';
+      playTone(440, 'sine', 0.08);
+      showToast('MoneyOS Voice Standby', '🎙️');
+    }
+  }
+
+  let velocityMultiplier = 1.25;
+  function boostVelocityRate() {
+    velocityMultiplier = Math.round((velocityMultiplier + 0.25) * 100) / 100;
+    if (velocityMultiplier > 5.0) velocityMultiplier = 1.25;
+    const multEl = document.getElementById('telemetry-multiplier');
+    if (multEl) {
+      multEl.innerText = `${velocityMultiplier.toFixed(2)}x`;
+      multEl.style.transform = 'scale(1.25)';
+      setTimeout(() => multEl.style.transform = 'scale(1)', 220);
+    }
+    const yieldVal = (0.0006 * velocityMultiplier / 1.25).toFixed(4);
+    const yieldEl = document.getElementById('telemetry-live-yield');
+    if (yieldEl) yieldEl.innerText = `+$${yieldVal}/s`;
+
+    const burnVal = (0.0012 * velocityMultiplier / 1.25).toFixed(4);
+    const burnEl = document.getElementById('telemetry-burn-earn');
+    if (burnEl) burnEl.innerText = `+$${burnVal}/s`;
+
+    const arrVal = Math.round(360 * velocityMultiplier / 1.25);
+    const arrEl = document.getElementById('telemetry-run-rate');
+    if (arrEl) arrEl.innerText = `$${arrVal}/yr`;
+
+    playTone(880, 'triangle', 0.15);
+    showToast(`⚡ Rate Multiplier Boosted to ${velocityMultiplier.toFixed(2)}x Supercritical!`, '⚡');
+  }
+
+  function openPricingDialog() {
+    const dlg = document.getElementById('pricing-dialog');
+    if (dlg) dlg.showModal();
+    playTone(520, 'sine', 0.1);
+  }
+
+  function highlightWindow(winId) {
+    const el = document.getElementById(winId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.style.boxShadow = '0 0 35px var(--neon-cyan)';
+      setTimeout(() => { el.style.boxShadow = ''; }, 1400);
+      showToast(`Navigated to ${winId}`, '🚀');
+    }
+  }
+
+  function triggerOmnisearchFocus() {
+    document.getElementById('cockpit-omnisearch').focus();
+  }
+
+  // Keyboard shortcut Ctrl+K or / to search
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      document.getElementById('cockpit-omnisearch').focus();
+    }
+  });
+
+  function filterCockpitWindows(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.cockpit-window').forEach(w => {
+      if (!q) {
+        w.style.opacity = '1';
+        w.style.border = '1px solid var(--panel-border)';
+        return;
+      }
+      if (w.innerText.toLowerCase().includes(q)) {
+        w.style.opacity = '1';
+        w.style.border = '2px solid var(--neon-cyan)';
+      } else {
+        w.style.opacity = '0.35';
+        w.style.border = '1px solid var(--panel-border)';
+      }
+    });
+  }
+
+  function saveProtocolSettings() {
+    showToast('Protocol Settings Saved to Local Substrate', '⚙️');
+    closeDialog('wizard-dialog');
+  }
+
+  // 7. Render 14-Day Matrix Bars
+  function initDailyMatrixBars() {
+    const container = document.getElementById('matrix-bars-container');
+    container.innerHTML = '';
+    const heights = [45, 60, 50, 75, 40, 65, 85, 55, 70, 90, 65, 80, 95, 100];
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    heights.forEach((h, i) => {
+      const col = document.createElement('div');
+      col.className = 'matrix-bar-col';
+      col.title = `Day ${i+1}: $${(h * 38.5).toFixed(0)}`;
+      col.onclick = () => showToast(`Day ${i+1} Revenue: $${(h * 38.5).toFixed(2)}`, '📊');
+      col.innerHTML = `
+        <div class="matrix-bar-fill" style="height: ${h}%;"></div>
+        <span class="matrix-bar-lbl">${days[i]}</span>
+      `;
+      container.appendChild(col);
+    });
+  }
+
+  // 8. The Living Wealth Vault State & Ascension Logic
+  const vaultState = {
+    currentTier: 3,
+    netWorth: 17852.40,
+    isSimulated: false,
+    tiers: [
+      { id: 1, label: 'Tier I • Starter Seed', min: 0, next: 1500, accent: '#f97316', desc: 'Raw liquidity accumulation & friction ground.' },
+      { id: 2, label: 'Tier II • Builder River', min: 1500, next: 10000, accent: '#10b981', desc: 'Dynamic liquidity flow through affiliate channels.' },
+      { id: 3, label: 'Tier III • Crypto Matrix', min: 10000, next: 50000, accent: '#00f0ff', desc: 'Multi-chain yield harvesting & SOL conduits.' },
+      { id: 4, label: 'Tier IV • Bullion Chamber', min: 50000, next: 250000, accent: '#ffb703', desc: '24K physical gold reserves & treasury shield.' },
+      { id: 5, label: 'Tier V • Sovereign Vault', min: 250000, next: 1000000, accent: '#b026ff', desc: 'Tier 0 Sovereign autonomy & osmium citadel.' },
+      { id: 6, label: 'Tier VI • Celestial Singularity', min: 1000000, next: 5000000, accent: '#38bdf8', desc: 'Hyper-compounding capital matrix & eternal orbit.' }
+    ]
+  };
+
+  function openLivingVaultDialog() {
+    document.getElementById('living-vault-dialog').showModal();
+    playTone(528, 'triangle', 0.15);
+    updateVaultUI();
+  }
+
+  function selectVaultTier(tierNum) {
+    vaultState.currentTier = tierNum;
+    const t = vaultState.tiers[tierNum - 1];
+    vaultState.netWorth = Math.max(t.min + (t.next - t.min) * 0.35, 1200);
+    vaultState.isSimulated = true;
+    document.getElementById('vault-sim-range').value = Math.round(vaultState.netWorth);
+    updateVaultUI();
+    playTone(660, 'sine', 0.12);
+    showToast(`Ascended to ${t.label}`, '🏛️');
+  }
+
+  function onVaultSimulationSlide(val) {
+    const num = parseFloat(val);
+    vaultState.netWorth = num;
+    vaultState.isSimulated = true;
+
+    // Auto-ascend based on dollar thresholds
+    if (num >= 1000000) vaultState.currentTier = 6;
+    else if (num >= 250000) vaultState.currentTier = 5;
+    else if (num >= 50000) vaultState.currentTier = 4;
+    else if (num >= 10000) vaultState.currentTier = 3;
+    else if (num >= 1500) vaultState.currentTier = 2;
+    else vaultState.currentTier = 1;
+
+    updateVaultUI();
+  }
+
+  function triggerVaultShockwave() {
+    playTone(330, 'sawtooth', 0.25);
+    setTimeout(() => playTone(660, 'sine', 0.2), 100);
+    showToast('⚡ COSMIC SHOCKWAVE BURST DETONATED', '⚡');
+    const b = document.getElementById('living-vault-dialog');
+    if (b) {
+      b.style.boxShadow = '0 0 100px #00ff88, inset 0 0 50px #00ff88';
+      setTimeout(() => { b.style.boxShadow = ''; }, 450);
+    }
+  }
+
+  function updateVaultUI() {
+    const t = vaultState.tiers[vaultState.currentTier - 1];
+    const titleEl = document.getElementById('vault-tier-title');
+    if (titleEl) {
+      titleEl.innerText = t.label;
+      titleEl.style.color = t.accent;
+    }
+    const nwEl = document.getElementById('vault-live-networth');
+    if (nwEl) nwEl.innerText = '$' + vaultState.netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const simEl = document.getElementById('sim-slider-val');
+    if (simEl) simEl.innerText = '$' + Math.round(vaultState.netWorth).toLocaleString('en-US') + ' USD';
+    const curEl = document.getElementById('vault-prog-current');
+    if (curEl) curEl.innerText = '$' + Math.round(vaultState.netWorth).toLocaleString('en-US');
+    const microVal = document.getElementById('micro-vault-val');
+    if (microVal) microVal.innerText = '$' + Math.round(vaultState.netWorth).toLocaleString('en-US');
+    const nextEl = document.getElementById('vault-prog-next');
+    if (nextEl) {
+      const nextT = vaultState.tiers[vaultState.currentTier];
+      nextEl.innerText = '$' + t.next.toLocaleString('en-US') + ' (' + (nextT ? nextT.label.split('•')[1] : 'MAX') + ')';
+    }
+
+    const pct = Math.min(100, Math.max(0, ((vaultState.netWorth - t.min) / (t.next - t.min)) * 100));
+    const pctEl = document.getElementById('vault-prog-pct');
+    if (pctEl) pctEl.innerText = pct.toFixed(1) + '%';
+    const barEl = document.getElementById('vault-progress-bar');
+    if (barEl) {
+      barEl.style.width = pct + '%';
+      barEl.style.background = `linear-gradient(90deg, ${t.accent}, #00f0ff)`;
+    }
+
+    const badge = document.getElementById('vault-sim-badge');
+    if (badge) {
+      if (vaultState.isSimulated) {
+        badge.innerText = '⚡ SIMULATION PREVIEW';
+        badge.style.background = 'rgba(255, 183, 3, 0.2)';
+        badge.style.borderColor = 'var(--neon-gold)';
+        badge.style.color = 'var(--neon-gold)';
+      } else {
+        badge.innerText = '● LIVE ACID VAULT';
+        badge.style.background = 'rgba(16, 185, 129, 0.2)';
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+      }
+    }
+
+    for (let i = 1; i <= 6; i++) {
+      const el = document.getElementById(`vt-card-${i}`);
+      if (el) {
+        if (i === vaultState.currentTier) el.classList.add('active');
+        else el.classList.remove('active');
+      }
+    }
+  }
+
+  // 9. Authentic Cryptographic Sigil Engine (Matches sigil.ts vector architecture)
+  const sigilConfig = {
+    aura: 'aura_primordial_gold',
+    glyph: 'glyph_octagram',
+    ring: 'ring_circuit_traces',
+    crest: 'crest_crown',
+    monogram: 'SHAN',
+    motto: 'AUTONOMOUS WEALTH PROTOCOL',
+    code: 'PRIM-T0-9942'
+  };
+
+  const THEMES = {
+    aura_primordial_gold: { p: '#ffd700', s: '#eab308', a: '#fffbeb', bg: '#140c00', g: '#ffd700', name: 'GOLD CROWN' },
+    aura_cyber_emerald: { p: '#00ff88', s: '#00bb66', a: '#38ef7d', bg: '#021209', g: '#00ff88', name: 'EMERALD DRAGON' },
+    aura_osmium_diamond: { p: '#38bdf8', s: '#818cf8', a: '#e0e7ff', bg: '#040b17', g: '#38bdf8', name: 'OSMIUM OMNI' },
+    aura_cosmic_nebula: { p: '#c084fc', s: '#38bdf8', a: '#f472b6', bg: '#0b0217', g: '#c084fc', name: 'COSMIC NEBULA' },
+    aura_hyper_violet: { p: '#d946ef', s: '#a855f7', a: '#f472b6', bg: '#13021e', g: '#d946ef', name: 'HYPER VIOLET' },
+    aura_solfeggio_528: { p: '#22c55e', s: '#16a34a', a: '#ffd700', bg: '#021406', g: '#22c55e', name: 'SOLFEGGIO 528' }
+  };
+
+  function generateSigilSVG(size = 320, cfg = sigilConfig) {
+    const t = THEMES[cfg.aura] || THEMES.aura_primordial_gold;
+    const cx = size / 2;
+    const cy = size / 2;
+    const maxR = size * 0.40;
+    const outerR = maxR * 0.92;
+    const innerR = maxR * 0.48;
+
+    let elements = '';
+
+    // 1. Constellation background stardust nodes with connecting chords
+    const nodeCount = 14;
+    const nodes = [];
+    for (let i = 0; i < nodeCount; i++) {
+      const a = (i * Math.PI * 2) / nodeCount + 0.2;
+      const r = innerR * 1.1 + ((i * 37) % Math.floor(outerR * 0.65 - innerR));
+      const nx = cx + Math.cos(a) * r;
+      const ny = cy + Math.sin(a) * r;
+      nodes.push({ x: nx, y: ny });
+      elements += `<circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="${i % 2 === 0 ? 1.8 : 1.2}" fill="${t.a}" opacity="0.85"/>`;
+    }
+    for (let i = 0; i < nodes.length; i++) {
+      const next = nodes[(i + 3) % nodes.length];
+      elements += `<line x1="${nodes[i].x.toFixed(1)}" y1="${nodes[i].y.toFixed(1)}" x2="${next.x.toFixed(1)}" y2="${next.y.toFixed(1)}" stroke="${t.p}" stroke-width="0.75" stroke-dasharray="2 3" opacity="0.35"/>`;
+    }
+
+    // 2. Concentric Orbitals & Sacred Boundary Rings
+    elements += `<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="${t.p}" stroke-width="2.2" opacity="0.85"/>`;
+    elements += `<circle cx="${cx}" cy="${cy}" r="${outerR - 5}" fill="none" stroke="${t.s}" stroke-width="1" stroke-dasharray="3 4" opacity="0.6"/>`;
+    elements += `<circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none" stroke="${t.s}" stroke-width="1.8" opacity="0.7"/>`;
+    elements += `<circle cx="${cx}" cy="${cy}" r="${innerR + 6}" fill="none" stroke="${t.a}" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.55"/>`;
+
+    // 3. Circumference Laser Harmonic Wave
+    let wavePath = '';
+    for (let i = 0; i <= 36; i++) {
+      const theta = (i * Math.PI * 2) / 36;
+      const rOffset = Math.sin(theta * 8) * 3.0;
+      const rCurr = (innerR + outerR) * 0.52 + rOffset;
+      const wx = cx + Math.cos(theta) * rCurr;
+      const wy = cy + Math.sin(theta) * rCurr;
+      wavePath += (i === 0 ? `M ${wx.toFixed(1)} ${wy.toFixed(1)}` : ` L ${wx.toFixed(1)} ${wy.toFixed(1)}`);
+    }
+    elements += `<path d="${wavePath} Z" fill="none" stroke="${t.a}" stroke-width="0.9" opacity="0.65"/>`;
+
+    // 4. Custom Ring FX
+    if (cfg.ring === 'ring_circuit_traces') {
+      for (let i = 0; i < 16; i++) {
+        const a = (i * Math.PI * 2) / 16;
+        const x1 = cx + Math.cos(a) * outerR;
+        const y1 = cy + Math.sin(a) * outerR;
+        const x2 = cx + Math.cos(a + 0.12) * (outerR + 7);
+        const y2 = cy + Math.sin(a + 0.12) * (outerR + 7);
+        elements += `<polyline points="${x1.toFixed(1)},${y1.toFixed(1)} ${(x1+2).toFixed(1)},${y1.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${t.a}" stroke-width="1.2" opacity="0.85"/>`;
+        elements += `<circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="1.6" fill="${t.p}"/>`;
+      }
+    } else if (cfg.ring === 'ring_celestial_corona') {
+      for (let i = 0; i < 32; i++) {
+        const a = (i * Math.PI * 2) / 32;
+        const len = i % 2 === 0 ? 8 : 4;
+        elements += `<line x1="${(cx + Math.cos(a) * outerR).toFixed(1)}" y1="${(cy + Math.sin(a) * outerR).toFixed(1)}" x2="${(cx + Math.cos(a) * (outerR + len)).toFixed(1)}" y2="${(cy + Math.sin(a) * (outerR + len)).toFixed(1)}" stroke="${t.a}" stroke-width="1.2" opacity="0.85"/>`;
+      }
+    } else if (cfg.ring === 'ring_laser_scanlines') {
+      elements += `<line x1="${cx - outerR - 10}" y1="${cy}" x2="${cx + outerR + 10}" y2="${cy}" stroke="${t.a}" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.85"/>`;
+      elements += `<line x1="${cx}" y1="${cy - outerR - 10}" x2="${cx}" y2="${cy + outerR + 10}" stroke="${t.a}" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.85"/>`;
+    } else {
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI * 2) / 6;
+        const hx = cx + Math.cos(a) * (outerR + 7);
+        const hy = cy + Math.sin(a) * (outerR + 7);
+        elements += `<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="3" fill="none" stroke="${t.a}" stroke-width="1"/>`;
+      }
+    }
+
+    // 5. Sacred Center Glyph
+    const glyphR = innerR * 0.72;
+    if (cfg.glyph === 'glyph_octagram') {
+      const pts = [];
+      for (let i = 0; i < 16; i++) {
+        const a = (i * Math.PI * 2) / 16 - Math.PI / 2;
+        const r = i % 2 === 0 ? glyphR : glyphR * 0.45;
+        pts.push(`${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)}`);
+      }
+      elements += `<polygon points="${pts.join(' ')}" fill="${t.a}" opacity="0.35" stroke="${t.p}" stroke-width="1.8"/>`;
+      elements += `<polygon points="${pts.join(' ')}" fill="none" stroke="${t.s}" stroke-width="1" transform="rotate(22.5 ${cx} ${cy})"/>`;
+    } else if (cfg.glyph === 'glyph_metatron') {
+      elements += `<polygon points="${cx},${cy - glyphR} ${cx + glyphR * 0.86},${cy - glyphR * 0.5} ${cx + glyphR * 0.86},${cy + glyphR * 0.5} ${cx},${cy + glyphR} ${cx - glyphR * 0.86},${cy + glyphR * 0.5} ${cx - glyphR * 0.86},${cy - glyphR * 0.5}" fill="none" stroke="${t.a}" stroke-width="1.8"/>`;
+      elements += `<polygon points="${cx},${cy + glyphR} ${cx - glyphR * 0.86},${cy - glyphR * 0.5} ${cx + glyphR * 0.86},${cy - glyphR * 0.5}" fill="none" stroke="${t.p}" stroke-width="1.2"/>`;
+      elements += `<polygon points="${cx},${cy - glyphR} ${cx - glyphR * 0.86},${cy + glyphR * 0.5} ${cx + glyphR * 0.86},${cy + glyphR * 0.5}" fill="none" stroke="${t.p}" stroke-width="1.2"/>`;
+    } else if (cfg.glyph === 'glyph_quantum_hex') {
+      elements += `<polygon points="${cx},${cy - glyphR} ${cx + glyphR * 0.86},${cy - glyphR * 0.5} ${cx + glyphR * 0.86},${cy + glyphR * 0.5} ${cx},${cy + glyphR} ${cx - glyphR * 0.86},${cy + glyphR * 0.5} ${cx - glyphR * 0.86},${cy - glyphR * 0.5}" fill="${t.a}" opacity="0.35" stroke="${t.p}" stroke-width="2.2"/>`;
+      elements += `<circle cx="${cx}" cy="${cy}" r="4" fill="#fff"/>`;
+    } else {
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI) / 3;
+        elements += `<circle cx="${(cx + Math.cos(a) * (glyphR * 0.5)).toFixed(1)}" cy="${(cy + Math.sin(a) * (glyphR * 0.5)).toFixed(1)}" r="${(glyphR * 0.5).toFixed(1)}" fill="none" stroke="${t.a}" stroke-width="1" opacity="0.75"/>`;
+      }
+    }
+
+    // 6. Imperial Crest atop the outer boundary
+    const topY = cy - outerR - 4;
+    if (cfg.crest === 'crest_crown') {
+      elements += `<polygon points="${cx - 16},${topY} ${cx - 12},${topY - 14} ${cx - 6},${topY - 6} ${cx},${topY - 18} ${cx + 6},${topY - 6} ${cx + 12},${topY - 14} ${cx + 16},${topY}" fill="${t.p}" stroke="${t.a}" stroke-width="1"/>`;
+      elements += `<circle cx="${cx}" cy="${topY - 19}" r="2" fill="#fff"/>`;
+      elements += `<circle cx="${cx - 12}" cy="${topY - 15}" r="1.5" fill="#fff"/>`;
+      elements += `<circle cx="${cx + 12}" cy="${topY - 15}" r="1.5" fill="#fff"/>`;
+    } else if (cfg.crest === 'crest_dragon_horns') {
+      elements += `<path d="M ${cx - 16} ${topY} Q ${cx - 24} ${topY - 18} ${cx - 8} ${topY - 10}" fill="none" stroke="${t.p}" stroke-width="2.2"/>`;
+      elements += `<path d="M ${cx + 16} ${topY} Q ${cx + 24} ${topY - 18} ${cx + 8} ${topY - 10}" fill="none" stroke="${t.p}" stroke-width="2.2"/>`;
+    } else if (cfg.crest === 'crest_omni_sovereign') {
+      elements += `<polygon points="${cx - 14},${topY} ${cx},${topY - 16} ${cx + 14},${topY}" fill="${t.p}"/>`;
+      elements += `<circle cx="${cx}" cy="${topY - 8}" r="2" fill="#fff"/>`;
+    } else {
+      elements += `<path d="M ${cx - 18} ${topY} Q ${cx - 26} ${topY - 12} ${cx - 6} ${topY - 4}" fill="none" stroke="${t.a}" stroke-width="1.8"/>`;
+      elements += `<path d="M ${cx + 18} ${topY} Q ${cx + 24} ${topY - 12} ${cx + 6} ${topY - 4}" fill="none" stroke="${t.a}" stroke-width="1.8"/>`;
+    }
+
+    // 7. Central Monogram Badge
+    elements += `<circle cx="${cx}" cy="${cy}" r="16" fill="${t.bg}" stroke="${t.p}" stroke-width="1.5"/>`;
+    elements += `<text x="${cx}" y="${cy + 4.5}" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="'Orbitron', sans-serif" font-weight="900" font-size="10" letter-spacing="1.5">${cfg.monogram}</text>`;
+
+    // 8. Outer Circular Text Path
+    const pathId = `sigilPath_${size}_${Math.floor(Math.random() * 10000)}`;
+    const textR = outerR + 10;
+    elements += `
+      <path id="${pathId}" d="M ${cx - textR},${cy} a ${textR},${textR} 0 1,1 ${textR * 2},0 a ${textR},${textR} 0 1,1 -${textR * 2},0" fill="none"/>
+      <text fill="${t.a}" font-family="'JetBrains Mono', monospace" font-size="6" font-weight="bold" letter-spacing="2.5" opacity="0.8">
+        <textPath href="#${pathId}" startOffset="50%" text-anchor="middle">
+          • ${cfg.motto} • SHANE (T0) • 528HZ •
+        </textPath>
+      </text>
+    `;
+
+    // 9. Hex Watermark
+    elements += `<text x="${cx}" y="${(cy + outerR + 14).toFixed(1)}" text-anchor="middle" fill="${t.a}" font-family="monospace" font-size="6" font-weight="bold" opacity="0.65">[HEX: ${cfg.code}]</text>`;
+
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="max-width: ${size}px; max-height: ${size}px; filter: drop-shadow(0 0 20px ${t.g}55);">
+        <defs>
+          <radialGradient id="sigilBg_${size}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="${t.bg}" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#020408" stop-opacity="1"/>
+          </radialGradient>
+        </defs>
+        <circle cx="${cx}" cy="${cy}" r="${(size/2) - 2}" fill="url(#sigilBg_${size})"/>
+        ${elements}
+      </svg>
+    `;
+  }
+
+  function initSigilEngine() {
+    renderCockpitSigil();
+    renderStudioSigil();
+  }
+
+  function renderCockpitSigil() {
+    const box = document.getElementById('sigil-medallion-window');
+    if (box) {
+      box.innerHTML = generateSigilSVG(175, sigilConfig);
+      const lbl = document.getElementById('sigil-rot-lbl');
+      if (lbl) lbl.innerText = THEMES[sigilConfig.aura]?.name || 'PRIMORDIAL GOLD';
+    }
+  }
+
+  function renderStudioSigil() {
+    const box = document.getElementById('forge-studio-svg-viewport');
+    if (box) {
+      box.innerHTML = generateSigilSVG(310, sigilConfig);
+    }
+  }
+
+  function openSigilForgeDialog() {
+    document.getElementById('sigil-forge-dialog').showModal();
+    playTone(528, 'sine', 0.15);
+    renderStudioSigil();
+  }
+
+  function updateForgeConfig(key, val, el) {
+    sigilConfig[key] = val;
+    if (el) {
+      const parent = el.parentElement;
+      if (parent) {
+        parent.querySelectorAll('.forge-pill-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+      }
+    }
+    renderCockpitSigil();
+    renderStudioSigil();
+    playTone(660, 'sine', 0.08);
+  }
+
+  function switchCockpitSigilTheme(aura, crest, glyph, el) {
+    sigilConfig.aura = aura;
+    if (crest) sigilConfig.crest = crest;
+    if (glyph) sigilConfig.glyph = glyph;
+    if (el) {
+      document.querySelectorAll('#win-sigil-matrix .archetype-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
+    renderCockpitSigil();
+    renderStudioSigil();
+    playTone(700, 'sine', 0.1);
+    showToast(`Sigil Forged: ${THEMES[aura]?.name || aura}`, '🔮');
+  }
+
+  function mintCreatorPassport() {
+    playTone(880, 'sine', 0.2);
+    setTimeout(() => playTone(1100, 'triangle', 0.3), 150);
+    showToast('👑 SHA-256 Sovereign Passport Minted & Bound to Ledger!', '👑');
+  }
+
+
+  // 9. Auto-Detect Local Masterplane Server
+  async function detectBackend() {
+    const badge = document.getElementById('backend-status-badge');
+    try {
+      const res = await fetch('http://localhost:3000/api/health', { signal: AbortSignal.timeout(1500) });
+      if (res.ok) {
+        badge.innerText = '● LIVE LINK (PORT 3000)';
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+        return;
+      }
+    } catch {}
+
+    try {
+      const res3001 = await fetch('http://localhost:3001/api/health', { signal: AbortSignal.timeout(1500) });
+      if (res3001.ok) {
+        badge.innerText = '● LIVE LINK (PORT 3001)';
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+        return;
+      }
+    } catch {}
+
+    badge.innerText = '● STANDALONE SOVEREIGN (OFFLINE)';
+    badge.style.borderColor = 'var(--neon-cyan)';
+    badge.style.color = 'var(--neon-cyan)';
+  }
+
+  // Initialize on load
+  window.addEventListener('DOMContentLoaded', () => {
+    initDailyMatrixBars();
+    initSigilEngine();
+    detectBackend();
+  });
+</script>
+
+</body>
 </html>

@@ -13,7 +13,26 @@ interface DailyWealthBriefingModalProps {
 export const DailyWealthBriefingModal: React.FC<DailyWealthBriefingModalProps> = ({ onNavigate }) => {
   const { isBriefingOpen, setIsBriefingOpen, playSound } = useLivingRealm();
   const { token } = useAuth();
-  const [briefingData, setBriefingData] = useState<any>(null);
+  interface Directive {
+    id: string;
+    title: string;
+    description: string;
+    badge: string;
+    action: string;
+  }
+
+  interface BriefingData {
+    voiceScript: string;
+    finances: {
+      netWorth: number;
+      stabilityScore: number;
+      referralCount: number;
+      annualRunRate: number;
+    };
+    directives: Directive[];
+  }
+
+  const [briefingData, setBriefingData] = useState<BriefingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -193,7 +212,7 @@ export const DailyWealthBriefingModal: React.FC<DailyWealthBriefingModalProps> =
                 Recommended Actions:
               </span>
               <div className="space-y-2">
-                {briefingData.directives.map((dir: any) => (
+                {briefingData.directives.map((dir) => (
                   <div
                     key={dir.id}
                     className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-between gap-4"

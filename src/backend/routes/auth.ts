@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { db, runInTransaction, recordAuditLog, initializeUserFinancialProfile } from '../db';
 import { config } from '../config';
@@ -8,6 +9,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { User, AuthResponse, ApiResponse } from '../../types';
 import { attributeReferralConversion } from './referrals';
 import { processReferralEvent } from './growth';
+import { generateClientFingerprint, getClientIp } from '../middleware/referralAntiFraud';
 
 const router = Router();
 
@@ -25,12 +27,9 @@ const loginSchema = z.object({
 });
 
 function generateReferralCode(): string {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let code = 'PLUG-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
+  // Using 3 bytes gives 6 hex characters. Very fast and high entropy.
+  // DB UNIQUE constraint handles practically impossible collisions.
+  return 'PLUG-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
 /**
@@ -92,15 +91,17 @@ router.post('/register', (req: Request, res: Response) => {
     `).get(referral_code.trim()) as unknown as User | undefined;
   }
 
-  let newUserCode = generateReferralCode();
-  while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-    newUserCode = generateReferralCode();
-  }
+  const newUserCode = generateReferralCode();
 
   const userId = `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   const salt = bcrypt.genSaltSync(10);
   const passwordHash = bcrypt.hashSync(password, salt);
   const now = new Date().toISOString();
+
+  // Evaluate risk & quarantine status prior to transaction
+  const ip = getClientIp(req);
+  const fingerprint = generateClientFingerprint(req);
+  let isQuarantined = false;
 
   try {
     runInTransaction(() => {
@@ -123,6 +124,10 @@ router.post('/register', (req: Request, res: Response) => {
 
       // 2. If valid referrer exists, record referral and create real commission entry + XP bonus for referrer
       if (referrer) {
+        // Run attribution anti-fraud check inside transaction context
+        const attrResult = attributeReferralConversion(userId, referrer.id, ip, { fingerprint, email: normalizedEmail });
+        isQuarantined = attrResult.quarantined;
+
         db.prepare(`
           UPDATE users 
           SET referral_count = referral_count + 1, xp = xp + 350, updated_at = ? 
@@ -130,17 +135,21 @@ router.post('/register', (req: Request, res: Response) => {
         `).run(now, referrer.id);
 
         const commissionId = `comm_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        const initialStatus = isQuarantined ? 'quarantined' : 'pending';
         db.prepare(`
           INSERT INTO commission_ledger (
             id, referrer_user_id, referred_user_id, amount_cents, 
             currency, status, notes, created_at, updated_at
-          ) VALUES (?, ?, ?, ?, 'USD', 'pending', ?, ?, ?)
+          ) VALUES (?, ?, ?, ?, 'USD', ?, ?, ?, ?)
         `).run(
           commissionId,
           referrer.id,
           userId,
           config.commissionAmountCents,
-          `Commission earned from referral: ${display_name.trim()} (${normalizedEmail})`,
+          initialStatus,
+          isQuarantined
+            ? `Quarantined commission (${attrResult.reason || 'Security review'})`
+            : `Commission earned from referral: ${display_name.trim()} (${normalizedEmail})`,
           now,
           now
         );
@@ -154,7 +163,7 @@ router.post('/register', (req: Request, res: Response) => {
             referrer_id: referrer.id,
             referred_id: userId,
             amount_cents: config.commissionAmountCents,
-            status: 'pending'
+            status: initialStatus
           }
         );
       }
@@ -171,10 +180,7 @@ router.post('/register', (req: Request, res: Response) => {
       );
     });
 
-    // ── Referral Attribution: Track conversion + fraud check + viral growth mechanics ──
-    if (referrer) {
-      const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-      attributeReferralConversion(userId, referrer.id, ip);
+    if (referrer && !isQuarantined) {
       try {
         processReferralEvent(referrer.id);
       } catch (growthErr) {
@@ -214,8 +220,10 @@ router.post('/register', (req: Request, res: Response) => {
     const responseData: ApiResponse<AuthResponse> = {
       success: true,
       data: { token, user },
-      message: referrer 
-        ? `Account created! Referral bonus of $${config.commissionAmountUsd.toFixed(2)} + 350 XP recorded for ${referrer.display_name}.`
+      message: referrer
+        ? (isQuarantined
+            ? `Account created! Referral bonus queued under security quarantine review.`
+            : `Account created! Referral bonus of $${config.commissionAmountUsd.toFixed(2)} + 350 XP recorded for ${referrer.display_name}.`)
         : 'Account created with initial starter budget and crypto ledger initialized!'
     };
 
@@ -346,10 +354,7 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
         `).get(refCode) as unknown as User | undefined;
       }
 
-      let newUserCode = generateReferralCode();
-      while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-        newUserCode = generateReferralCode();
-      }
+      const newUserCode = generateReferralCode();
 
       const insertUser = db.prepare(`
         INSERT INTO users (
@@ -379,11 +384,14 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
         initializeUserFinancialProfile(effectiveId, normalizedEmail);
 
         if (referrer) {
-          const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-          attributeReferralConversion(effectiveId, referrer.id, ip);
-          try {
-            processReferralEvent(referrer.id);
-          } catch {}
+          const ip = getClientIp(req);
+          const fingerprint = generateClientFingerprint(req);
+          const attrRes = attributeReferralConversion(effectiveId, referrer.id, ip, { fingerprint, email: normalizedEmail });
+          if (!attrRes.quarantined) {
+            try {
+              processReferralEvent(referrer.id);
+            } catch {}
+          }
         }
       });
 

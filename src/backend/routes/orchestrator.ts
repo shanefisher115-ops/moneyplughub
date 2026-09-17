@@ -11,7 +11,7 @@ const router = Router();
  */
 router.post('/command', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const { task, payload } = req.body as { task: OrchestratorTask; payload?: any };
+  const { task, payload } = req.body as { task: OrchestratorTask; payload?: Record<string, unknown> };
 
   if (!task) {
     res.status(400).json({ success: false, error: 'task name is required' });
@@ -100,7 +100,7 @@ router.get('/events', authenticateToken, (req: AuthenticatedRequest, res: Respon
     WHERE user_id = ? 
     ORDER BY created_at DESC 
     LIMIT 25
-  `).all(userId) as any[];
+  `).all(userId);
 
   res.json({
     success: true,

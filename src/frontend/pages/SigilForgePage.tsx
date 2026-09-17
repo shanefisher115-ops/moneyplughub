@@ -4,15 +4,16 @@ import { useLivingRealm } from '../context/LivingRealmContext';
 import { useGamificationXp } from '../context/GamificationXpContext';
 import { PointPackButton } from '../components/PointPackButton';
 import { NiagaraParticleCanvas } from '../components/NiagaraParticleCanvas';
+import { Sigil3DChamber } from '../components/Sigil3DChamber';
 import { forgeAudio } from '../utils/forgeAudio';
 import { 
   Compass, Sparkles, Shield, Trophy, Zap, 
-  RotateCw, Eye, Check, ShoppingBag, Lock, Crown, Award, 
+  RotateCw, RotateCcw, Eye, Check, ShoppingBag, Lock, Crown, Award, 
   ExternalLink, Maximize2, RefreshCw, Loader2, Download,
   Sliders, Copy, Dices, Layers, ShieldCheck, Share2,
   Terminal, Sparkle, Flame, Gem, Palette, Type, Scan,
   Volume2, VolumeX, Image as ImageIcon, Wand2, Sun, Moon, Orbit, Cpu, Fingerprint,
-  Code, Radio, Smartphone, Music, CheckCircle2
+  Code, Radio, Smartphone, Music, CheckCircle2, Box, Globe
 } from 'lucide-react';
 
 interface SigilForgePageProps {
@@ -440,7 +441,13 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
 
   // Creative & Immersion Controls
   const [hueShift, setHueShift] = useState<number>(0);
-  const [rotationSpeed, setRotationSpeed] = useState<'off' | 'slow' | 'normal' | 'warp'>('normal');
+  const [rotationSpeed, setRotationSpeed] = useState<'off' | 'slow' | 'normal' | 'warp'>('off'); // Default strictly 'off' keeping sigil upright
+  const [viewportMode, setViewportMode] = useState<'card' | 'chamber'>('card');
+  const [orientationAngle, setOrientationAngle] = useState<number>(0); // 0° right-side-up baseline
+  const [spinMode, setSpinMode] = useState<'rings_only' | 'full_disc'>('rings_only'); // orbital rings spin while crest stays upright
+  const [isIgniting, setIsIgniting] = useState<boolean>(false);
+  const [isDronePlaying, setIsDronePlaying] = useState<boolean>(false);
+  const [activeDroneHz, setActiveDroneHz] = useState<number>(528);
   const [glowMode, setGlowMode] = useState<'subtle' | 'normal' | 'supernova'>('normal');
   const [particleBurst, setParticleBurst] = useState<boolean>(false);
   const [isAudioMuted, setIsAudioMuted] = useState<boolean>(forgeAudio.getMuted());
@@ -555,11 +562,52 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
     setTilt({ x: 0, y: 0 });
   };
 
+  // ── Drone Audio Cleanup on Unmount ────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      forgeAudio.stopHarmonicDrone();
+    };
+  }, []);
+
   // ── Sound & Audio Triggers ────────────────────────────────────────────
   const triggerShockwave = () => {
     setParticleBurst(true);
     forgeAudio.playLaserPulse();
     setTimeout(() => setParticleBurst(false), 800);
+  };
+
+  const handleIgniteRitual = () => {
+    setIsIgniting(true);
+    setParticleBurst(true);
+    forgeAudio.playIgnitionSequence();
+    awardXp(100, 'Ignited Primordial Forge Ritual');
+    setTimeout(() => {
+      setIsIgniting(false);
+      setParticleBurst(false);
+    }, 2400);
+  };
+
+  const handleToggleDrone = (hz: number = 528) => {
+    if (isDronePlaying && activeDroneHz === hz) {
+      forgeAudio.stopHarmonicDrone();
+      setIsDronePlaying(false);
+    } else {
+      forgeAudio.startHarmonicDrone(hz);
+      setActiveDroneHz(hz);
+      setIsDronePlaying(true);
+    }
+  };
+
+  const handleSnapUpright = () => {
+    setOrientationAngle(0);
+    setRotationSpeed('off');
+    forgeAudio.playOrientSnap();
+    awardXp(10, 'Aligned Sigil Right-Side Up');
+  };
+
+  const handleRotateQuarter = (delta: number) => {
+    setOrientationAngle((prev) => (prev + delta + 360) % 360);
+    forgeAudio.playTick(950);
   };
 
   // ── Save & Equip ──────────────────────────────────────────────────────
@@ -1175,92 +1223,183 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
         {/* 2-Column Master Studio Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
           
-          {/* LEFT: 3D Holographic Parallax Viewport (5 Columns) */}
+          {/* LEFT: 3D Holographic Parallax Viewport & WebGL Chamber (5 Columns) */}
           <div className="lg:col-span-5 flex flex-col items-center">
             
-            {/* 3D Holographic Card Viewport */}
-            <div
-              ref={cardRef}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              className="relative w-full aspect-square max-w-[420px] rounded-3xl p-6 border border-slate-800 shadow-2xl backdrop-blur-2xl transition-transform duration-100 ease-out cursor-crosshair group overflow-hidden"
-              style={{
-                background: ATMOSPHERES_LIST.find(a => a.id === selectedAtmosphere)?.preview || '#020617',
-                transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                transformStyle: 'preserve-3d',
-                boxShadow: `0 25px 60px -15px ${activeGlowColor}33, 0 0 30px ${activeGlowColor}15`,
-              }}
-            >
-              {/* Niagara Interactive Particle Canvas */}
-              <NiagaraParticleCanvas
-                glowColor={activeGlowColor}
-                triggerBurst={particleBurst}
-                intensity={glowMode}
-              />
+            {/* Viewport Dimension Mode Selector & Ignition Bar */}
+            <div className="w-full max-w-[420px] mb-3 flex items-center justify-between gap-2 p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    setViewportMode('card');
+                    forgeAudio.playTick(800);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                    viewportMode === 'card'
+                      ? 'bg-plug-accent text-white shadow-lg shadow-plug-accent/25'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Box className="w-3.5 h-3.5" />
+                  <span>3D Hologram</span>
+                </button>
 
-              {/* Holographic Foil Rainbow Reflection Sheen */}
-              <div 
-                className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-35 transition-opacity duration-500 rounded-3xl"
-                style={{
-                  background: `linear-gradient(${115 + tilt.y * 3}deg, transparent 20%, rgba(255, 0, 128, 0.4) 40%, rgba(0, 255, 255, 0.4) 60%, transparent 80%)`,
-                  mixBlendMode: 'color-dodge',
-                }}
-              />
-
-              {/* Dynamic Specular Glare Highlight */}
-              <div 
-                className="absolute inset-0 pointer-events-none rounded-3xl transition-opacity duration-300 opacity-15 group-hover:opacity-30"
-                style={{
-                  background: `radial-gradient(circle at ${50 + tilt.y * 2}% ${50 - tilt.x * 2}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
-                }}
-              />
-
-              {/* HUD Calibration Header */}
-              <div className="flex items-center justify-between relative z-10 text-[10px] font-mono text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  CRYPTOGRAPHIC_MATRIX
-                </span>
-                <span className="text-slate-500">
-                  X:{(tilt?.x ?? 0).toFixed(1)}° Y:{(tilt?.y ?? 0).toFixed(1)}°
-                </span>
+                <button
+                  onClick={() => {
+                    setViewportMode('chamber');
+                    forgeAudio.playAscensionChord();
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                    viewportMode === 'chamber'
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Globe className="w-3.5 h-3.5 text-cyan-300 animate-spin" style={{ animationDuration: '10s' }} />
+                  <span>WebGL Chamber</span>
+                </button>
               </div>
 
-              {/* Central Vector Emblem */}
-              <div className="relative w-full h-[calc(100%-28px)] flex items-center justify-center z-10">
-                {!sigilSvgDataUri && loadingSigil ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="w-10 h-10 text-plug-accent animate-spin" />
-                    <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
-                      Synthesizing Geometry...
-                    </span>
-                  </div>
-                ) : sigilSvgDataUri ? (
-                  <div 
-                    className={`relative w-full h-full flex items-center justify-center transition-all ${getRotationClass()}`}
-                    style={{
-                      filter: `${hueShift !== 0 ? `hue-rotate(${hueShift}deg)` : ''} ${chromaticAberration ? 'drop-shadow(-2px 0px 0px rgba(255,0,0,0.7)) drop-shadow(2px 0px 0px rgba(0,255,255,0.7))' : ''}`,
-                    }}
-                  >
-                    <img
-                      src={sigilSvgDataUri}
-                      alt="Vector Sigil"
-                      className="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.15)] select-none pointer-events-none"
-                    />
-                    {loadingSigil && (
-                      <div className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 border border-purple-500/50 shadow-md">
-                        <Loader2 className="w-3 h-3 text-purple-400 animate-spin" />
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-xs text-slate-500 font-mono">Synthesizing Sigil...</div>
-                )}
-              </div>
-
-              {/* Viewport Laser Scanlines Effect */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none rounded-3xl opacity-20" />
+              {/* Ignite Forge Ritual CTA */}
+              <button
+                onClick={handleIgniteRitual}
+                disabled={isIgniting}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-extrabold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isIgniting
+                    ? 'bg-amber-400 text-slate-950 scale-105 shadow-xl shadow-amber-400/50 animate-pulse'
+                    : 'bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-black shadow-lg shadow-amber-500/20'
+                }`}
+                title="Ignite Cosmic Supernova Shockwave & Harmonic Choir"
+              >
+                <Zap className={`w-3.5 h-3.5 ${isIgniting ? 'animate-bounce' : ''}`} />
+                <span>{isIgniting ? '⚡ IGNITING' : '⚡ IGNITE'}</span>
+              </button>
             </div>
+
+            {/* Viewport Render Branch: WebGL 3D Chamber vs 3D Holographic Card */}
+            {viewportMode === 'chamber' ? (
+              <Sigil3DChamber
+                svgDataUri={sigilSvgDataUri}
+                glowColor={activeGlowColor}
+                isIgniting={isIgniting}
+                orientationAngle={orientationAngle}
+                onSnapUpright={handleSnapUpright}
+              />
+            ) : (
+              /* 3D Holographic Card Viewport with guaranteed upright orientation */
+              <div
+                ref={cardRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                className={`relative w-full aspect-square max-w-[420px] rounded-3xl p-6 border border-slate-800 shadow-2xl backdrop-blur-2xl transition-all duration-100 ease-out cursor-crosshair group overflow-hidden ${
+                  isIgniting ? 'scale-105 ring-4 ring-amber-400 shadow-[0_0_80px_rgba(251,191,36,0.6)]' : ''
+                }`}
+                style={{
+                  background: ATMOSPHERES_LIST.find(a => a.id === selectedAtmosphere)?.preview || '#020617',
+                  transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                  transformStyle: 'preserve-3d',
+                  boxShadow: isIgniting 
+                    ? `0 0 90px #ffd700, 0 0 140px ${activeGlowColor}`
+                    : `0 25px 60px -15px ${activeGlowColor}33, 0 0 30px ${activeGlowColor}15`,
+                }}
+              >
+                {/* Niagara Interactive Particle Canvas */}
+                <NiagaraParticleCanvas
+                  glowColor={isIgniting ? '#ffd700' : activeGlowColor}
+                  triggerBurst={particleBurst || isIgniting}
+                  intensity={isIgniting ? 'supernova' : glowMode}
+                />
+
+                {/* Holographic Foil Rainbow Reflection Sheen */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-35 transition-opacity duration-500 rounded-3xl"
+                  style={{
+                    background: `linear-gradient(${115 + tilt.y * 3}deg, transparent 20%, rgba(255, 0, 128, 0.4) 40%, rgba(0, 255, 255, 0.4) 60%, transparent 80%)`,
+                    mixBlendMode: 'color-dodge',
+                  }}
+                />
+
+                {/* Dynamic Specular Glare Highlight */}
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-3xl transition-opacity duration-300 opacity-15 group-hover:opacity-30"
+                  style={{
+                    background: `radial-gradient(circle at ${50 + tilt.y * 2}% ${50 - tilt.x * 2}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
+                  }}
+                />
+
+                {/* HUD Calibration Header with Upright Orientation Indicator */}
+                <div className="flex items-center justify-between relative z-10 text-[10px] font-mono">
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-bold bg-slate-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    <Compass className="w-3 h-3 text-emerald-400 animate-pulse" />
+                    <span>{orientationAngle === 0 ? 'UPRIGHT (0°) ✓' : `BEARING: ${orientationAngle}°`}</span>
+                  </span>
+                  <span className="text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-slate-800">
+                    X:{(tilt?.x ?? 0).toFixed(1)}° Y:{(tilt?.y ?? 0).toFixed(1)}°
+                  </span>
+                </div>
+
+                {/* Central Vector Emblem */}
+                <div className="relative w-full h-[calc(100%-28px)] flex items-center justify-center z-10">
+                  {!sigilSvgDataUri && loadingSigil ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="w-10 h-10 text-plug-accent animate-spin" />
+                      <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+                        Synthesizing Geometry...
+                      </span>
+                    </div>
+                  ) : sigilSvgDataUri ? (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      
+                      {/* Celestial Sacred Geometry Astrolabe Rings (Spins independently while keeping Sigil Right-Side Up) */}
+                      {spinMode === 'rings_only' && rotationSpeed !== 'off' && (
+                        <div className={`absolute inset-2 pointer-events-none opacity-40 ${getRotationClass()}`}>
+                          <svg viewBox="0 0 200 200" className="w-full h-full">
+                            <circle cx="100" cy="100" r="92" fill="none" stroke={activeGlowColor} strokeWidth="1" strokeDasharray="4 8" />
+                            <circle cx="100" cy="100" r="84" fill="none" stroke="#60a5fa" strokeWidth="0.75" strokeDasharray="12 12" />
+                            <circle cx="100" cy="100" r="76" fill="none" stroke={activeGlowColor} strokeWidth="1.2" strokeDasharray="2 6" />
+                            <polygon points="100,10 105,18 95,18" fill={activeGlowColor} />
+                            <polygon points="190,100 182,105 182,95" fill={activeGlowColor} />
+                            <polygon points="100,190 95,182 105,182" fill={activeGlowColor} />
+                            <polygon points="10,100 18,95 18,105" fill={activeGlowColor} />
+                          </svg>
+                        </div>
+                      )}
+
+                      {/* Main Sigil Artwork Layer */}
+                      <div 
+                        className={`relative w-full h-full flex items-center justify-center transition-all ${
+                          spinMode === 'full_disc' ? getRotationClass() : ''
+                        }`}
+                        style={{
+                          transform: `rotate(${orientationAngle}deg)`,
+                          filter: `${hueShift !== 0 ? `hue-rotate(${hueShift}deg)` : ''} ${
+                            chromaticAberration
+                              ? 'drop-shadow(-2px 0px 0px rgba(255,0,0,0.7)) drop-shadow(2px 0px 0px rgba(0,255,255,0.7))'
+                              : ''
+                          } ${isIgniting ? 'brightness-150 drop-shadow([0_0_35px_#ffd700])' : ''}`,
+                        }}
+                      >
+                        <img
+                          src={sigilSvgDataUri}
+                          alt="Vector Sigil"
+                          className="w-full h-full object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.15)] select-none pointer-events-none"
+                        />
+                        {loadingSigil && (
+                          <div className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 border border-purple-500/50 shadow-md">
+                            <Loader2 className="w-3 h-3 text-purple-400 animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-xs text-slate-500 font-mono">Synthesizing Sigil...</div>
+                  )}
+                </div>
+
+                {/* Viewport Laser Scanlines Effect */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none rounded-3xl opacity-20" />
+              </div>
+            )}
 
             {/* Unique Cryptographic Watermark Banner */}
             <div className="w-full max-w-[420px] mt-3 p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-between">
@@ -1276,60 +1415,95 @@ export const SigilForgePage: React.FC<SigilForgePageProps> = ({ onNavigate }) =>
             {/* Viewport Controls Bar */}
             <div className="w-full max-w-[420px] mt-3 p-4 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-3.5">
               
-              {/* Glow Mode Selector */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  Luminosity
-                </span>
-                <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
-                  {(['subtle', 'normal', 'supernova'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => {
-                        setGlowMode(mode);
-                        forgeAudio.playTick(mode === 'supernova' ? 1200 : 800);
-                      }}
-                      className={`px-2.5 py-1 rounded-lg capitalize transition-colors font-bold ${
-                        glowMode === mode 
-                          ? 'bg-plug-accent text-white shadow' 
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {mode}
-                    </button>
-                  ))}
+              {/* Orientation & Upright Lock Controls */}
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Compass className={`w-4 h-4 ${orientationAngle === 0 ? 'text-emerald-400' : 'text-amber-400'}`} />
+                  <div>
+                    <div className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                      Orientation Bearing
+                      {orientationAngle === 0 ? (
+                        <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                          UPRIGHT ✓
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-amber-400 font-bold bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-500/30">
+                          {orientationAngle}°
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] font-mono text-slate-500">
+                      Lock emblem 100% right-side-up
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 font-mono text-xs">
+                  <button
+                    onClick={() => handleRotateQuarter(-90)}
+                    className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:text-white cursor-pointer"
+                    title="Rotate -90° (Counter-clockwise)"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleRotateQuarter(90)}
+                    className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:text-white cursor-pointer"
+                    title="Rotate +90° (Clockwise)"
+                  >
+                    <RotateCw className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={handleSnapUpright}
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                    title="Snap directly to 0° Upright"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>0° Snap</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Rotation Velocity Selector */}
+              {/* Spin Dynamics & Orbital Protection */}
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
-                  <Orbit className="w-3.5 h-3.5 text-cyan-400" />
-                  Spin Velocity
-                </span>
+                <div>
+                  <span className="text-xs font-mono text-slate-400 font-bold flex items-center gap-1.5">
+                    <Orbit className="w-3.5 h-3.5 text-cyan-400" />
+                    Spin Dynamics
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    {spinMode === 'rings_only' ? '🛡️ Rings spin, Core stays upright' : '🔄 Full disc rotation'}
+                  </span>
+                </div>
                 <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
-                  {[
-                    { id: 'off', label: 'Static' },
-                    { id: 'slow', label: '60s' },
-                    { id: 'normal', label: '20s' },
-                    { id: 'warp', label: '6s ⚡' },
-                  ].map((speed) => (
-                    <button
-                      key={speed.id}
-                      onClick={() => {
-                        setRotationSpeed(speed.id as any);
-                        forgeAudio.playTick(900);
-                      }}
-                      className={`px-2 py-1 rounded-lg transition-colors font-bold ${
-                        rotationSpeed === speed.id 
-                          ? 'bg-purple-600 text-white shadow' 
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {speed.label}
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => {
+                      setSpinMode('rings_only');
+                      forgeAudio.playTick(950);
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-colors font-bold cursor-pointer ${
+                      spinMode === 'rings_only'
+                        ? 'bg-cyan-600 text-white shadow'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="Orbit rings spin around the medallion while crown & monogram remain right-side-up"
+                  >
+                    Rings Only
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSpinMode('full_disc');
+                      forgeAudio.playTick(950);
+                    }}
+                    className={`px-2 py-1 rounded-lg transition-colors font-bold cursor-pointer ${
+                      spinMode === 'full_disc'
+                        ? 'bg-purple-600 text-white shadow'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="Rotate full disc 360° continuously"
+                  >
+                    Full Disc
+                  </button>
                 </div>
               </div>
 

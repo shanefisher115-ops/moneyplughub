@@ -58,7 +58,7 @@ export interface BaseTransactionRecord {
   timestamp: string;
   is_real: boolean;
   processor_id: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 

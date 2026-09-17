@@ -49,6 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
     { id: 'creator-os', label: '🎨 Creator OS Studio', icon: Sparkles, color: 'text-pink-400' },
     { id: 'video', label: '🎬 Omni Flash & Loops', icon: Film, color: 'text-pink-400' },
     { id: 'reality-engine', label: '☢️ Reality Engine', icon: Orbit, color: 'text-cyan-400' },
+    { id: 'agent-swarm', label: '🤖 Agent Swarm Protocol', icon: Bot, color: 'text-emerald-400' },
     { id: 'net-worth', label: 'Living Vault', icon: Wallet, color: 'text-amber-400', minLevel: 3 },
     { id: 'budget', label: 'Budget Shield', icon: PieChart, color: 'text-sky-400', minLevel: 3 },
     { id: 'generate', label: 'AI Studio', icon: Sparkles, color: 'text-pink-400', minLevel: 6 },
@@ -212,89 +213,57 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
             </div>
           </nav>
         ) : (
-          <nav className="hidden md:flex items-center gap-1 bg-slate-900/70 p-1 rounded-2xl border border-slate-800 text-xs font-mono shrink-0">
-            <button
-              onClick={() => setCurrentTab('landing')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                currentTab === 'landing' 
-                  ? 'bg-plug-accent/20 text-plug-accent border border-plug-accent/30' 
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              Home
-            </button>
+          <nav className="hidden md:flex items-center gap-2 text-xs font-mono shrink-0">
             <button
               onClick={() => setCurrentTab('moneyos')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-1.5 py-1 font-bold transition-all relative border-b-2 cursor-pointer ${
                 currentTab === 'moneyos' || currentTab === 'chat'
-                  ? 'bg-plug-accent/20 text-plug-accent border border-plug-accent/40 shadow-sm' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                  ? 'text-white border-emerald-400' 
+                  : 'text-slate-400 hover:text-white border-transparent hover:border-emerald-400/50'
               }`}
             >
-              <Bot className="w-3.5 h-3.5 text-plug-accent" />
-              <span>MoneyOS</span>
+              MoneyOS
             </button>
+            <span className="text-slate-700 select-none">|</span>
             <button
               onClick={() => setCurrentTab('primordia')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-1.5 py-1 font-bold transition-all relative border-b-2 cursor-pointer ${
                 currentTab === 'primordia' 
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' 
-                  : 'text-slate-300 hover:text-white'
+                  ? 'text-white border-cyan-400' 
+                  : 'text-slate-400 hover:text-white border-transparent hover:border-cyan-400/50'
               }`}
             >
-              <Cpu className="w-3.5 h-3.5" />
-              <span>PrimordiaOS</span>
+              PrimordiaOS
             </button>
-            <button
-              onClick={() => setCurrentTab('creator-os')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
-                currentTab === 'creator-os' 
-                  ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' 
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-              <span>Creator OS</span>
-            </button>
-            <button
-              onClick={() => setCurrentTab('signal-realm')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
-                currentTab === 'signal-realm' || currentTab === 'signalrealm' || currentTab === 'apollo' || currentTab === 'phom'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' 
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              <Send className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Signal Realm</span>
-            </button>
+            <span className="text-slate-700 select-none">|</span>
             <button
               onClick={() => setCurrentTab('landing-calc')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-1.5 py-1 font-bold transition-all relative border-b-2 cursor-pointer ${
                 currentTab === 'landing-calc' 
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
-                  : 'text-slate-300 hover:text-white'
+                  ? 'text-white border-emerald-400' 
+                  : 'text-slate-400 hover:text-white border-transparent hover:border-emerald-400/50'
               }`}
             >
-              <Calculator className="w-3.5 h-3.5" />
-              <span>Simulator</span>
+              Simulator
             </button>
+            <span className="text-slate-700 select-none">|</span>
             <button
               onClick={() => setCurrentTab('sigil-forge')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-1.5 py-1 font-bold transition-all relative border-b-2 cursor-pointer ${
                 currentTab === 'sigil-forge' 
-                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' 
-                  : 'text-slate-300 hover:text-white'
+                  ? 'text-white border-purple-400' 
+                  : 'text-slate-400 hover:text-white border-transparent hover:border-purple-400/50'
               }`}
             >
-              <Compass className="w-3.5 h-3.5" />
-              <span>Sigil Forge</span>
+              Sigil Forge
             </button>
+            <span className="text-slate-700 select-none">|</span>
             <button
               onClick={() => setCurrentTab('pricing')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-1.5 py-1 font-bold transition-all relative border-b-2 cursor-pointer ${
                 currentTab === 'pricing' 
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' 
-                  : 'text-slate-300 hover:text-white'
+                  ? 'text-white border-amber-400' 
+                  : 'text-slate-400 hover:text-white border-transparent hover:border-amber-400/50'
               }`}
             >
               Pricing
@@ -305,36 +274,49 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
         {/* ── Right Controls: Action Badges & Profile Menu ── */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
-          {/* Daily Mystery Crate Trigger */}
-          <button
-            onClick={() => {
-              if (typeof (window as any).openDailyLootCrate === 'function') {
-                (window as any).openDailyLootCrate();
-              }
-            }}
-            className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-400/50 text-amber-300 font-mono text-xs font-black flex items-center gap-1.5 transition-all hover:scale-105 cursor-pointer shadow-md shadow-amber-500/10"
-            title="Open Daily Mystery Loot Crate"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-current animate-pulse" />
-            <span className="hidden sm:inline">Crate</span>
-          </button>
-
-          {/* XP -> Cash Conversion Quick Button */}
-          {onOpenXpConversion && (
+          {/* Category B: User Inventory / Vault (Segmented Split Badge) */}
+          <div className="hidden sm:flex items-center bg-slate-900/90 border border-slate-700/80 rounded-full p-0.5 shadow-md">
             <button
-              onClick={onOpenXpConversion}
-              className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-cyan-500/25 hover:from-emerald-500/35 hover:to-cyan-500/35 border border-emerald-400/50 text-emerald-300 font-mono text-xs font-black flex items-center gap-1.5 transition-all hover:scale-105 cursor-pointer shadow-md shadow-emerald-500/10"
-              title="Antigravity Conversion Chamber (Convert XP to Real Cash)"
+              onClick={() => {
+                if (typeof (window as any).openDailyLootCrate === 'function') {
+                  (window as any).openDailyLootCrate();
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Daily Mystery Loot Crate"
             >
-              <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
-              <span className="hidden md:inline">XP → Cash</span>
-              {user && (
-                <span className="px-1.5 py-0.5 rounded bg-slate-950/70 text-emerald-300 text-[10px] font-mono">
-                  {user.xp?.toLocaleString() || 0}
-                </span>
-              )}
+              <span>📦</span>
+              <span className="text-slate-400">Crates:</span>
+              <span className="font-bold text-amber-400">1</span>
             </button>
-          )}
+
+            <div className="w-px h-3.5 bg-slate-700" />
+
+            <button
+              onClick={() => setIsProfileMenuOpen(true)}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Creator Level & Experience"
+            >
+              <span className="text-amber-400 font-bold">⚡</span>
+              <span className="font-bold text-white">Lv.{user?.level || 4}</span>
+              <span className="text-slate-400 text-[10px]">| {(user?.xp || 1250).toLocaleString()} XP</span>
+            </button>
+
+            <div className="w-px h-3.5 bg-slate-700" />
+
+            <button
+              onClick={() => {
+                if (onOpenXpConversion) onOpenXpConversion();
+                else setCurrentTab('net-worth');
+              }}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Claimable Revenue"
+            >
+              <span className="text-emerald-400">🪙</span>
+              <span className="font-bold text-emerald-400">$0.00</span>
+              <span className="text-slate-400 text-[10px]">Claimable</span>
+            </button>
+          </div>
 
           {user ? (
             <>
@@ -456,18 +438,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentTab('login')}
-                className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl hover:bg-slate-800/80 transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white rounded-full border border-slate-700 hover:border-slate-500 bg-transparent transition-all cursor-pointer"
               >
                 Sign In
               </button>
               <button
                 onClick={() => setCurrentTab('register')}
-                className="px-3 sm:px-3.5 py-1.5 bg-plug-accent hover:bg-plug-accentHover text-plug-dark font-bold text-xs rounded-xl transition-all shadow-md shadow-plug-accent/20 cursor-pointer"
+                className="px-4 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black text-xs rounded-full transition-all shadow-lg shadow-emerald-400/25 flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
               >
-                Get Started
+                <span>Start Free</span>
+                <span className="font-bold">→</span>
               </button>
             </div>
           )}

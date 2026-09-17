@@ -1,877 +1,2218 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoneyPlug Hub — Creator Money OS & Living Wealth Matrix</title>
-  
-  <!-- Global Canvas & Network Resilience Patch -->
-  <script>
-    // 1. Prevent canvas crash from negative radius in 3D orbit
-    if (typeof CanvasRenderingContext2D !== 'undefined') {
-      const _origEllipse = CanvasRenderingContext2D.prototype.ellipse;
-      CanvasRenderingContext2D.prototype.ellipse = function(x, y, rx, ry, rot, start, end, acw) {
-        return _origEllipse.call(
-          this,
-          x,
-          y,
-          Math.max(0.01, Math.abs(rx)),
-          Math.max(0.01, Math.abs(ry)),
-          rot || 0,
-          start || 0,
-          end || Math.PI * 2,
-          acw || false
-        );
-      };
-    }
+  <title>MoneyOS — Holographic Command Cockpit // moneyplughub.com</title>
 
-    // 2. Intercept 405 API calls so they return 200 JSON instead of crashing with <!DOCTYPE
-    const _origFetch = window.fetch;
-    window.fetch = async function(...args) {
-      try {
-        const res = await _origFetch.apply(this, args);
-        if (args[0] && typeof args[0] === 'string' && args[0].includes('/api/')) {
-          if (!res.ok || res.status === 405) {
-            const url = args[0];
-            let mock = { success: true, status: "OK" };
-            if (url.includes('sigil')) {
-              mock = {
-                success: true,
-                equipped: "Cyber Matrix",
-                color: "#10b981",
-                shape: "tesseract",
-                spinSpeed: 0.018,
-                bloom: 18,
-                auras: [{ id: 1, name: "Cyber Matrix", color: "#10b981", equipped: true }]
-              };
-            } else if (url.includes('peersignal')) {
-              mock = { success: true, emitted: true, peerId: "peer_admin" };
-            } else if (url.includes('track-action')) {
-              mock = { success: true, logged: true, xpEarned: 250 };
-            } else if (url.includes('auth')) {
-              mock = { success: true, token: "sovereign_token", user: { email: "admin@moneyplughub.com" } };
-            }
-            return new Response(JSON.stringify(mock), {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' }
-            });
-          }
-        }
-        return res;
-      } catch (e) {
-        if (args[0] && typeof args[0] === 'string' && args[0].includes('/api/')) {
-          return new Response(JSON.stringify({ success: true, fallback: true }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-        throw e;
-      }
-    };
-  </script>
-
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-deep: #030712;
-      --panel-bg: rgba(9, 14, 26, 0.94);
-      --panel-border: rgba(16, 185, 129, 0.25);
-      --neon-green: #10b981;
-      --neon-cyan: #06b6d4;
-      --neon-purple: #a855f7;
-      --neon-gold: #fbbf24;
-      --neon-red: #f43f5e;
-      --font-display: 'Inter', system-ui, sans-serif;
+      --bg-deep: #020612;
+      --cockpit-hull: #030a1a;
+      --panel-bg: rgba(6, 14, 28, 0.88);
+      --panel-border: rgba(0, 240, 255, 0.32);
+      --panel-border-bright: rgba(0, 240, 255, 0.75);
+      --panel-glow: 0 8px 32px rgba(0, 0, 0, 0.7), inset 0 0 16px rgba(0, 240, 255, 0.08);
+      --neon-cyan: #00f0ff;
+      --neon-green: #00ff88;
+      --neon-purple: #b026ff;
+      --neon-gold: #ffb703;
+      --neon-red: #ff3366;
+      --font-hud: 'Orbitron', -apple-system, sans-serif;
+      --font-body: 'Rajdhani', -apple-system, sans-serif;
       --font-mono: 'Fira Code', Consolas, monospace;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: var(--bg-deep); color: #f8fafc; font-family: var(--font-display);
-      min-height: 100vh; overflow-x: hidden; padding-bottom: 75px;
+      background-color: var(--bg-deep);
+      color: #e2e8f0;
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(0, 240, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(0, 180, 255, 0.08) 0%, transparent 50%);
+      user-select: none;
     }
 
-    /* Top Nav */
-    .top-nav {
-      display: flex; justify-content: space-between; align-items: center; padding: 12px 28px;
-      background: rgba(3, 7, 18, 0.96); border-bottom: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000;
+    /* Baseline Standard Scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
     }
-    .brand-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; color: #fff; cursor: pointer; }
-    .brand-icon {
-      width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
-      display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 0 12px rgba(16,185,129,0.5);
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* View Transitions API */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) {
+      animation-duration: 0.22s;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .nav-pills { display: flex; gap: 6px; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); }
-    .nav-pill {
-      background: transparent; border: none; color: #94a3b8; padding: 6px 14px; border-radius: 18px;
-      font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit;
-    }
-    .nav-pill:hover { color: #fff; }
-    .nav-pill.active { background: rgba(16,185,129,0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
-
-    .nav-actions { display: flex; gap: 8px; align-items: center; }
-    .action-badge {
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-      color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit;
-    }
-    .action-badge.gold { border-color: var(--neon-gold); color: var(--neon-gold); background: rgba(251,191,36,0.1); }
-    .action-badge.admin { border-color: var(--neon-cyan); color: #fff; background: rgba(6,182,212,0.15); }
-    .action-badge.auth { border-color: var(--neon-green); color: var(--neon-green); background: rgba(16,185,129,0.15); }
-
-    /* Stream Ticker */
-    .stream-ticker {
-      background: #02050f; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 8px 28px;
-      display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 11px;
-    }
-    .stream-stat { display: flex; gap: 16px; align-items: center; }
-    .stream-stat strong { color: var(--neon-green); }
-
-    .container { max-width: 1440px; margin: 20px auto; padding: 0 24px; }
-
-    /* View Switcher */
-    .tab-view { display: none; }
-    .tab-view.active-view { display: block !important; }
-
-    /* Grid & Cards */
-    .grid-2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; margin-bottom: 24px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
-
-    .card {
-      background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px; padding: 22px; position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-    }
-    .card-title { font-size: 11px; letter-spacing: 1.5px; color: #94a3b8; text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 12px; font-weight: 700; }
-
-    .chip {
-      display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800;
-      padding: 4px 10px; border-radius: 20px; text-transform: uppercase; font-family: var(--font-mono);
-    }
-    .chip-green { background: rgba(16,185,129,0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
-
-    .link-box {
-      background: #010308; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 16px;
-      display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 12px;
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
     }
 
-    .level-row {
-      background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
-      padding: 16px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;
-    }
-    .lvl-badge {
-      background: #010308; border: 1px solid var(--neon-cyan); border-radius: 10px; padding: 8px 14px;
-      text-align: center; font-family: var(--font-mono);
-    }
-    .xp-bar-full {
-      flex: 1; margin: 0 30px; height: 10px; background: #010308; border-radius: 5px;
-      overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-    }
-    .xp-bar-inner { height: 100%; background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)); width: 74%; }
-
-    .btn-main {
-      background: var(--neon-green); color: #000; border: none; font-weight: 800; font-size: 12px;
-      padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: inherit;
-    }
-    .btn-main:hover { box-shadow: 0 0 16px var(--neon-green); transform: translateY(-1px); }
-    .btn-outline {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.15);
-      color: #fff; font-weight: 700; font-size: 12px; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: inherit;
-    }
-    .btn-outline:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
-
-    /* Sigil Forge */
-    .archetype-carousel {
-      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 14px; margin-bottom: 20px; scrollbar-width: none;
-    }
-    .archetype-card {
-      min-width: 190px; background: rgba(10, 15, 29, 0.9); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;
-    }
-    .archetype-card:hover, .archetype-card.active {
-      border-color: var(--neon-green); background: rgba(16, 185, 129, 0.08); box-shadow: 0 0 16px rgba(16,185,129,0.2);
-    }
-    .forge-grid { display: grid; grid-template-columns: 460px 1fr; gap: 24px; }
-    @media (max-width: 1024px) { .forge-grid { grid-template-columns: 1fr; } }
-
-    .sigil-viewport-card {
-      background: rgba(6, 10, 20, 0.96); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-    }
-    #sigil-canvas-box {
-      width: 100%; height: 380px; background: radial-gradient(circle at center, rgba(16,185,129,0.12) 0%, #010308 100%);
-      border-radius: 14px; border: 1px solid rgba(16,185,129,0.3); position: relative; overflow: hidden;
-      display: flex; justify-content: center; align-items: center;
-    }
-    #forge-sigil-canvas { width: 420px; height: 380px; display: block; }
-
-    .control-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 11px; color: #cbd5e1; font-family: var(--font-mono); }
-    .toggle-group { display: flex; gap: 4px; background: #010308; padding: 3px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-    .toggle-btn {
-      background: transparent; border: none; color: #94a3b8; font-size: 10px; font-weight: 700;
-      padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: inherit;
-    }
-    .toggle-btn.active { background: var(--neon-green); color: #000; }
-
-    .component-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .comp-tab {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-      color: #94a3b8; padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-    }
-    .comp-tab.active {
-      background: linear-gradient(135deg, var(--neon-green), #059669); color: #000; border-color: var(--neon-green); font-weight: 800;
+    /* ==========================================================================
+       HOLOGRAPHIC COCKPIT CANOPY ARCHITECTURE (3D PERSPECTIVE)
+       ========================================================================== */
+    .cockpit-canopy {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 30%, rgba(4, 18, 38, 0.7) 0%, #01040d 95%);
+      box-shadow: inset 0 0 100px rgba(0, 240, 255, 0.12);
     }
 
-    .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    @media (max-width: 640px) { .comp-grid { grid-template-columns: 1fr; } }
-    .comp-card {
-      background: rgba(10, 15, 29, 0.85); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative;
-    }
-    .comp-card:hover { transform: translateY(-2px); border-color: rgba(16,185,129,0.5); }
-    .comp-card.equipped {
-      border: 2px solid var(--neon-green); background: rgba(16,185,129,0.08); box-shadow: 0 0 16px rgba(16,185,129,0.2);
+    /* Top Curved Canopy Arch */
+    .canopy-arch-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      border-bottom: 2px solid rgba(0, 240, 255, 0.35);
+      background: linear-gradient(180deg, rgba(0, 240, 255, 0.08) 0%, transparent 100%);
+      border-radius: 0 0 50% 50% / 0 0 25px 25px;
+      pointer-events: none;
+      box-shadow: 0 5px 25px rgba(0, 240, 255, 0.15);
+      z-index: 10;
     }
 
-    /* Pricing Section */
-    .toggle-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 16px 0 28px 0; font-size: 13px; font-weight: 600; }
-    .toggle-switch { width: 46px; height: 24px; background: #010308; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; position: relative; cursor: pointer; }
-    .toggle-switch.active { background: var(--neon-green); border-color: var(--neon-green); }
-    .toggle-knob { width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 3px; transition: transform 0.25s ease; }
-    .toggle-switch.active .toggle-knob { transform: translateX(22px); background: #000; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-    @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; } }
-    .price-card { background: rgba(10, 15, 29, 0.9); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px 22px; display: flex; flex-direction: column; justify-content: space-between; }
-    .price-card.popular { border: 2px solid var(--neon-green); background: rgba(10, 18, 32, 0.96); box-shadow: 0 0 30px rgba(16,185,129,0.15); position: relative; }
-
-    /* Modals */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(14px); display: none; justify-content: center; align-items: center; z-index: 5000;
+    /* ==========================================================================
+       TOP NAVIGATION BAR
+       ========================================================================== */
+    .cockpit-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 36px;
+      position: relative;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      background: rgba(2, 6, 18, 0.85);
     }
-    .modal-content {
-      background: #090e1c; border: 1px solid var(--panel-border); border-radius: 18px;
-      width: 90%; max-width: 540px; padding: 32px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.8);
-    }
-    .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; }
-    .auth-input { width: 100%; background: #010308; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px 16px; color: #fff; font-family: var(--font-mono); font-size: 13px; margin-bottom: 12px; outline: none; }
 
-    /* Bottom Bar */
-    .bottom-bar {
-      position: fixed; bottom: 0; left: 0; width: 100%; padding: 12px 28px; background: rgba(3, 7, 18, 0.96);
-      border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between;
-      align-items: center; z-index: 1000; backdrop-filter: blur(20px);
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .brand-hex {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      animation: hexPulse 3s infinite ease-in-out;
+    }
+    @keyframes hexPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
+    }
+    .brand-title {
+      font-family: var(--font-hud);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+    }
+    .brand-title span { color: var(--neon-cyan); }
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      background: rgba(0, 255, 136, 0.1);
+      letter-spacing: 1px;
+    }
+
+    .nav-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(4, 12, 28, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 20px;
+      padding: 6px 16px;
+      width: 360px;
+      transition: all 0.2s;
+    }
+    .nav-search:focus-within {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .nav-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      width: 100%;
+    }
+    .nav-search input::placeholder { color: #64748b; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-pill-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: var(--neon-cyan);
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 7px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .nav-pill-btn:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+      transform: translateY(-1px);
+    }
+    .nav-pill-btn.gold {
+      background: rgba(255, 183, 3, 0.12);
+      border-color: var(--neon-gold);
+      color: var(--neon-gold);
+    }
+    .nav-pill-btn.gold:hover {
+      background: rgba(255, 183, 3, 0.25);
+      box-shadow: 0 0 14px rgba(255, 183, 3, 0.6);
+    }
+
+    /* ==========================================================================
+       3D CURVED COCKPIT BRIDGE GRID
+       ========================================================================== */
+    .cockpit-viewport {
+      perspective: 1600px;
+      perspective-origin: 50% 45%;
+      width: 100%;
+      padding: 10px 24px 30px;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .cockpit-cluster {
+      display: grid;
+      grid-template-columns: 280px 290px 370px 290px 280px;
+      gap: 16px;
+      max-width: 1640px;
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 3D Column Rotations for Holographic Surround Effect */
+    .col-outer-left {
+      transform: rotateY(13deg) translateZ(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-mid-left {
+      transform: rotateY(6deg) translateZ(25px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-center-hero {
+      transform: translateZ(45px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-mid-right {
+      transform: rotateY(-6deg) translateZ(25px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .col-outer-right {
+      transform: rotateY(-13deg) translateZ(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Responsive Flat Mode for smaller screens */
+    @media (max-width: 1540px) {
+      .cockpit-viewport { perspective: none; }
+      .cockpit-cluster {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        transform-style: flat;
+      }
+      .col-outer-left, .col-mid-left, .col-center-hero, .col-mid-right, .col-outer-right {
+        transform: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       HOLOGRAPHIC COCKPIT WINDOW PANELS
+       ========================================================================== */
+    .cockpit-window {
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--panel-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .cockpit-window::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      opacity: 0.6;
+    }
+    .cockpit-window:hover {
+      border-color: var(--panel-border-bright);
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+    .window-title {
+      font-family: var(--font-hud);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+    .window-title .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+    .window-title .dot.green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+    .window-title .dot.gold { background: var(--neon-gold); box-shadow: 0 0 8px var(--neon-gold); }
+    .window-title .dot.purple { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+
+    .window-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 1. Live Ticker Stream */
+    .ticker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ticker-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: rgba(3, 10, 22, 0.6);
+      border-left: 2px solid var(--neon-cyan);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ticker-item:hover { background: rgba(0, 240, 255, 0.12); }
+    .ticker-sym { color: #fff; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .ticker-val { color: var(--neon-green); font-weight: 700; }
+    .ticker-val.down { color: var(--neon-red); }
+
+    /* 2. Mountain Chart Area */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      margin-top: 4px;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .chart-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+    .chart-pills {
+      display: flex;
+      gap: 4px;
+    }
+    .chart-pill {
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      cursor: pointer;
+    }
+    .chart-pill.active {
+      background: var(--neon-cyan);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* 3. Radial Multi-Ring Gauge */
+    .gauge-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+    .gauge-svg-box {
+      width: 110px;
+      height: 110px;
+      position: relative;
+    }
+    .gauge-svg-box svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .gauge-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .gauge-num {
+      font-family: var(--font-hud);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    .gauge-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
+    .gauge-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .gauge-stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .gauge-stat-val { color: #fff; font-weight: 700; }
+
+    /* 4. Swarm Syndicates List ('MY ARMS') */
+    .syndicate-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .syndicate-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(2, 9, 20, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .syndicate-card:hover, .syndicate-card.active {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.12);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+    }
+    .synd-info { display: flex; align-items: center; gap: 8px; }
+    .synd-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(0,240,255,0.3), rgba(176,38,255,0.3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .synd-name { font-family: var(--font-hud); font-size: 11px; font-weight: 700; color: #fff; }
+    .synd-role { font-family: var(--font-mono); font-size: 9px; color: #94a3b8; }
+    .synd-status {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--neon-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 5. Autonomous Velocity & Dual Sliders */
+    .slider-box {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    .slider-head span:last-child { color: var(--neon-cyan); font-weight: 700; }
+    input[type=range].hud-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      background: #0f172a;
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type=range].hud-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      cursor: pointer;
+    }
+
+    /* 6. Center Hero Window */
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .hero-avatar-ring {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      border: 3px solid var(--neon-cyan);
+      padding: 3px;
+      background: radial-gradient(circle, rgba(0,240,255,0.3) 0%, transparent 70%);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .hero-avatar-ring .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #091a33;
+      font-family: var(--font-hud);
+      font-size: 28px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    .hero-name-title {
+      text-align: center;
+      font-family: var(--font-hud);
+      font-size: 21px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1.5px;
+      margin-bottom: 2px;
+      text-shadow: 0 0 14px rgba(0, 240, 255, 0.7);
+    }
+    .hero-level-sub {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Gold Commission Shield Badge */
+    .commission-badge-shield {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(90deg, rgba(255,183,3,0.15) 0%, rgba(255,183,3,0.05) 50%, rgba(255,183,3,0.15) 100%);
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin-bottom: 14px;
+    }
+    .shield-icon {
+      font-size: 24px;
+      filter: drop-shadow(0 0 8px var(--neon-gold));
+    }
+    .shield-text-big {
+      font-family: var(--font-hud);
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--neon-gold);
+      letter-spacing: 1px;
+    }
+    .shield-text-sub {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    /* Dual Balance Boxes */
+    .dual-balance-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .balance-box {
+      background: rgba(2, 8, 20, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .balance-label {
+      font-size: 10px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+      font-family: var(--font-hud);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .balance-amt {
+      font-family: var(--font-hud);
+      font-size: 21px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .balance-amt.cyan { color: var(--neon-cyan); text-shadow: 0 0 12px var(--neon-cyan); }
+    .balance-amt.green { color: var(--neon-green); text-shadow: 0 0 12px var(--neon-green); }
+
+    /* Primary CTA Buttons */
+    .hero-btn-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cta-claim-now {
+      width: 100%;
+      background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+      color: #000;
+      font-family: var(--font-hud);
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 183, 3, 0.6), inset 0 0 10px rgba(255,255,255,0.4);
+      transition: all 0.2s;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .cta-claim-now:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 0 35px rgba(255, 183, 3, 0.9);
+      filter: brightness(1.1);
+    }
+    .cta-claim-now:active { transform: scale(0.98); }
+
+    .cta-crate-sub {
+      width: 100%;
+      background: rgba(176, 38, 255, 0.15);
+      border: 1px solid var(--neon-purple);
+      color: #e2e8f0;
+      font-family: var(--font-hud);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .cta-crate-sub:hover {
+      background: rgba(176, 38, 255, 0.3);
+      box-shadow: 0 0 16px rgba(176, 38, 255, 0.5);
+    }
+
+    /* 7. Center Matrix 3D Sigil Canvas Window */
+    .sigil-canvas-box {
+      width: 100%;
+      height: 180px;
+      background: radial-gradient(circle at center, rgba(0,240,255,0.08) 0%, #01040b 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #forge-sigil-canvas { width: 100%; height: 180px; display: block; cursor: grab; }
+    #forge-sigil-canvas:active { cursor: grabbing; }
+    .sigil-canvas-overlay {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--neon-cyan);
+      display: flex;
+      gap: 12px;
+      z-index: 5;
+    }
+    .sigil-archetype-pills {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .archetype-pill {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--neon-cyan);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .archetype-pill.active, .archetype-pill:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* 8. RETIREE AGE Donut Window */
+    .donut-gauge-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .donut-svg-box {
+      width: 110px;
+      height: 110px;
+      position: relative;
+    }
+    .donut-svg-box svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .donut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .donut-num {
+      font-family: var(--font-hud);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+    }
+    .donut-sub {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #94a3b8;
+    }
+    .fire-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .fire-row { display: flex; justify-content: space-between; gap: 12px; }
+    .fire-row span:last-child { color: #fff; font-weight: 700; }
+
+    /* 9. Layered Hexagon Window ('EOVENTTARES' / ANTIGRAV) */
+    .hex-matrix-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 6px 0;
+    }
+    .hex-svg-box {
+      width: 90px;
+      height: 90px;
+    }
+    .hex-nodes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .hex-node-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hex-node-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+    .hex-node-circle.gold { background: var(--neon-gold); box-shadow: 0 0 8px var(--neon-gold); }
+    .hex-node-circle.purple { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+
+    /* 10. High-Volatility Line Chart ('POREIALE') */
+    .vol-chart-box {
+      width: 100%;
+      height: 110px;
+      position: relative;
+    }
+
+    /* 11. Circular Sonar Radar Window */
+    .radar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 0;
+    }
+    .radar-sweep-box {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+      position: relative;
+      overflow: hidden;
+    }
+    .radar-sweep-line {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-green));
+      transform-origin: 0% 0%;
+      animation: sweepRadar 3s infinite linear;
+    }
+    @keyframes sweepRadar {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .radar-channels {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+    .channel-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .channel-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    }
+
+    /* 12. Multi-colored Daily Bar Matrix */
+    .daily-bars-grid {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 80px;
+      padding-top: 10px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      margin-bottom: 8px;
+    }
+    .matrix-bar-col {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .matrix-bar-fill {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, var(--neon-cyan), rgba(0,240,255,0.3));
+      transition: all 0.2s;
+    }
+    .matrix-bar-col:hover .matrix-bar-fill {
+      background: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+    .matrix-bar-lbl {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #64748b;
+    }
+
+    /* ==========================================================================
+       BOTTOM PERSPECTIVE GRID FLOOR & PEDESTAL
+       ========================================================================== */
+    .cockpit-pedestal-floor {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-top: 1px solid rgba(0, 240, 255, 0.25);
+      background: linear-gradient(180deg, rgba(2, 8, 20, 0.9) 0%, #000208 100%);
+      z-index: 10;
+    }
+
+    /* 3D Wireframe Perspective Floor Grid */
+    .floor-grid-plane {
+      position: absolute;
+      top: 0;
+      left: -20%;
+      right: -20%;
+      bottom: -40%;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.18) 1px, transparent 1px);
+      background-size: 32px 32px;
+      transform: perspective(350px) rotateX(68deg);
+      transform-origin: 50% 0%;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    /* Glowing Pedestal Floor Text */
+    .floor-glow-title {
+      font-family: var(--font-hud);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      text-shadow: 
+        0 0 15px rgba(0, 240, 255, 0.9),
+        0 0 35px rgba(0, 240, 255, 0.5),
+        0 0 60px rgba(0, 240, 255, 0.3);
+      position: relative;
+      z-index: 2;
+      animation: pedestalBreathe 4s infinite ease-in-out;
+    }
+    @keyframes pedestalBreathe {
+      0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(0,240,255,0.7)); }
+      50% { filter: brightness(1.3) drop-shadow(0 0 25px rgba(0,240,255,1)); }
+    }
+    .floor-subline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #94a3b8;
+      margin-top: 4px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Persistent Voice Audio Bar in Footer */
+    .voice-dock-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(4, 14, 30, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 30px;
+      padding: 6px 20px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    }
+    .voice-mic-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 0 12px var(--neon-cyan);
+      transition: transform 0.15s;
+    }
+    .voice-mic-btn:hover { transform: scale(1.1); }
+    .voice-waves {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+    }
+    .wave-bar {
+      width: 3px;
+      height: 8px;
+      background: var(--neon-green);
+      border-radius: 2px;
+      animation: waveDance 1.2s infinite ease-in-out alternate;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; height: 14px; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; height: 16px; }
+    .wave-bar:nth-child(5) { animation-delay: 0.3s; height: 8px; }
+    @keyframes waveDance {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    /* ==========================================================================
+       TOP LAYER NATIVE <dialog> MODALS (@starting-style)
+       ========================================================================== */
+    dialog.modern-dialog {
+      margin: auto;
+      background: rgba(3, 10, 24, 0.95);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 240, 255, 0.3);
+      color: #e2e8f0;
+      padding: 28px 32px;
+      max-width: 460px;
+      width: 90%;
+      outline: none;
+      backdrop-filter: blur(20px);
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+      opacity: 0;
+      transform: scale(0.92) translateY(15px);
+    }
+    dialog.modern-dialog[open] {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    @starting-style {
+      dialog.modern-dialog[open] {
+        opacity: 0;
+        transform: scale(0.92) translateY(15px);
+      }
+    }
+    dialog.modern-dialog::backdrop {
+      background: rgba(1, 4, 10, 0.85);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.25s ease-out, overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+      opacity: 0;
+    }
+    dialog.modern-dialog[open]::backdrop {
+      opacity: 1;
+    }
+    @starting-style {
+      dialog.modern-dialog[open]::backdrop {
+        opacity: 0;
+      }
+    }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+      padding-bottom: 12px;
+    }
+    .dialog-title {
+      font-family: var(--font-hud);
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .dialog-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .dialog-close:hover { color: var(--neon-cyan); }
+
+    .dialog-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-field label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #cbd5e1;
+      letter-spacing: 1px;
+    }
+    .input-field input {
+      background: rgba(2, 6, 18, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .dialog-btn-primary {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+      color: #000;
+      font-family: var(--font-hud);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-top: 6px;
+      transition: all 0.2s;
+    }
+    .dialog-btn-primary:hover {
+      box-shadow: 0 0 20px var(--neon-cyan);
+      transform: translateY(-1px);
+    }
+
+    /* Floating Toast */
+    .toast-hud {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(3, 12, 28, 0.95);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.4);
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-hud.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Unboxing Loot Crate Animation */
+    .crate-box-spin {
+      width: 100px;
+      height: 100px;
+      margin: 16px auto;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #7928ca, #ff0080);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      box-shadow: 0 0 30px rgba(255, 0, 128, 0.6);
+      cursor: pointer;
+      animation: crateFloat 3s infinite ease-in-out;
+      transition: transform 0.2s;
+    }
+    .crate-box-spin:hover { transform: scale(1.1) rotate(5deg); }
+    @keyframes crateFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
     }
   </style>
 </head>
 <body>
 
-  <div class="os-wrap">
-    <!-- Top Master Nav -->
-    <nav class="top-nav">
-      <div class="brand-logo" onclick="setTab('sigil')">
-        <div class="brand-icon">⚡</div>
-        <span>MoneyPlug Hub</span>
-      </div>
+<div class="cockpit-canopy">
+  <!-- Top Curved Canopy Arch Framework -->
+  <div class="canopy-arch-top"></div>
 
-      <div class="nav-pills">
-        <button id="pill-sigil" class="nav-pill active" onclick="setTab('sigil')">🌌 Sigil Forge</button>
-        <button id="pill-command" class="nav-pill" onclick="setTab('command')">⚡ Command</button>
-        <button id="pill-pricing" class="nav-pill" onclick="setTab('pricing')">💳 Pricing</button>
-        <button id="pill-quests" class="nav-pill" onclick="setTab('quests')">🏆 Quests & XP</button>
-        <button id="pill-playbook" class="nav-pill" onclick="setTab('playbook')">📚 Playbook</button>
-        <button id="pill-cfo" class="nav-pill" onclick="setTab('cfo')">🧠 MoneyOS AI</button>
-        <button id="pill-chambers" class="nav-pill" onclick="setTab('chambers')">🏛️ Chambers</button>
+  <!-- Top Cockpit Header Navigation -->
+  <header class="cockpit-nav">
+    <div class="brand-section" onclick="triggerOmnisearchFocus()">
+      <div class="brand-hex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
       </div>
-
-      <div class="nav-actions">
-        <button id="auth-btn" class="action-badge auth" onclick="openModal('modal-auth')">👤 Sign In</button>
-        <button class="action-badge gold" onclick="openModal('modal-wizard')">✨ Setup Wizard</button>
-        <button class="action-badge admin" onclick="setTab('pricing')">👑 Upgrade Pro</button>
-      </div>
-    </nav>
-
-    <!-- Stream Ticker -->
-    <div class="stream-ticker">
-      <div class="stream-stat">
-        <span>LIVE CASHFLOW:</span> <strong>+$0.0024 USD</strong>
-        <span>VELOCITY:</span> <strong style="color:var(--neon-cyan);">+0.0012f/sec</strong>
-        <span>MULTIPLIER:</span> <strong style="color:var(--neon-purple);">1.50x Supercritical</strong>
-      </div>
-      <div style="color:#64748b; font-style:italic;">"STACK CASHFLOW, LOCK THE VAULT, LET COMPOUNDING RUN."</div>
+      <div class="brand-title">MONEY<span>OS</span></div>
+      <span class="brand-badge" id="backend-status-badge">SOVEREIGN // STANDALONE</span>
     </div>
 
-    <!-- Main Container -->
-    <main class="container">
+    <!-- Center Search bar matching mockup -->
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="cockpit-omnisearch" placeholder="Search features, syndicates, yield, audit..." oninput="filterCockpitWindows(this.value)" />
+      <span style="font-family: var(--font-mono); font-size: 10px; color: #64748b;">⌘K</span>
+    </div>
 
-      <!-- View: Sigil Forge Studio (Default) -->
-      <div id="view-sigil" class="tab-view active-view">
-        <div class="archetype-carousel">
-          <div class="archetype-card active" onclick="selectArchetype('Cyber Dragonlord', '#10b981', 528, this)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🐉</span><span style="color:var(--neon-green); font-size:9px; font-weight:bold;">Lv. 8</span></div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">Cyber Dragonlord</div>
-            <div style="font-size:9px; color:#94a3b8;">Void Singularity & Mecha...</div>
-          </div>
-          <div class="archetype-card" onclick="selectArchetype('Seraphim Ascendant', '#06b6d4', 639, this)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🪽</span><span style="color:var(--neon-cyan); font-size:9px; font-weight:bold;">Lv. 7</span></div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">Seraphim Ascendant</div>
-            <div style="font-size:9px; color:#94a3b8;">Osmium Crystal Light...</div>
-          </div>
-          <div class="archetype-card" onclick="selectArchetype('Stealth Carbon Titan', '#94a3b8', 432, this)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">🛡️</span><span style="color:#cbd5e1; font-size:9px; font-weight:bold;">Lv. 8</span></div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">Stealth Carbon Titan</div>
-            <div style="font-size:9px; color:#94a3b8;">Carbon Fiber Nanites...</div>
-          </div>
-          <div class="archetype-card" onclick="selectArchetype('Archon 6-Wing Herald', '#a855f7', 852, this)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">✨</span><span style="color:var(--neon-purple); font-size:9px; font-weight:bold;">Lv. 9</span></div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">Archon 6-Wing Herald</div>
-            <div style="font-size:9px; color:#94a3b8;">Tachyon Warp Radiance...</div>
-          </div>
-          <div class="archetype-card" onclick="selectArchetype('Sovereign Emperor', '#fbbf24', 963, this)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span style="font-size:16px;">👑</span><span style="color:var(--neon-gold); font-size:9px; font-weight:bold;">Lv. 10</span></div>
-            <div style="font-size:11px; font-weight:800; color:#fff;">Sovereign Emperor</div>
-            <div style="font-size:9px; color:#94a3b8;">Imperial 24K Gold...</div>
-          </div>
-        </div>
+    <!-- Right Header Actions -->
+    <div class="nav-actions">
+      <button class="nav-pill-btn gold" onclick="openLootDialog()">
+        <span>🎁</span> LOOT CRATE
+      </button>
+      <button class="nav-pill-btn" onclick="openProfileDialog()">
+        <span>👤</span> SHANE (T0)
+      </button>
+      <button class="nav-pill-btn" onclick="openWizardDialog()">
+        <span>⚙️</span> PROTOCOL
+      </button>
+    </div>
+  </header>
 
-        <div class="forge-grid">
-          <div class="sigil-viewport-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-family:var(--font-mono); font-size:10px;">
-              <span style="color:var(--neon-green);">● CRYPTOGRAPHIC_MATRIX</span>
-              <span style="color:#94a3b8;" id="coord-tracker">X: 0.0° Y: 0.0°</span>
-            </div>
-            <div id="sigil-canvas-box">
-              <canvas id="forge-sigil-canvas" width="420" height="380"></canvas>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:10px; font-family:var(--font-mono);">
-              <span style="color:var(--neon-green);">🛡️ Zero-Duplicate Guarantee</span>
-              <span style="color:#64748b;">SEED: CREATOR-OS</span>
-            </div>
-            <div class="control-row">
-              <span>☀️ Luminosity</span>
-              <div class="toggle-group">
-                <button class="toggle-btn" onclick="setLuminosity(8, this)">Subtle</button>
-                <button class="toggle-btn active" onclick="setLuminosity(18, this)">Normal</button>
-                <button class="toggle-btn" onclick="setLuminosity(32, this)">Supernova</button>
-              </div>
-            </div>
-            <div class="control-row">
-              <span>🪐 Spin Velocity</span>
-              <div class="toggle-group">
-                <button class="toggle-btn" onclick="setVelocity(0, this)">Static</button>
-                <button class="toggle-btn" onclick="setVelocity(0.005, this)">60s</button>
-                <button class="toggle-btn active" onclick="setVelocity(0.018, this)">20s</button>
-                <button class="toggle-btn" onclick="setVelocity(0.045, this)">6s ⚡</button>
-              </div>
-            </div>
-          </div>
+  <!-- 3D Curved Cockpit Bridge Cluster -->
+  <main class="cockpit-viewport">
+    <div class="cockpit-cluster">
 
-          <div>
-            <div class="component-tabs">
-              <button class="comp-tab active">✨ Auras & Shaders <span>30</span></button>
-              <button class="comp-tab" onclick="speak('Core Glyphs selected.')">💎 Core Glyphs <span>35</span></button>
-              <button class="comp-tab" onclick="speak('Orbital Rings selected.')">🪐 Orbital Rings <span>35</span></button>
-              <button class="comp-tab" onclick="speak('Imperial Crests selected.')">👑 Imperial Crests <span>30</span></button>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:11px; font-family:var(--font-mono);">
-              <span style="color:#94a3b8;">SELECT AURA COMPONENT</span>
-              <span style="color:#fff;">Equipped: <strong style="color:var(--neon-green);" id="equipped-name">Cyber Matrix</strong></span>
-            </div>
-            <div class="comp-grid">
-              <div class="comp-card equipped" onclick="equipShader('Cyber Matrix', '#10b981', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">⚡ 250 XP</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Cyber Matrix ✓</div>
-                <div style="font-size:10px; color:#94a3b8;">Neon Emerald & Cybernetic Laser Pulse shader.</div>
-              </div>
-              <div class="comp-card" onclick="equipShader('Retro Synthwave', '#f43f5e', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Retro Synthwave</div>
-                <div style="font-size:10px; color:#94a3b8;">Neon Magenta & Sunset Orange glow.</div>
-              </div>
-              <div class="comp-card" onclick="equipShader('Hyper Plasma', '#38bdf8', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-cyan);">RARE</span><span style="color:var(--neon-gold);">🔒 Lv. 2</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Hyper Plasma</div>
-                <div style="font-size:10px; color:#94a3b8;">Ultraviolet laser discharge with ionized blue arcs.</div>
-              </div>
-              <div class="comp-card" onclick="equipShader('Cosmic Nebula', '#a855f7', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 3</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Cosmic Nebula</div>
-                <div style="font-size:10px; color:#94a3b8;">Deep Supernova Violet & Cyan plasma.</div>
-              </div>
-              <div class="comp-card" onclick="equipShader('Quantum Frost', '#06b6d4', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 4</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Quantum Frost</div>
-                <div style="font-size:10px; color:#94a3b8;">Sub-zero Arctic Cyan & Diamond Frost.</div>
-              </div>
-              <div class="comp-card" onclick="equipShader('Solar Flare', '#fbbf24', this)">
-                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:bold; font-family:var(--font-mono);"><span style="color:var(--neon-purple);">EPIC</span><span style="color:var(--neon-gold);">🔒 Lv. 5</span></div>
-                <div style="font-size:13px; font-weight:bold; color:#fff; margin:4px 0;">Solar Flare</div>
-                <div style="font-size:10px; color:#94a3b8;">Radiant 24K Gold thermonuclear flare.</div>
-              </div>
-            </div>
-            <button class="btn-main" style="width:100%; margin-top:16px; padding:14px;" onclick="speak('Sigil Cryptographically Attested with SHA-256 seal bound to player profile!')">🔐 ATTEST & BIND SIGIL</button>
+      <!-- ====================================================================
+           COLUMN 1 (OUTER LEFT - ANGLED INWARD)
+           ==================================================================== -->
+      <div class="col-outer-left">
+        <!-- Window 1: Live Ticker Stream -->
+        <section class="cockpit-window" id="win-tickers">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> LIVE TICKERS</div>
+            <span class="window-tag" id="ticker-counter">24/s</span>
           </div>
-        </div>
+          <div class="ticker-list" id="ticker-container">
+            <div class="ticker-item" onclick="copyTickerHash('0x9a4f...7b12')">
+              <span class="ticker-sym"><span style="color:var(--neon-gold)">●</span> SOL / USDC</span>
+              <span class="ticker-val">$184.20 <small style="color:#64748b">(+6.4%)</small></span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x4e21...98c3')">
+              <span class="ticker-sym"><span style="color:var(--neon-cyan)">●</span> AFF / RAKUTEN</span>
+              <span class="ticker-val">+$48.50/s</span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x12bb...881f')">
+              <span class="ticker-sym"><span style="color:var(--neon-green)">●</span> SWARM YIELD</span>
+              <span class="ticker-val">+$1,420/d</span>
+            </div>
+            <div class="ticker-item" onclick="copyTickerHash('0x9910...aa41')">
+              <span class="ticker-sym"><span style="color:var(--neon-purple)">●</span> ETH / ARB</span>
+              <span class="ticker-val">$3,412.80</span>
+            </div>
+          </div>
+          <div style="margin-top: 8px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: #64748b;">
+            <span>STREAM: AGENT-PULSE</span>
+            <span style="color: var(--neon-green)">LATENCY: 14ms</span>
+          </div>
+        </section>
+
+        <!-- Window 2: Mountain Area Chart (PAX LANDER) -->
+        <section class="cockpit-window" id="win-chart-area">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> PAX LANDER</div>
+            <div class="chart-pills">
+              <span class="chart-pill active" onclick="setChartRange(this, '1W')">1W</span>
+              <span class="chart-pill" onclick="setChartRange(this, '1M')">1M</span>
+              <span class="chart-pill" onclick="setChartRange(this, 'ALL')">ALL</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <svg class="chart-svg" viewBox="0 0 240 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.5"/>
+                  <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              <!-- Filled mountain polygon -->
+              <polygon id="chart-poly" points="0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12 240,100 0,100" fill="url(#areaGrad)" />
+              <!-- Top neon stroke line -->
+              <polyline id="chart-line" points="0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="chart-meta">
+            <span>2018: $1.2K</span>
+            <span style="color: var(--neon-cyan); font-weight: 700;">2026: $48.9K</span>
+          </div>
+        </section>
+
+        <!-- Window 3: Radial Multi-Ring Gauge (58%) -->
+        <section class="cockpit-window" id="win-radial-gauge">
+          <div class="window-header">
+            <div class="window-title"><span class="dot gold"></span> ATTRIBUTION</div>
+            <span class="window-tag">COOKIE 30D</span>
+          </div>
+          <div class="gauge-wrapper">
+            <div class="gauge-svg-box">
+              <svg viewBox="0 0 100 100">
+                <!-- Outer background track -->
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                <!-- Outer colored ring (58%) -->
+                <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gaugeGrad)" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="110" stroke-linecap="round"/>
+                <!-- Inner secondary ring -->
+                <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(0,255,136,0.2)" stroke-width="4"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#00ff88" stroke-width="4" stroke-dasharray="188" stroke-dashoffset="50" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#00f0ff"/>
+                    <stop offset="100%" stop-color="#ffb703"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-center-text">
+                <div class="gauge-num" id="gauge-percent">58%</div>
+                <div class="gauge-label">CONV. RATIO</div>
+              </div>
+            </div>
+            <div class="gauge-stats">
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">Streak:</span>
+                <span class="gauge-stat-val" style="color:var(--neon-green)">1.50x</span>
+              </div>
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">Clicks:</span>
+                <span class="gauge-stat-val">12,480</span>
+              </div>
+              <div class="gauge-stat-row">
+                <span style="color:#94a3b8">EPC:</span>
+                <span class="gauge-stat-val" style="color:var(--neon-gold)">$3.42</span>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <!-- View: Command Center -->
-      <div id="view-command" class="tab-view">
-        <div style="background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:16px; padding:24px 28px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="display:flex; gap:8px; margin-bottom:8px;">
-              <span class="chip chip-green">PLUG IN OS</span>
-              <span class="chip" style="background:rgba(6,182,212,0.15); color:var(--neon-cyan); border:1px solid var(--neon-cyan);">ADAPTIVE + BEHAVIOR AWARE</span>
-            </div>
-            <h1 style="font-size:24px; font-weight:800; color:#fff;">⭐ Command Center (Full Rebuild)</h1>
-            <p style="font-size:13px; color:#94a3b8; margin-top:4px;">Your sovereign, autonomous multi-agent wealth operating system.</p>
+      <!-- ====================================================================
+           COLUMN 2 (MID LEFT)
+           ==================================================================== -->
+      <div class="col-mid-left">
+        <!-- Window 4: Swarm & Channels List ('MY ARMS') -->
+        <section class="cockpit-window" id="win-arms">
+          <div class="window-header">
+            <div class="window-title"><span class="dot purple"></span> MY ARMS // SWARM</div>
+            <span class="window-tag">4 ACTIVE</span>
           </div>
-          <div>
-            <div style="font-size:10px; color:#94a3b8; margin-bottom:4px; font-family:var(--font-mono);">YOUR RAKUTEN SMART LINK:</div>
-            <div class="link-box">
-              <span style="color:var(--neon-green);">https://www.rakuten.com/r/CASHPL19</span>
-              <button class="btn-main" style="padding:4px 10px; font-size:10px;" onclick="copyLink()">Copy</button>
+          <div class="syndicate-list">
+            <div class="syndicate-card active" onclick="selectSyndicate('VRTX')">
+              <div class="synd-info">
+                <div class="synd-icon">🐉</div>
+                <div>
+                  <div class="synd-name">[VORTEX] Cyber</div>
+                  <div class="synd-role">Autonomous Syndication</div>
+                </div>
+              </div>
+              <div class="synd-status">● 142K XP</div>
+            </div>
+            <div class="syndicate-card" onclick="selectSyndicate('APEX')">
+              <div class="synd-info">
+                <div class="synd-icon">👑</div>
+                <div>
+                  <div class="synd-name">[APEX] Capital</div>
+                  <div class="synd-role">High-Ticket Vault</div>
+                </div>
+              </div>
+              <div class="synd-status">● 118K XP</div>
+            </div>
+            <div class="syndicate-card" onclick="selectSyndicate('PLSE')">
+              <div class="synd-info">
+                <div class="synd-icon">⚡</div>
+                <div>
+                  <div class="synd-name">[PULSE] TikTok</div>
+                  <div class="synd-role">Viral Video Loop</div>
+                </div>
+              </div>
+              <div class="synd-status">● 95K XP</div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="level-row">
-          <div class="lvl-badge">
-            <div id="cmd-lvl" style="font-size:16px; font-weight:900; color:var(--neon-gold);">LVL 14</div>
-            <div style="font-size:9px; color:#94a3b8;">SOVEREIGN PLUG</div>
+        <!-- Window 5: Autonomous Velocity Engine ('NIOIDES') -->
+        <section class="cockpit-window" id="win-velocity">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> VELOCITY ENGINE</div>
+            <span class="window-tag" id="worker-count-badge">8 WORKERS</span>
           </div>
-          <div style="flex:1; margin:0 24px;">
-            <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono); margin-bottom:6px;">
-              <span style="color:#fff;">Level Progress: <strong id="cmd-xp-txt">3,450 / 4,000 XP</strong></span>
-              <span style="color:var(--neon-cyan);">Next Unlock: Budget Velocity Shields</span>
+          <div class="slider-box">
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Autonomous Frequency</span>
+                <span id="slider-freq-val">60s</span>
+              </div>
+              <input type="range" class="hud-range" min="10" max="120" value="60" oninput="updateVelocityFreq(this.value)" />
             </div>
-            <div class="xp-bar-full"><div id="cmd-xp-fill" class="xp-bar-inner" style="width:74%;"></div></div>
-          </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <div style="text-align:right; font-family:var(--font-mono);">
-              <div style="font-size:14px; font-weight:800; color:var(--neon-gold);">🔥 14d Streak</div>
-              <div style="font-size:10px; color:var(--neon-green);">1.50x Boost Active</div>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Yield Multiplier</span>
+                <span id="slider-mult-val">2.4x</span>
+              </div>
+              <input type="range" class="hud-range" min="1" max="5" step="0.1" value="2.4" oninput="updateYieldMult(this.value)" />
             </div>
-            <button class="btn-main" onclick="addXP(250)">⚡ Boost XP</button>
           </div>
-        </div>
-
-        <div class="grid-4">
-          <div class="card"><div class="card-title">AGGREGATED NET WORTH</div><h2 style="color:var(--neon-green); font-size:28px; font-weight:800;">$94,200.00</h2><div style="font-size:12px; color:#94a3b8;">4 Bank Feeds Synchronized</div></div>
-          <div class="card"><div class="card-title">UNENCUMBERED VAULT</div><h2 style="color:var(--neon-cyan); font-size:28px; font-weight:800;">$42,850.00</h2><div style="font-size:12px; color:#94a3b8;">340 Days Safe Runway</div></div>
-          <div class="card"><div class="card-title">DEBT HYDRO DESTROYER</div><h2 style="color:var(--neon-red); font-size:28px; font-weight:800;">-$7,040.00</h2><div style="font-size:12px; color:var(--neon-green);">+$1,840 Interest Vaporized</div></div>
-          <div class="card"><div class="card-title">SCHEDULE C DEDUCTIONS</div><h2 style="color:var(--neon-gold); font-size:28px; font-weight:800;">+$3,850.00</h2><div style="font-size:12px; color:var(--neon-green);">+$924 Direct Tax Savings</div></div>
-        </div>
+          <button class="nav-pill-btn" style="width: 100%; margin-top: 12px; justify-content: center;" onclick="pulseSubstrate()">
+            ⚡ PULSE SUBSTRATE
+          </button>
+        </section>
       </div>
 
-      <!-- View: Pricing Matrix -->
-      <div id="view-pricing" class="tab-view">
-        <div style="text-align:center; margin-bottom:24px;">
-          <h1 style="font-size:32px; font-weight:900; color:#fff;">Simple, transparent pricing</h1>
-          <p style="font-size:13px; color:#94a3b8; margin-top:6px;">Unlock the full power of Creator Money OS. No hidden fees.</p>
-          <div class="toggle-container">
-            <span id="txt-monthly" style="color:#fff;">Monthly</span>
-            <div id="toggle-box" class="toggle-switch" onclick="toggleBilling()"><div class="toggle-knob"></div></div>
-            <span id="txt-annually" style="color:#94a3b8;">Annually</span>
-            <span style="background:rgba(16,185,129,0.15); border:1px solid var(--neon-green); color:var(--neon-green); font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px;">2 months free</span>
-          </div>
-        </div>
-        <div class="pricing-grid">
-          <div class="price-card">
-            <div>
-              <h3 style="font-size:18px; font-weight:800; color:#fff;">Free Lite</h3>
-              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;">$0</div>
-              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Perfect for new creators getting started.</p>
-              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ 5 referral links<br>✓ Basic earnings dashboard<br>✓ MoneyOS AI chat<br>✓ Commission tracking</div>
+      <!-- ====================================================================
+           COLUMN 3 (CENTER HERO STAGE)
+           ==================================================================== -->
+      <div class="col-center-hero">
+        <!-- Window 6: Avatar Card, Gold Shield, Dual Balances & Primary CTA -->
+        <section class="cockpit-window" id="win-hero-stage" style="border-color: rgba(0,240,255,0.5);">
+          <div class="hero-card">
+            <!-- Glowing Avatar Ring -->
+            <div class="hero-avatar-ring">
+              <div class="avatar-fallback">👑</div>
             </div>
-            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Free Lite tier active.')">Start Free</button>
-          </div>
-          <div class="price-card popular">
-            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--neon-green); color:#000; font-size:10px; font-weight:900; padding:3px 12px; border-radius:12px;">⚡ Most Popular</div>
-            <div>
-              <h3 style="font-size:18px; font-weight:800; color:#fff;">Creator</h3>
-              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-creator">$29</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
-              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Everything you need to grow your financial empire.</p>
-              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ Unlimited referral links<br>✓ MoneyOS AI Voice (ElevenLabs)<br>✓ Budget & debt tools<br>✓ Synthetic yield simulator<br>✓ Priority support</div>
-            </div>
-            <button class="btn-main" style="width:100%; margin-top:16px;" onclick="speak('Redirecting to Stripe Checkout for Creator Plan.')">Start Creator Plan</button>
-          </div>
-          <div class="price-card">
-            <div>
-              <h3 style="font-size:18px; font-weight:800; color:#fff;">Pro</h3>
-              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-pro">$149</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
-              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Advanced tools for high-volume creators.</p>
-              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ Full AI Swarm Orchestrator<br>✓ Advanced net worth analytics<br>✓ Crypto portfolio tracking<br>✓ Custom Living Vault themes</div>
-            </div>
-            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Pro plan selected.')">Go Pro</button>
-          </div>
-          <div class="price-card">
-            <div>
-              <h3 style="font-size:18px; font-weight:800; color:#fff;">Enterprise</h3>
-              <div style="font-size:36px; font-weight:900; color:#fff; margin:8px 0;"><span id="price-enterprise">$499+</span><span style="font-size:13px; color:#94a3b8;">/mo</span></div>
-              <p style="font-size:11px; color:#94a3b8; margin-bottom:14px;">Bespoke solutions for large creator agencies.</p>
-              <div style="font-size:11px; color:#cbd5e1; line-height:1.8;">✓ White-label deployment<br>✓ Custom AI agent training<br>✓ Dedicated infrastructure<br>✓ SLA guarantees</div>
-            </div>
-            <button class="btn-outline" style="width:100%; margin-top:16px;" onclick="speak('Routing to Enterprise Sales.')">Contact Sales</button>
-          </div>
-        </div>
-      </div>
+            <div class="hero-name-title">SHANE</div>
+            <div class="hero-level-sub">SOVEREIGN TIER 0 // CORE OPERATOR</div>
 
-      <!-- View: Quests & XP -->
-      <div id="view-quests" class="tab-view">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">ACTIVE BOUNTIES & QUEST MATRIX</div>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
-                <div><strong>🗡️ Morning Bank Recon</strong><div style="font-size:10px; color:#94a3b8;">Audit connected institutions for new charges.</div></div>
-                <button class="btn-main" onclick="addXP(50)">+50 XP</button>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
-                <div><strong>🧾 Receipt OCR Scan</strong><div style="font-size:10px; color:#94a3b8;">Ingest a receipt with Vision OCR.</div></div>
-                <button class="btn-main" onclick="addXP(100)">+100 XP</button>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:8px;">
-                <div><strong>🐉 The Inflow Titan</strong><div style="font-size:10px; color:#94a3b8;">Route a full paycheck via 50/20/20/10 formula.</div></div>
-                <button class="btn-main" onclick="addXP(750)">+750 XP</button>
+            <!-- Gold Commission Shield Badge -->
+            <div class="commission-badge-shield">
+              <div class="shield-icon">🛡️</div>
+              <div>
+                <div class="shield-text-big">10% COMMISSION ACTIVE</div>
+                <div class="shield-text-sub">LIFETIME SOVEREIGN ATTRIBUTION</div>
               </div>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-title">CYBER TROPHY HALL OF FAME</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
-              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">👑</div><strong>Genesis Sovereign</strong></div>
-              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">💎</div><strong>Diamond Hands</strong></div>
-              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">⚔️</div><strong>Debt Slayer</strong></div>
-              <div style="background:rgba(251,191,36,0.08); border:1px solid var(--neon-gold); padding:12px; border-radius:8px; text-align:center;"><div style="font-size:24px;">🏛️</div><strong>Centurion Vault</strong></div>
+
+            <!-- Dual Balance Boxes -->
+            <div class="dual-balance-row">
+              <div class="balance-box">
+                <div class="balance-label">Daily Balance</div>
+                <div class="balance-amt cyan" id="harvest-amt">$13,800.00</div>
+              </div>
+              <div class="balance-box">
+                <div class="balance-label">Pending Vault</div>
+                <div class="balance-amt green" id="vault-amt">$17,852.40</div>
+              </div>
+            </div>
+
+            <!-- Primary Claim CTA -->
+            <div class="hero-btn-stack">
+              <button class="cta-claim-now" id="claim-button" onclick="executeHarvestClaim()">
+                <span>⚡</span> CLAIM NOW <span>$13,800</span>
+              </button>
+              <button class="cta-crate-sub" onclick="openLootDialog()">
+                <span>🎁</span> OPEN DAILY MYSTERY LOOT CRATE
+              </button>
             </div>
           </div>
-        </div>
+        </section>
+
+        <!-- Window 7: Center Matrix 3D Sigil Canvas Window -->
+        <section class="cockpit-window" id="win-sigil-matrix">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> 3D SIGIL FORGE MATRIX</div>
+            <span class="window-tag" id="sigil-status-tag">528Hz SOLFEGGIO</span>
+          </div>
+          <div class="sigil-canvas-box">
+            <div class="sigil-canvas-overlay">
+              <span>ROT: <span id="sigil-rot-lbl">45°</span></span>
+              <span>LUMEN: 99.4%</span>
+              <span style="color:var(--neon-green)">STABLE</span>
+            </div>
+            <canvas id="forge-sigil-canvas" width="340" height="180"></canvas>
+          </div>
+          <div class="sigil-archetype-pills">
+            <span class="archetype-pill active" onclick="switchSigilArchetype(this, 'DRAGON')">CYBER DRAGON</span>
+            <span class="archetype-pill" onclick="switchSigilArchetype(this, 'EMPEROR')">SOVEREIGN EMP</span>
+            <span class="archetype-pill" onclick="switchSigilArchetype(this, 'PULSE')">VIRAL PULSE</span>
+            <span class="archetype-pill" onclick="playSolfeggioTone()">🔊 528Hz TONE</span>
+          </div>
+        </section>
       </div>
 
-      <!-- View: Playbook -->
-      <div id="view-playbook" class="tab-view">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">1. THE FINANCIAL ORDER OF OPERATIONS (FOO)</div>
-            <p style="font-size:12px; line-height:1.7; color:#cbd5e1; margin-top:8px;">
-              1. Deductibles Covered ($1,500-$2,500 emergency buffer)<br>
-              2. Employer 401(k) Match (100% Instant Guaranteed ROI)<br>
-              3. High-Interest Debt Payoff (>8% APR)<br>
-              4. Emergency Reserves (3-6mo liquid HYSA 4.5%+)<br>
-              5. Roth IRA ($7,000) + HSA ($4,150 Triple Tax Advantage)<br>
-              6. Maximize 401(k) ($23,000/yr in broad index VOO/VTI)<br>
-              7. Hyper-Accumulation & Real Estate
-            </p>
+      <!-- ====================================================================
+           COLUMN 4 (MID RIGHT)
+           ==================================================================== -->
+      <div class="col-mid-right">
+        <!-- Window 8: RETIREE AGE Donut & FIRE Freedom Clock -->
+        <section class="cockpit-window" id="win-retiree-donut">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> RETIREE AGE // FIRE</div>
+            <span class="window-tag">9.4 YRS</span>
           </div>
-          <div class="card">
-            <div class="card-title">2. THE BOGLEHEAD INDEX MANIFESTO</div>
-            <p style="font-size:12px; line-height:1.7; color:#cbd5e1; margin-top:8px;">
-              • <strong>90%+ of Wall Street active fund managers fail</strong> to beat low-cost broad index funds over 15 years.<br>
-              • <strong>Low Fees Matter:</strong> A 1.0% fee eats over 28% of your lifetime wealth vs a 0.03% expense ratio (VOO/VTI).<br>
-              • <strong>Time in Market > Timing Market:</strong> Automate bi-weekly dollar cost averaging.
-            </p>
+          <div class="donut-gauge-box">
+            <div class="donut-svg-box">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#00ff88" stroke-width="8" stroke-dasharray="238" stroke-dashoffset="60" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-center-text">
+                <div class="donut-num" id="retire-age-val">41.4</div>
+                <div class="donut-sub">TARGET AGE</div>
+              </div>
+            </div>
+            <div class="fire-details">
+              <div class="fire-row">
+                <span style="color:#94a3b8">Goal Nest:</span>
+                <span>$1.875M</span>
+              </div>
+              <div class="fire-row">
+                <span style="color:#94a3b8">Monte Carlo:</span>
+                <span style="color:var(--neon-green)">98.6%</span>
+              </div>
+              <div class="fire-row">
+                <span style="color:#94a3b8">Passive Mo:</span>
+                <span style="color:var(--neon-gold)">$7,800</span>
+              </div>
+            </div>
           </div>
-        </div>
+          <div style="padding: 0 4px 6px;">
+            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: #94a3b8; margin-bottom: 4px;">
+              <span>Target Retirement Age</span>
+              <span id="fire-age-label" style="color:var(--neon-green); font-weight: 700;">41 yrs</span>
+            </div>
+            <input type="range" class="hud-range" min="30" max="65" value="41" oninput="updateFireTarget(this.value)" />
+          </div>
+        </section>
+
+        <!-- Window 9: ANTIGRAV Hexagon Window ('EOVENTTARES') -->
+        <section class="cockpit-window" id="win-antigrav-hex">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> EOVENTTARES</div>
+            <span class="window-tag">ANTIGRAV()</span>
+          </div>
+          <div class="hex-matrix-box">
+            <div class="hex-svg-box">
+              <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                <polygon points="50,5 90,27 90,73 50,95 10,73 10,27" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.4)" stroke-width="2"/>
+                <polygon points="50,18 80,34 80,66 50,82 20,66 20,34" fill="none" stroke="var(--neon-cyan)" stroke-width="1.5" stroke-dasharray="6,3"/>
+                <circle cx="50" cy="50" r="14" fill="rgba(0,240,255,0.2)" stroke="var(--neon-cyan)" stroke-width="2"/>
+                <text x="50" y="54" font-family="'Orbitron', sans-serif" font-size="10" font-weight="900" fill="#fff" text-anchor="middle">94</text>
+              </svg>
+            </div>
+            <div class="hex-nodes-list">
+              <div class="hex-node-item">
+                <div class="hex-node-circle"></div>
+                <span style="color:#cbd5e1">15% Sync Substrate</span>
+              </div>
+              <div class="hex-node-item">
+                <div class="hex-node-circle gold"></div>
+                <span style="color:#cbd5e1">30% Deploy Loop</span>
+              </div>
+              <div class="hex-node-item">
+                <div class="hex-node-circle purple"></div>
+                <span style="color:#cbd5e1">294% Supercritical</span>
+              </div>
+            </div>
+          </div>
+          <button class="nav-pill-btn" style="width: 100%; margin-top: 6px; justify-content: center;" onclick="runAntigravAudit()">
+            🛡️ RUN SOVEREIGN AUDIT
+          </button>
+        </section>
       </div>
 
-      <!-- View: MoneyOS AI -->
-      <div id="view-cfo" class="tab-view">
-        <div class="card">
-          <div class="card-title">EXECUTIVE AI CFO COPILOT TERMINAL</div>
-          <div style="display:flex; gap:10px; margin:14px 0;">
-            <button class="btn-outline" onclick="speak('Executive Briefing: Net Worth is $94,200 across 4 bank institutions. 340 days safe runway.')">💼 Net Worth Briefing</button>
-            <button class="btn-outline" onclick="speak('Tax Strategy: $3,850 in Schedule C deductions delivering $924 in tax savings.')">📊 Tax Write-Offs</button>
-            <button class="btn-outline" onclick="speak('Portfolio Alert: Crypto is overweight by 10.7%. Recommended trade: Trim $10,070 into Index Funds.')">⚖️ Rebalance Trade</button>
+      <!-- ====================================================================
+           COLUMN 5 (OUTER RIGHT - ANGLED INWARD)
+           ==================================================================== -->
+      <div class="col-outer-right">
+        <!-- Window 10: High-Volatility Line Chart ('POREIALE') -->
+        <section class="cockpit-window" id="win-chart-poreiale">
+          <div class="window-header">
+            <div class="window-title"><span class="dot"></span> POREIALE // YIELD</div>
+            <span class="window-tag">+14.8% APY</span>
           </div>
-          <div style="background:#010308; padding:18px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); font-size:12px; line-height:1.6;">
-            <strong>🧠 AI CFO:</strong> "Autonomous multi-agent loop active. I have verified your 4 bank accounts, tax deductions, and debt stack. What financial maneuver shall we execute?"
+          <div class="vol-chart-box">
+            <svg viewBox="0 0 240 90" style="width: 100%; height: 100%;">
+              <path d="M0,80 Q30,75 60,65 T120,40 T180,25 T240,8" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M0,85 Q40,82 80,75 T160,65 T240,55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4,4"/>
+              <circle cx="240" cy="8" r="4" fill="#00ff88" filter="drop-shadow(0 0 6px #00ff88)"/>
+            </svg>
           </div>
-        </div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: #64748b;">
+            <span>Linear: $22K</span>
+            <span style="color: var(--neon-cyan); font-weight: 700;">Compounded: $68.4K</span>
+          </div>
+        </section>
+
+        <!-- Window 11: Circular Sonar Radar Window -->
+        <section class="cockpit-window" id="win-radar">
+          <div class="window-header">
+            <div class="window-title"><span class="dot green"></span> PAYOUT RADAR</div>
+            <span class="window-tag">TRACKING</span>
+          </div>
+          <div class="radar-wrapper">
+            <div class="radar-sweep-box">
+              <div class="radar-sweep-line"></div>
+              <div style="position: absolute; top: 25%; left: 65%; width: 5px; height: 5px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green);"></div>
+              <div style="position: absolute; top: 70%; left: 30%; width: 4px; height: 4px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan);"></div>
+            </div>
+            <div class="radar-channels">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>MaxBounty</span>
+                  <span style="color: #fff">$5,840</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 85%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>Rakuten</span>
+                  <span style="color: #fff">$4,120</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 62%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                  <span>Direct Conduit</span>
+                  <span style="color: #fff">$1,650</span>
+                </div>
+                <div class="channel-bar-bg"><div class="channel-bar-fill" style="width: 38%;"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Window 12: Multi-colored Daily Bar Matrix -->
+        <section class="cockpit-window" id="win-daily-matrix">
+          <div class="window-header">
+            <div class="window-title"><span class="dot gold"></span> 14D MATRIX // TAX</div>
+            <span class="window-tag">-$924 SAVED</span>
+          </div>
+          <div class="daily-bars-grid" id="matrix-bars-container">
+            <!-- 14 dynamic bars rendered via JS -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px;">
+            <span style="color:#94a3b8">Sched C Write-Off:</span>
+            <span style="color:var(--neon-green); font-weight:700;">$3,850.00</span>
+          </div>
+        </section>
       </div>
 
-      <!-- View: Chambers -->
-      <div id="view-chambers" class="tab-view">
-        <div class="grid-3">
-          <div class="card">
-            <div class="card-title">🎲 MONTE CARLO (1,000 PATHS)</div>
-            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Survival Probability: <strong>98.6%</strong> over 24 months. Median P50 Vault: <strong>$84,500</strong>.</p>
-            <button class="btn-main" onclick="speak('Monte Carlo running 1,000 stochastic paths. 98.6% survival probability confirmed.')">⚡ Re-run 1,000 Paths</button>
-          </div>
-          <div class="card">
-            <div class="card-title">🔥 FIRE FREEDOM CLOCK</div>
-            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Standard FIRE Target: <strong>$1,875,000</strong>. Freedom Date estimated in <strong>9.4 Years</strong>.</p>
-            <button class="btn-main" onclick="speak('FIRE calculation updated. Cutting $100 per month lowers FIRE target by $30,000.')">⚡ Calculate FIRE</button>
-          </div>
-          <div class="card">
-            <div class="card-title">📊 SCHEDULE C TAX LEDGER</div>
-            <p style="font-size:12px; color:#cbd5e1; margin:8px 0;">Eligible Deductions: <strong>$3,850.00</strong>. Direct Tax Savings: <strong>+$924.00</strong>.</p>
-            <button class="btn-main" onclick="speak('Schedule C CSV exported.')">📥 Export CSV</button>
-          </div>
-        </div>
-      </div>
+    </div>
+  </main>
 
-    </main>
+  <!-- Bottom Perspective Grid Floor & Pedestal -->
+  <footer class="cockpit-pedestal-floor">
+    <div class="floor-grid-plane"></div>
+    <div class="floor-glow-title">MONEYPLUGHUB.COM</div>
+    <div class="floor-subline">CREATOR FINANCIAL OPERATING SYSTEM // ALL WINDOWS LIVE</div>
 
-    <!-- Bottom Cockpit Bar -->
-    <footer class="bottom-bar">
-      <div style="display:flex; gap:12px; align-items:center;">
-        <button class="btn-main" style="background:rgba(16,185,129,0.15); border:1px solid var(--neon-green); color:var(--neon-green);" onclick="toggleVoice()">
-          🎙️ MoneyOS AI • <span id="voice-status">Live Voice Ready</span>
-        </button>
-        <span style="font-size:12px; color:#94a3b8;">Antigravity Autonomous Loop Daemon Active</span>
+    <!-- Interactive AI Voice Control Bar -->
+    <div class="voice-dock-bar">
+      <button class="voice-mic-btn" id="voice-btn" onclick="toggleVoiceOS()">
+        🎙️
+      </button>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: #fff;">
+        <span id="voice-status-text">MoneyOS Neural Voice: Ready</span>
       </div>
+      <div class="voice-waves">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+    </div>
+  </footer>
+</div>
 
-      <div style="display:flex; gap:14px; align-items:center; font-family:var(--font-mono); font-size:12px;">
-        <span>LIVING VAULT: <strong style="color:var(--neon-green); font-size:15px;">$94,200.00</strong></span>
-        <button class="btn-main" onclick="setTab('pricing')">⚡ Upgrade Creator OS Pro</button>
-      </div>
-    </footer>
+<!-- ==========================================================================
+     NATIVE <dialog> MODALS (Top Layer)
+     ========================================================================== -->
+
+<!-- 1. Profile / Sovereign Modal -->
+<dialog class="modern-dialog" id="profile-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">SOVEREIGN IDENTITY // TIER 0</div>
+    <button class="dialog-close" onclick="closeDialog('profile-dialog')">✕</button>
   </div>
-
-  <!-- Modals -->
-  <div id="modal-auth" class="modal-overlay">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal('modal-auth')">✕</button>
-      <h2 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:12px;">Sign In to MoneyPlug Hub</h2>
-      <input id="auth-email" type="email" class="auth-input" placeholder="Enter your email address..." />
-      <input id="auth-password" type="password" class="auth-input" placeholder="Enter your password..." />
-      <button class="btn-main" style="width:100%; margin-top:6px;" onclick="executeSignIn()">🔐 Sign In</button>
+  <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #0b1e38; border: 2px solid var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 28px;">
+      👑
+    </div>
+    <div>
+      <h3 style="font-family: var(--font-hud); font-size: 18px; color: #fff;">SHANE</h3>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: var(--neon-cyan);">Operator ID: PRIM-T0-9942-SHN</p>
+      <p style="font-family: var(--font-mono); font-size: 11px; color: var(--neon-green);">Commission: 10% Gold Lifetime</p>
     </div>
   </div>
-
-  <div id="modal-wizard" class="modal-overlay">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal('modal-wizard')">✕</button>
-      <h2 style="font-size:22px; font-weight:800; color:#fff; margin-bottom:8px;">The Living Wealth Vault</h2>
-      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Your dashboard visually pulses as your net worth and streak multipliers grow.</p>
-      <button class="btn-main" style="width:100%;" onclick="closeModal('modal-wizard'); speak('Living Vault setup complete.');">Finish Setup →</button>
-    </div>
+  <div style="background: rgba(2,6,18,0.7); border: 1px solid rgba(0,240,255,0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-family: var(--font-mono); font-size: 11px; line-height: 1.6;">
+    <div><strong>Vault Balance:</strong> $17,852.40 USD</div>
+    <div><strong>Compounding Yield:</strong> +8.4% Annual APY</div>
+    <div><strong>Antigravity Score:</strong> 94.2 / 100 (Passes All Gates)</div>
+    <div><strong>Connected Edge:</strong> moneyplughub.com</div>
   </div>
+  <button class="dialog-btn-primary" style="width:100%" onclick="closeDialog('profile-dialog')">CONFIRM & CLOSE</button>
+</dialog>
 
-  <script>
-    let activeTab = 'sigil';
-    let isAnnual = false;
-    let playerLevel = 14, currentXP = 3450, maxXP = 4000;
-    let currentColor = '#10b981', currentBloom = 18, spinSpeed = 0.018;
-    let rotX = 0, rotY = 0, isDragging = false, lastX = 0, lastY = 0;
+<!-- 2. Protocol / API Key Manager Modal -->
+<dialog class="modern-dialog" id="wizard-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">PROTOCOL & API CONDUIT</div>
+    <button class="dialog-close" onclick="closeDialog('wizard-dialog')">✕</button>
+  </div>
+  <form class="dialog-form" onsubmit="event.preventDefault(); saveProtocolSettings();">
+    <div class="input-field">
+      <label>LOCAL BACKEND URL (PORT 3000 / 3001)</label>
+      <input type="text" id="cfg-backend-url" value="http://localhost:3000" />
+    </div>
+    <div class="input-field">
+      <label>AFFILIATE NETWORK CONDUIT KEY</label>
+      <input type="password" id="cfg-aff-key" value="prim_live_9481726a4b" />
+    </div>
+    <div class="input-field">
+      <label>SOLFEGGIO HARMONIC FREQUENCY</label>
+      <input type="text" id="cfg-freq" value="528 Hz (Sacred Transformation)" />
+    </div>
+    <button type="submit" class="dialog-btn-primary">SAVE PROTOCOL SETTINGS</button>
+  </form>
+</dialog>
 
-    function speak(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.pitch = 0.85; u.rate = 0.9;
-        window.speechSynthesis.speak(u);
-      }
+<!-- 3. Daily Mystery Loot Crate Modal -->
+<dialog class="modern-dialog" id="loot-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">DAILY MYSTERY LOOT CRATE</div>
+    <button class="dialog-close" onclick="closeDialog('loot-dialog')">✕</button>
+  </div>
+  <div style="text-align: center;">
+    <div class="crate-box-spin" id="crate-box" onclick="openLootCrate()">
+      📦
+    </div>
+    <div id="loot-result-text" style="font-family: var(--font-hud); font-size: 14px; color: var(--neon-gold); min-height: 24px; margin-top: 8px;">
+      CLICK THE CRATE TO CRACK OPEN
+    </div>
+    <p style="font-family: var(--font-mono); font-size: 11px; color: #94a3b8; margin-top: 8px;">
+      Resets daily at 00:00 UTC. Guaranteed Sovereign XP or Yield Multipliers.
+    </p>
+  </div>
+  <button class="dialog-btn-primary" style="width:100%; margin-top: 20px;" onclick="closeDialog('loot-dialog')">DONE</button>
+</dialog>
+
+<!-- Floating HUD Toast -->
+<div class="toast-hud" id="hud-toast">
+  <span id="toast-icon">⚡</span>
+  <span id="toast-msg">Harvest Claim Initiated</span>
+</div>
+
+<!-- ==========================================================================
+     INTERACTIVE ENGINES, 3D SIGIL CANVAS & AUDIO SYNTHESIS
+     ========================================================================== -->
+<script>
+  // Global State
+  const state = {
+    vaultBalance: 17852.40,
+    dailyBalance: 13800.00,
+    claimed: false,
+    solfeggioFreq: 528,
+    activeSyndicate: 'VRTX',
+    sigilArchetype: 'DRAGON',
+    voiceActive: false,
+    audioCtx: null
+  };
+
+  // 1. Toast Notification Helper
+  function showToast(msg, icon = '⚡') {
+    const t = document.getElementById('hud-toast');
+    document.getElementById('toast-msg').innerText = msg;
+    document.getElementById('toast-icon').innerText = icon;
+    t.classList.add('show');
+    playTone(880, 'sine', 0.1);
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // 2. WebAudio Synthesizer for UI feedback (zero external audio files needed)
+  function getAudioContext() {
+    if (!state.audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) state.audioCtx = new AudioContext();
+    }
+    if (state.audioCtx && state.audioCtx.state === 'suspended') {
+      state.audioCtx.resume();
+    }
+    return state.audioCtx;
+  }
+
+  function playTone(freq = 440, type = 'sine', duration = 0.15) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch (e) {
+      console.warn('Audio tone error:', e);
+    }
+  }
+
+  function playSolfeggioTone() {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(528, ctx.currentTime);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.8);
+      showToast('Emitting 528Hz Solfeggio Aura Resonator', '🔮');
+    } catch (e) {
+      console.warn('Solfeggio audio error:', e);
+    }
+  }
+
+  // 3. Primary Harvest Claim Interaction
+  function executeHarvestClaim() {
+    if (state.claimed) {
+      showToast('Daily Harvest already secured for today!', '🛡️');
+      return;
     }
 
-    function toggleVoice() {
-      speak("MoneyOS AI Live Voice ready. Telemetry online across all 20 chambers.");
-      document.getElementById('voice-status').innerText = "Voice Active";
-    }
+    state.claimed = true;
+    state.vaultBalance += state.dailyBalance;
+    state.dailyBalance = 0.00;
 
-    function copyLink() {
-      navigator.clipboard.writeText("https://www.rakuten.com/r/CASHPL19");
-      speak("Rakuten smart link copied to clipboard!");
-      alert("Smart Link copied to clipboard!");
-    }
+    // Visual Updates
+    document.getElementById('harvest-amt').innerText = '$0.00';
+    document.getElementById('vault-amt').innerText = '$' + state.vaultBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    const btn = document.getElementById('claim-button');
+    btn.innerHTML = '<span>✔</span> HARVEST CLAIMED ($13,800.00)';
+    btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00f0ff 100%)';
+    btn.style.boxShadow = '0 0 30px rgba(0,255,136,0.8)';
 
-    // Direct Pre-Rendered View Switcher
-    function setTab(tabName) {
-      activeTab = tabName;
+    // Play triumphant chime
+    playTone(528, 'triangle', 0.2);
+    setTimeout(() => playTone(660, 'triangle', 0.25), 120);
+    setTimeout(() => playTone(880, 'triangle', 0.4), 240);
 
-      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active-view'));
-      const activeEl = document.getElementById('view-' + tabName);
-      if (activeEl) activeEl.classList.add('active-view');
+    showToast('Success! $13,800.00 deposited into Sovereign Vault.', '💰');
+  }
 
-      document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
-      const pill = document.getElementById('pill-' + tabName);
-      if (pill) pill.classList.add('active');
+  // 4. Daily Mystery Loot Crate
+  function openLootCrate() {
+    const box = document.getElementById('crate-box');
+    const res = document.getElementById('loot-result-text');
+    box.style.transform = 'scale(1.25) rotate(15deg)';
+    playTone(330, 'square', 0.1);
+    
+    setTimeout(() => {
+      box.innerText = '✨';
+      box.style.transform = 'scale(1)';
+      const rewards = [
+        '+500 XP Reactor Boost // Level 43 Unlocked',
+        '2x Sovereign Multiplier for 24h',
+        'Golden Affiliate Pass: 15% Tier Bump',
+        '528Hz Sacred Solfeggio Shield Equipped'
+      ];
+      const pick = rewards[Math.floor(Math.random() * rewards.length)];
+      res.innerText = 'UNLOCKED: ' + pick;
+      res.style.color = 'var(--neon-green)';
+      playTone(528, 'sine', 0.3);
+      showToast('Loot Reward Claimed: ' + pick, '🎁');
+    }, 400);
+  }
 
-      speak("Switched to " + tabName.toUpperCase());
-    }
+  // 5. Native Dialog Handlers
+  function openProfileDialog() {
+    document.getElementById('profile-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function openWizardDialog() {
+    document.getElementById('wizard-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function openLootDialog() {
+    document.getElementById('loot-dialog').showModal();
+    playTone(600, 'sine', 0.08);
+  }
+  function closeDialog(id) {
+    document.getElementById(id).close();
+    playTone(400, 'sine', 0.08);
+  }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    function executeSignIn() {
-      const email = document.getElementById('auth-email').value.trim();
-      document.getElementById('auth-btn').innerText = `👤 ${email ? email.split('@')[0] : 'Member'}`;
-      speak("Signed in successfully.");
-      closeModal('modal-auth');
-    }
-
-    function toggleBilling() {
-      isAnnual = !isAnnual;
-      const toggle = document.getElementById('toggle-box');
-      toggle.classList.toggle('active', isAnnual);
-
-      document.getElementById('txt-monthly').style.color = isAnnual ? '#94a3b8' : '#fff';
-      document.getElementById('txt-annually').style.color = isAnnual ? '#fff' : '#94a3b8';
-
-      document.getElementById('price-creator').innerText = isAnnual ? '$24' : '$29';
-      document.getElementById('price-pro').innerText = isAnnual ? '$124' : '$149';
-      document.getElementById('price-enterprise').innerText = isAnnual ? '$415+' : '$499+';
-
-      speak(isAnnual ? "Annual billing active. 2 months free." : "Monthly billing active.");
-    }
-
-    function addXP(amount) {
-      currentXP += amount;
-      speak("+" + amount + " XP earned!");
-      if (currentXP >= maxXP) {
-        playerLevel++;
-        currentXP -= maxXP;
-        speak("Level up! You are now Level " + playerLevel);
-      }
-      document.getElementById('cmd-lvl').innerText = "LVL " + playerLevel;
-      document.getElementById('cmd-xp-txt').innerText = `${currentXP} / ${maxXP} XP`;
-      document.getElementById('cmd-xp-fill').style.width = `${Math.min(100, (currentXP/maxXP)*100)}%`;
-    }
-
-    // Sigil Customizers
-    function selectArchetype(name, color, freq, el) {
-      currentColor = color;
-      document.getElementById('equipped-name').innerText = name;
-      document.querySelectorAll('.archetype-card').forEach(c => c.classList.remove('active'));
-      el.classList.add('active');
-      speak(`${name} selected. Solfeggio tuning: ${freq} Hertz.`);
-    }
-
-    function equipShader(name, color, el) {
-      currentColor = color;
-      document.getElementById('equipped-name').innerText = name;
-      document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('equipped'));
-      el.classList.add('equipped');
-      speak(`Equipped Shader: ${name}`);
-    }
-
-    function setLuminosity(bloom, btn) {
-      currentBloom = bloom;
-      btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    function setVelocity(speed, btn) {
-      spinSpeed = speed;
-      btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    // Canvas Sacred Geometry Renderer
-    function initSigilCanvas() {
-      const canvas = document.getElementById('forge-sigil-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      canvas.width = 420;
-      canvas.height = 380;
-
-      canvas.onmousedown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY; };
-      window.onmouseup = () => { isDragging = false; };
-      window.onmousemove = (e) => {
-        if (!isDragging) return;
-        rotY += (e.clientX - lastX) * 0.01;
-        rotX += (e.clientY - lastY) * 0.01;
-        lastX = e.clientX; lastY = e.clientY;
-        const tracker = document.getElementById('coord-tracker');
-        if (tracker) tracker.innerText = `X: ${(rotX*57.3).toFixed(1)}° Y: ${(rotY*57.3).toFixed(1)}°`;
-      };
-
-      const particles = Array.from({length: 32}, () => ({
-        x: (Math.random() - 0.5) * 260,
-        y: (Math.random() - 0.5) * 260,
-        z: (Math.random() - 0.5) * 180,
-        r: Math.random() * 2.5 + 1.5
-      }));
-
-      let angle = 0;
-
-      function renderFrame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        angle += spinSpeed;
-
-        const cx = canvas.width / 2, cy = canvas.height / 2;
-
-        function project(x, y, z) {
-          const cosY = Math.cos(rotY + angle), sinY = Math.sin(rotY + angle);
-          let x1 = x * cosY - z * sinY, z1 = z * cosY + x * sinY;
-          const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
-          let y1 = y * cosX - z1 * sinX, z2 = z1 * cosX + y * sinX;
-          const scale = 320 / (320 + z2 + 200);
-          return { px: cx + x1 * scale, py: cy + y1 * scale, scale };
-        }
-
-        ctx.strokeStyle = currentColor;
-        ctx.fillStyle = currentColor;
-        ctx.shadowBlur = currentBloom;
-        ctx.shadowColor = currentColor;
-
-        // 1. Constellation Nodes
-        particles.forEach((p, i) => {
-          const pt = project(p.x, p.y, p.z);
-          ctx.beginPath();
-          ctx.arc(pt.px, pt.py, p.r * pt.scale, 0, Math.PI * 2);
-          ctx.fill();
-
-          for (let j = i + 1; j < particles.length; j++) {
-            const p2 = particles[j];
-            const dist = Math.hypot(p.x - p2.x, p.y - p2.y, p.z - p2.z);
-            if (dist < 75) {
-              const pt2 = project(p2.x, p2.y, p2.z);
-              ctx.lineWidth = 0.6;
-              ctx.beginPath();
-              ctx.moveTo(pt.px, pt.py);
-              ctx.lineTo(pt2.px, pt2.py);
-              ctx.stroke();
-            }
-          }
-        });
-
-        // 2. Concentric Orbital Rings (Always non-negative radius)
-        [65, 105, 135].forEach((rad, i) => {
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          for (let a = 0; a <= Math.PI * 2; a += 0.25) {
-            const pt = project(Math.cos(a) * rad, Math.sin(a * 3 + angle * (i+1)) * (10 + i*4), Math.sin(a) * rad);
-            if (a === 0) ctx.moveTo(pt.px, pt.py); else ctx.lineTo(pt.px, pt.py);
-          }
-          ctx.closePath();
-          ctx.stroke();
-        });
-
-        // 3. Central Flower of Life Geometry
-        const innerRad = 45;
-        for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
-          const ox = Math.cos(a) * (innerRad * 0.6);
-          const oy = Math.sin(a) * (innerRad * 0.6);
-          ctx.beginPath();
-          for (let th = 0; th <= Math.PI * 2; th += 0.3) {
-            const pt = project(ox + Math.cos(th) * innerRad, oy + Math.sin(th) * innerRad, 0);
-            if (th === 0) ctx.moveTo(pt.px, pt.py); else ctx.lineTo(pt.px, pt.py);
-          }
-          ctx.closePath();
-          ctx.stroke();
-        }
-
-        // 4. Center Singularity Core
-        const core = project(0, 0, 0);
-        ctx.beginPath();
-        ctx.arc(core.px, core.py, 8 + Math.sin(angle * 6) * 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        requestAnimationFrame(renderFrame);
-      }
-
-      renderFrame();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      setTab('sigil');
-      setTimeout(initSigilCanvas, 40);
+  // Close dialog on outside backdrop click
+  document.querySelectorAll('dialog.modern-dialog').forEach(d => {
+    d.addEventListener('click', (e) => {
+      const rect = d.getBoundingClientRect();
+      const inDialog = (
+        rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+      );
+      if (!inDialog) d.close();
     });
-  </script>
+  });
+
+  // 6. Interactive Controls & Range Sliders
+  function updateVelocityFreq(val) {
+    document.getElementById('slider-freq-val').innerText = val + 's';
+  }
+  function updateYieldMult(val) {
+    document.getElementById('slider-mult-val').innerText = val + 'x';
+  }
+  function updateFireTarget(val) {
+    document.getElementById('fire-age-label').innerText = val + ' yrs';
+    document.getElementById('retire-age-val').innerText = val;
+  }
+  function setChartRange(el, range) {
+    document.querySelectorAll('.chart-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    playTone(550, 'sine', 0.06);
+
+    // Morph the SVG chart line according to range
+    const poly = document.getElementById('chart-poly');
+    const line = document.getElementById('chart-line');
+    if (range === '1W') {
+      line.setAttribute('points', '0,80 30,65 70,72 110,40 150,50 190,30 240,15');
+      poly.setAttribute('points', '0,80 30,65 70,72 110,40 150,50 190,30 240,15 240,100 0,100');
+    } else if (range === '1M') {
+      line.setAttribute('points', '0,90 35,75 75,55 120,60 160,35 200,20 240,8');
+      poly.setAttribute('points', '0,90 35,75 75,55 120,60 160,35 200,20 240,8 240,100 0,100');
+    } else {
+      line.setAttribute('points', '0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12');
+      poly.setAttribute('points', '0,95 20,70 50,78 80,45 110,55 140,30 170,40 200,18 240,12 240,100 0,100');
+    }
+  }
+
+  function selectSyndicate(tag) {
+    state.activeSyndicate = tag;
+    document.querySelectorAll('.syndicate-card').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    showToast(`Syndicate Switched to [${tag}]`, '🐉');
+  }
+
+  function pulseSubstrate() {
+    playTone(700, 'triangle', 0.2);
+    showToast('⚡ Autonomous Pulse Broadcasted to Local Workers', '⚡');
+    const badge = document.getElementById('worker-count-badge');
+    badge.innerText = 'SYNCING...';
+    badge.style.color = 'var(--neon-gold)';
+    setTimeout(() => {
+      badge.innerText = '8 WORKERS ACTIVE';
+      badge.style.color = 'var(--neon-green)';
+    }, 1200);
+  }
+
+  function runAntigravAudit() {
+    playTone(800, 'sine', 0.15);
+    showToast('Running ANTIGRAV() Sovereign Integrity Check...', '🛡️');
+    setTimeout(() => {
+      showToast('ANTIGRAV() Score: 94.2/100 (Zero Passive Collapse)', '✔');
+    }, 1000);
+  }
+
+  function copyTickerHash(hash) {
+    showToast(`Conduit Tx Hash: ${hash}`, '📋');
+  }
+
+  function toggleVoiceOS() {
+    state.voiceActive = !state.voiceActive;
+    const txt = document.getElementById('voice-status-text');
+    const btn = document.getElementById('voice-btn');
+    if (state.voiceActive) {
+      txt.innerText = 'MoneyOS Neural Voice: LISTENING...';
+      txt.style.color = 'var(--neon-green)';
+      btn.style.background = 'var(--neon-green)';
+      playTone(660, 'sine', 0.1);
+      showToast('Voice Command Interface Armed', '🎙️');
+    } else {
+      txt.innerText = 'MoneyOS Neural Voice: Ready';
+      txt.style.color = '#fff';
+      btn.style.background = 'var(--neon-cyan)';
+      showToast('Voice Interface Standby', '🎙️');
+    }
+  }
+
+  function triggerOmnisearchFocus() {
+    document.getElementById('cockpit-omnisearch').focus();
+  }
+
+  // Keyboard shortcut Ctrl+K or / to search
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      document.getElementById('cockpit-omnisearch').focus();
+    }
+  });
+
+  function filterCockpitWindows(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.cockpit-window').forEach(w => {
+      if (!q) {
+        w.style.opacity = '1';
+        w.style.border = '1px solid var(--panel-border)';
+        return;
+      }
+      if (w.innerText.toLowerCase().includes(q)) {
+        w.style.opacity = '1';
+        w.style.border = '2px solid var(--neon-cyan)';
+      } else {
+        w.style.opacity = '0.35';
+        w.style.border = '1px solid var(--panel-border)';
+      }
+    });
+  }
+
+  function saveProtocolSettings() {
+    showToast('Protocol Settings Saved to Local Substrate', '⚙️');
+    closeDialog('wizard-dialog');
+  }
+
+  // 7. Render 14-Day Matrix Bars
+  function initDailyMatrixBars() {
+    const container = document.getElementById('matrix-bars-container');
+    container.innerHTML = '';
+    const heights = [45, 60, 50, 75, 40, 65, 85, 55, 70, 90, 65, 80, 95, 100];
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    heights.forEach((h, i) => {
+      const col = document.createElement('div');
+      col.className = 'matrix-bar-col';
+      col.title = `Day ${i+1}: $${(h * 38.5).toFixed(0)}`;
+      col.onclick = () => showToast(`Day ${i+1} Revenue: $${(h * 38.5).toFixed(2)}`, '📊');
+      col.innerHTML = `
+        <div class="matrix-bar-fill" style="height: ${h}%;"></div>
+        <span class="matrix-bar-lbl">${days[i]}</span>
+      `;
+      container.appendChild(col);
+    });
+  }
+
+  // 8. Procedural 3D Sigil Forge Canvas (Sacred Geometry + Interactive Orbit)
+  const sigilCanvas = document.getElementById('forge-sigil-canvas');
+  const sCtx = sigilCanvas.getContext('2d');
+  let angle = 0;
+  let isDragging = false;
+  let lastMouseX = 0;
+
+  sigilCanvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const delta = e.clientX - lastMouseX;
+      angle += delta * 0.015;
+      lastMouseX = e.clientX;
+      document.getElementById('sigil-rot-lbl').innerText = Math.round((angle % (Math.PI * 2)) * (180 / Math.PI)) + '°';
+    }
+  });
+
+  function switchSigilArchetype(el, type) {
+    state.sigilArchetype = type;
+    document.querySelectorAll('.archetype-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    playTone(660, 'sine', 0.1);
+    showToast(`Sigil Archetype: ${type}`, '🔮');
+  }
+
+  function drawSigil() {
+    if (!isDragging) {
+      angle += 0.008;
+      document.getElementById('sigil-rot-lbl').innerText = Math.round((angle % (Math.PI * 2)) * (180 / Math.PI)) + '°';
+    }
+
+    const w = sigilCanvas.width;
+    const h = sigilCanvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    sCtx.clearRect(0, 0, w, h);
+
+    // Concentric Energy Rings
+    sCtx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+    sCtx.lineWidth = 1;
+    sCtx.beginPath();
+    sCtx.arc(cx, cy, 55, 0, Math.PI * 2);
+    sCtx.stroke();
+
+    sCtx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+    sCtx.beginPath();
+    sCtx.arc(cx, cy, 70, 0, Math.PI * 2);
+    sCtx.stroke();
+
+    // Rotating Outer Sacred Hexagon
+    sCtx.save();
+    sCtx.translate(cx, cy);
+    sCtx.rotate(angle);
+    sCtx.strokeStyle = '#00f0ff';
+    sCtx.lineWidth = 1.5;
+    sCtx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = (i * Math.PI) / 3;
+      const x = 50 * Math.cos(a);
+      const y = 50 * Math.sin(a);
+      if (i === 0) sCtx.moveTo(x, y);
+      else sCtx.lineTo(x, y);
+    }
+    sCtx.closePath();
+    sCtx.stroke();
+    sCtx.restore();
+
+    // Counter-Rotating Inner Triangle / Polyhedron
+    sCtx.save();
+    sCtx.translate(cx, cy);
+    sCtx.rotate(-angle * 1.5);
+    sCtx.strokeStyle = state.sigilArchetype === 'DRAGON' ? '#ffb703' : '#b026ff';
+    sCtx.lineWidth = 2;
+    sCtx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const a = (i * 2 * Math.PI) / 3;
+      const x = 36 * Math.cos(a);
+      const y = 36 * Math.sin(a);
+      if (i === 0) sCtx.moveTo(x, y);
+      else sCtx.lineTo(x, y);
+    }
+    sCtx.closePath();
+    sCtx.stroke();
+    sCtx.restore();
+
+    // Glowing Central Singularity
+    sCtx.fillStyle = '#fff';
+    sCtx.beginPath();
+    sCtx.arc(cx, cy, 4 + Math.sin(angle * 4) * 1.5, 0, Math.PI * 2);
+    sCtx.fill();
+
+    requestAnimationFrame(drawSigil);
+  }
+
+  // 9. Auto-Detect Local Masterplane Server
+  async function detectBackend() {
+    const badge = document.getElementById('backend-status-badge');
+    try {
+      const res = await fetch('http://localhost:3000/api/health', { signal: AbortSignal.timeout(1500) });
+      if (res.ok) {
+        badge.innerText = '● LIVE LINK (PORT 3000)';
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+        return;
+      }
+    } catch {}
+
+    try {
+      const res3001 = await fetch('http://localhost:3001/api/health', { signal: AbortSignal.timeout(1500) });
+      if (res3001.ok) {
+        badge.innerText = '● LIVE LINK (PORT 3001)';
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+        return;
+      }
+    } catch {}
+
+    badge.innerText = '● STANDALONE SOVEREIGN (OFFLINE)';
+    badge.style.borderColor = 'var(--neon-cyan)';
+    badge.style.color = 'var(--neon-cyan)';
+  }
+
+  // Initialize on load
+  window.addEventListener('DOMContentLoaded', () => {
+    initDailyMatrixBars();
+    drawSigil();
+    detectBackend();
+  });
+</script>
+
 </body>
 </html>

@@ -6,7 +6,7 @@ export type VoiceEventHandler<T extends VoiceEventType> = (payload: VoiceEventMa
 export interface TelemetryRecord {
   id: string;
   type: VoiceEventType;
-  payload: any;
+  payload: unknown;
   timestamp: number;
   latencyMs?: number;
 }
@@ -47,7 +47,7 @@ export class VoiceOSEventBus {
     return this.emitter.emit(event, payload);
   }
 
-  private recordTelemetry(type: VoiceEventType, payload: any, latencyMs?: number): void {
+  private recordTelemetry(type: VoiceEventType, payload: unknown, latencyMs?: number): void {
     const record: TelemetryRecord = {
       id: `evt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       type,
