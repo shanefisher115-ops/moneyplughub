@@ -94,10 +94,10 @@ export const config = {
       return parseInt(process.env.AWS_SES_SMTP_PORT || '587', 10);
     },
     get user(): string {
-      return process.env.AWS_SES_SMTP_USER || 'inp-ikzfukep4wgbxjfcpiyxen3a';
+      return process.env.AWS_SES_SMTP_USER || '';
     },
     get pass(): string {
-      return process.env.AWS_SES_SMTP_PASS || 'Demoniac666$';
+      return process.env.AWS_SES_SMTP_PASS || '';
     },
     get from(): string {
       return process.env.AWS_SES_FROM || 'Shane <sovereign-relay@primordialorigin.com>';

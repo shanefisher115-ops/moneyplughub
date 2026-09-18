@@ -34,9 +34,9 @@ function loadPrograms() {
   return cachedPrograms;
 }
 
-app.get('/referral/programs', (req, res) => {
+app.get('/referral/programs', async (req, res) => {
   try {
-    const programs = loadPrograms();
+    const programs = await loadPrograms();
     res.json(programs);
   } catch (e) {
     res.status(500).json({ error: e.message });

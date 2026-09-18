@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { db, runInTransaction, recordAuditLog, initializeUserFinancialProfile } from '../db';
 import { config } from '../config';
@@ -26,12 +27,9 @@ const loginSchema = z.object({
 });
 
 function generateReferralCode(): string {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let code = 'PLUG-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
+  // Using 3 bytes gives 6 hex characters. Very fast and high entropy.
+  // DB UNIQUE constraint handles practically impossible collisions.
+  return 'PLUG-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
 /**
@@ -93,10 +91,7 @@ router.post('/register', (req: Request, res: Response) => {
     `).get(referral_code.trim()) as unknown as User | undefined;
   }
 
-  let newUserCode = generateReferralCode();
-  while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-    newUserCode = generateReferralCode();
-  }
+  const newUserCode = generateReferralCode();
 
   const userId = `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   const salt = bcrypt.genSaltSync(10);
@@ -359,10 +354,7 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
         `).get(refCode) as unknown as User | undefined;
       }
 
-      let newUserCode = generateReferralCode();
-      while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-        newUserCode = generateReferralCode();
-      }
+      const newUserCode = generateReferralCode();
 
       const insertUser = db.prepare(`
         INSERT INTO users (
