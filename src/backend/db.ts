@@ -1393,6 +1393,9 @@ export function seedDefaultTasks(): void {
     { id: 'task_crypto_stack', title: 'Stack Crypto Holdings', description: 'Review your multi-asset crypto ledger and verify wallet transactions.', category: 'crypto', reward_cents: 75, reward_xp: 100, task_type: 'daily' },
     { id: 'task_refer_friend', title: 'Invite A Financial Peer', description: 'Share your MoneyPlugHub link to earn real commissions and rank up.', category: 'referral', reward_cents: 1000, reward_xp: 350, task_type: 'milestone' },
     { id: 'task_networth_sync', title: 'Calculate Weekly Net Worth', description: 'Sync all connected bank, crypto, and liability accounts.', category: 'learning', reward_cents: 100, reward_xp: 110, task_type: 'daily' },
+    { id: 'task_viral_hook_post', title: 'Viral Video Script Draft', description: 'Script or queue 1 short-form TikTok/Reels video using high-converting hooks.', category: 'referral', reward_cents: 150, reward_xp: 200, task_type: 'daily' },
+    { id: 'task_squad_coop', title: 'Form / Join A Viral Squad', description: 'Team up with creator peers in a Squad to unlock 1.25x cluster multipliers.', category: 'referral', reward_cents: 200, reward_xp: 250, task_type: 'milestone' },
+    { id: 'task_sigil_flex', title: 'Track Cryptographic Sigil Clicks', description: 'Share your unique procedural Sigil link and register active audience clicks.', category: 'referral', reward_cents: 100, reward_xp: 150, task_type: 'daily' },
   ];
 
   const stmt = db.prepare(`
