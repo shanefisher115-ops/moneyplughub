@@ -438,7 +438,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               </div>
             </>
           ) : (
-            {/* Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentTab('login')}
