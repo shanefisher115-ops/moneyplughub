@@ -370,11 +370,10 @@ export class AgentSwarmEngine {
 
           case 'SigilForgeAgent': {
             const user = db.prepare('SELECT xp, level, tier_title FROM users WHERE id = ?').get(userId) as any;
-            const sigil = generateSigil(user?.tier_title || 'Novice Plug', {
-              seed: userId,
-              ringCount: Math.min(8, 2 + Math.floor((user?.level || 1) / 2)),
-              primaryColor: '#10b981',
-              accentColor: '#38bdf8',
+            const ringCount = Math.min(8, 2 + Math.floor((user?.level || 1) / 2));
+            const sigilSvg = generateSigil(user?.tier_title || 'Novice Plug', 256, {
+              aura: 'emerald',
+              glow_level: 'supernova',
             });
             steps.push({
               agent,
@@ -383,7 +382,7 @@ export class AgentSwarmEngine {
               durationMs: Date.now() - stepStart,
               output: {
                 sigilSeed: userId,
-                rings: sigil?.rings?.length || 4,
+                rings: ringCount,
                 frequencyHz: 528,
                 rarity: (user?.level || 1) >= 5 ? 'Epic' : 'Rare'
               }
