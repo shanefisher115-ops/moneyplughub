@@ -14,6 +14,7 @@ import referralRoutes from './routes/referrals';
 import adminRoutes from './routes/admin';
 import financeRoutes from './routes/finance';
 import gamificationRoutes from './routes/gamification';
+import missionsRoutes from './routes/missions';
 import cryptoRoutes from './routes/crypto';
 import routingRoutes from './routes/routing';
 import programRoutes from './routes/programs';
@@ -102,6 +103,7 @@ app.use('/api/referrals', referralRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/gamification', gamificationRoutes);
+app.use('/api/missions', missionsRoutes);
 app.use('/api/crypto', cryptoRoutes);
 app.use('/api/programs', programRoutes);
 app.use('/api/cashback-pack', cashbackRoutes);
@@ -183,21 +185,18 @@ const clientDistPath = possibleDistPaths.find(p => fs.existsSync(p)) || possible
 const clientDistExists = fs.existsSync(clientDistPath);
 
 if (clientDistExists) {
-  // Static hashed assets: cache for 1 year immutable
   app.use('/assets', express.static(path.join(clientDistPath, 'assets'), {
     maxAge: '1y',
     immutable: true,
     etag: true
   }));
 
-  // Other static root files (images, icons, etc. but not index.html)
   app.use(express.static(clientDistPath, {
     index: false,
     maxAge: '1h',
     etag: true
   }));
-  
-  // SPA Catch-all route: ALWAYS serve fresh index.html with no-store
+
   app.get('*', (req: Request, res: Response, next: NextFunction) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/go')) {
       next();
@@ -210,7 +209,6 @@ if (clientDistExists) {
   });
 }
 
-// Global Error Handler
 app.use((err: Error & { status?: number }, req: Request, res: Response, next: NextFunction) => {
   console.error('Unhandled Server Error:', err);
   res.status(500).json({
@@ -219,7 +217,6 @@ app.use((err: Error & { status?: number }, req: Request, res: Response, next: Ne
   });
 });
 
-// Start Server on Port 3001
 const server = http.createServer(app);
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
@@ -231,7 +228,6 @@ server.listen(3001, () => {
   console.log(`⚡ Plug In OS v5.0 Server running on port 3001`);
 });
 
-// Also start secondary listener on Port 3000 to catch legacy 3000 tunnel routes
 const server3000 = http.createServer(app);
 server3000.keepAliveTimeout = 65000;
 server3000.headersTimeout = 66000;
