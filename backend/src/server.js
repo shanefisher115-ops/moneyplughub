@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
@@ -7,37 +7,31 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const root = path.resolve(__dirname, '../../');
+const root = path.join(__dirname, '../../');
 const refRoot = path.join(root, 'referral');
 const engineFile = path.join(refRoot, 'engine', 'referral-engine.json');
 const programsDir = path.join(refRoot, 'programs');
 const eventsLog = path.join(refRoot, 'events.log');
 const signalsLog = path.join(refRoot, 'signals.log');
 
+let cachedPrograms = null;
+let lastCacheTime = 0;
+const CACHE_TTL = 30000; // 30 seconds cache duration
+
 function loadEngine() {
   return JSON.parse(fs.readFileSync(engineFile, 'utf8'));
 }
 
-let programsCache = { data: null, lastUpdated: 0 };
-const CACHE_TTL_MS = 60000;
-
-async function loadPrograms() {
+function loadPrograms() {
   const now = Date.now();
-  if (programsCache.data && (now - programsCache.lastUpdated < CACHE_TTL_MS)) {
-    return programsCache.data;
+  if (cachedPrograms && (now - lastCacheTime < CACHE_TTL)) {
+    return cachedPrograms;
   }
 
-  const files = await fs.promises.readdir(programsDir);
-  const jsonFiles = files.filter(f => f.endsWith('.json'));
-
-  const programsPromises = jsonFiles.map(async f => {
-    const data = await fs.promises.readFile(path.join(programsDir, f), 'utf8');
-    return JSON.parse(data);
-  });
-
-  const programs = await Promise.all(programsPromises);
-  programsCache = { data: programs, lastUpdated: now };
-  return programs;
+  const files = fs.readdirSync(programsDir).filter(f => f.endsWith('.json'));
+  cachedPrograms = files.map(f => JSON.parse(fs.readFileSync(path.join(programsDir, f), 'utf8')));
+  lastCacheTime = now;
+  return cachedPrograms;
 }
 
 app.get('/referral/programs', async (req, res) => {
@@ -57,7 +51,7 @@ app.post('/referral/event', (req, res) => {
     event: eventType,
     user: user || 'unknown'
   };
-  fs.appendFileSync(eventsLog, JSON.stringify(event) + '\\n');
+  fs.appendFileSync(eventsLog, JSON.stringify(event) + '\n');
   res.json({ ok: true });
 });
 
@@ -69,7 +63,7 @@ app.post('/referral/signal', (req, res) => {
     program: programId,
     severity: severity || 'info'
   };
-  fs.appendFileSync(signalsLog, JSON.stringify(event) + '\\n');
+  fs.appendFileSync(signalsLog, JSON.stringify(event) + '\n');
   res.json({ ok: true });
 });
 
