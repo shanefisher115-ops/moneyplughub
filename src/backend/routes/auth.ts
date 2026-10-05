@@ -8,6 +8,7 @@ import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { User, AuthResponse, ApiResponse } from '../../types';
 import { attributeReferralConversion } from './referrals';
 import { processReferralEvent } from './growth';
+import { generateClientFingerprint } from '../middleware/referralAntiFraud';
 
 const router = Router();
 
@@ -101,6 +102,7 @@ router.post('/register', (req: Request, res: Response) => {
   const salt = bcrypt.genSaltSync(10);
   const passwordHash = bcrypt.hashSync(password, salt);
   const now = new Date().toISOString();
+  let createdCommissionId: string | undefined;
 
   try {
     runInTransaction(() => {
@@ -129,14 +131,14 @@ router.post('/register', (req: Request, res: Response) => {
           WHERE id = ?
         `).run(now, referrer.id);
 
-        const commissionId = `comm_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        createdCommissionId = `comm_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         db.prepare(`
           INSERT INTO commission_ledger (
             id, referrer_user_id, referred_user_id, amount_cents, 
             currency, status, notes, created_at, updated_at
           ) VALUES (?, ?, ?, ?, 'USD', 'pending', ?, ?, ?)
         `).run(
-          commissionId,
+          createdCommissionId,
           referrer.id,
           userId,
           config.commissionAmountCents,
@@ -144,6 +146,7 @@ router.post('/register', (req: Request, res: Response) => {
           now,
           now
         );
+      }
 
         recordAuditLog(
           userId,
@@ -174,7 +177,8 @@ router.post('/register', (req: Request, res: Response) => {
     // ── Referral Attribution: Track conversion + fraud check + viral growth mechanics ──
     if (referrer) {
       const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
-      attributeReferralConversion(userId, referrer.id, ip);
+      const { hash: clientFingerprint } = generateClientFingerprint(req);
+      attributeReferralConversion(userId, referrer.id, ip, clientFingerprint, createdCommissionId);
       try {
         processReferralEvent(referrer.id);
       } catch (growthErr) {

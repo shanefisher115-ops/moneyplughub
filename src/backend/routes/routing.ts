@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { db, runInTransaction } from '../db';
 import { CryptoReferralProgram } from '../../types';
+import { referralAntiFraudMiddleware, AntiFraudRequest, generateClientFingerprint } from '../middleware/referralAntiFraud';
 
 const router = Router();
 
@@ -8,10 +9,11 @@ const router = Router();
  * Public Click Redirect Engine: /go/:slug
  * Looks up slug, logs click analytics, and redirects to referral destination.
  */
-router.get('/:slug', (req: Request, res: Response) => {
+router.get('/:slug', referralAntiFraudMiddleware, (req: AntiFraudRequest, res: Response) => {
   const slug = req.params.slug.trim().toLowerCase();
   const source = (req.query.src as string) || (req.query.source as string) || 'direct';
-  const ipAddress = req.ip || req.socket.remoteAddress || '127.0.0.1';
+  const ipAddress = req.antiFraud?.ipAddress || req.ip || req.socket.remoteAddress || '127.0.0.1';
+  const fingerprint = req.fingerprintHash || generateClientFingerprint(req).hash;
   const now = new Date().toISOString();
 
   const program = db.prepare(`
@@ -47,9 +49,9 @@ router.get('/:slug', (req: Request, res: Response) => {
       // 2. Log click entry
       const clickId = `clk_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       db.prepare(`
-        INSERT INTO program_clicks (id, program_id, slug, source, ip_address, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `).run(clickId, program.id, slug, source, ipAddress, now);
+        INSERT INTO program_clicks (id, program_id, slug, source, ip_address, client_fingerprint, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(clickId, program.id, slug, source, ipAddress, fingerprint, now);
     });
   } catch (err) {
     console.error('Failed to log click event:', err);
