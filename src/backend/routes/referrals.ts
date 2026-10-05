@@ -3,6 +3,13 @@ import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { config } from '../config';
 import { CommissionEntry, ApiResponse } from '../../types';
+import {
+  referralAntiFraudMiddleware,
+  generateClientFingerprint,
+  getClientIp,
+  evaluateReferralRisk,
+  AntiFraudRequest
+} from '../middleware/referralAntiFraud';
 
 const router = Router();
 
@@ -20,6 +27,7 @@ try {
       referral_code TEXT NOT NULL,
       referrer_user_id TEXT NOT NULL,
       ip_address TEXT,
+      client_fingerprint TEXT,
       user_agent TEXT,
       referer_url TEXT,
       landing_page TEXT,
@@ -31,6 +39,7 @@ try {
 
     CREATE INDEX IF NOT EXISTS idx_ref_clicks_code ON referral_clicks(referral_code);
     CREATE INDEX IF NOT EXISTS idx_ref_clicks_ip ON referral_clicks(ip_address);
+    CREATE INDEX IF NOT EXISTS idx_ref_clicks_fp ON referral_clicks(client_fingerprint);
     CREATE INDEX IF NOT EXISTS idx_ref_clicks_date ON referral_clicks(created_at);
 
     CREATE TABLE IF NOT EXISTS referral_fraud_log (
@@ -39,6 +48,21 @@ try {
       ip_address TEXT,
       reason TEXT NOT NULL,
       created_at TEXT NOT NULL
+    );
+
+    -- Recreate or ensure commission_ledger constraint permits 'quarantined'
+    CREATE TABLE IF NOT EXISTS commission_ledger (
+      id TEXT PRIMARY KEY,
+      referrer_user_id TEXT NOT NULL,
+      referred_user_id TEXT NOT NULL UNIQUE,
+      amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
+      currency TEXT NOT NULL DEFAULT 'USD',
+      status TEXT NOT NULL DEFAULT 'pending',
+      notes TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (referrer_user_id) REFERENCES users(id) ON DELETE RESTRICT,
+      FOREIGN KEY (referred_user_id) REFERENCES users(id) ON DELETE RESTRICT
     );
 
     CREATE TABLE IF NOT EXISTS commission_tiers (
@@ -59,7 +83,7 @@ try {
       ('tier_diamond',  'Diamond',  100, 40.0, 10000, datetime('now'));
   `);
 
-  // Column migrations for 2026 AI-Enhanced Attribution
+  // Column migrations for 2026 AI-Enhanced Attribution & Anti-Fraud
   try {
     db.exec(`
       ALTER TABLE referral_clicks ADD COLUMN source_category TEXT;
@@ -68,6 +92,12 @@ try {
       ALTER TABLE referral_clicks ADD COLUMN utm_source TEXT;
       ALTER TABLE referral_clicks ADD COLUMN utm_medium TEXT;
       ALTER TABLE referral_clicks ADD COLUMN utm_campaign TEXT;
+    `);
+  } catch (e) {}
+
+  try {
+    db.exec(`
+      ALTER TABLE referral_clicks ADD COLUMN client_fingerprint TEXT;
     `);
   } catch (e) {}
 } catch (e) {
@@ -147,9 +177,10 @@ export function classifyTrafficSource(referer: string, userAgent: string, query:
 //     Sets a 30-day cookie and redirects to homepage.
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/track/:code', (req: Request, res: Response) => {
+router.get('/track/:code', referralAntiFraudMiddleware, (req: AntiFraudRequest, res: Response) => {
   const code = req.params.code.trim().toUpperCase();
-  const ip = (req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const ip = req.clientIp || getClientIp(req);
+  const fingerprint = req.clientFingerprint || generateClientFingerprint(req);
   const userAgent = req.headers['user-agent'] || '';
   const referer = req.headers['referer'] || '';
   const now = new Date().toISOString();
@@ -196,12 +227,12 @@ router.get('/track/:code', (req: Request, res: Response) => {
     const clickId = `rclick_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     db.prepare(`
       INSERT INTO referral_clicks (
-        id, referral_code, referrer_user_id, ip_address, user_agent, referer_url, landing_page,
+        id, referral_code, referrer_user_id, ip_address, client_fingerprint, user_agent, referer_url, landing_page,
         source_category, ai_platform, intent_score, utm_source, utm_medium, utm_campaign, created_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
-      clickId, code, referrer.id, ip, userAgent.substring(0, 500), referer.substring(0, 500),
+      clickId, code, referrer.id, ip, fingerprint, userAgent.substring(0, 500), referer.substring(0, 500),
       (req.query.page as string) || '/', category, aiPlatform, intentScore, utmSource, utmMedium, utmCampaign, now
     );
   }
@@ -619,28 +650,52 @@ router.get('/fraud-log', authenticateToken, (req: AuthenticatedRequest, res: Res
  * Called from auth.ts register handler after a user signs up with a referral code.
  * Performs fraud checks and marks the click as converted.
  */
-export function attributeReferralConversion(newUserId: string, referrerUserId: string, ip: string): void {
+export function attributeReferralConversion(
+  newUserId: string,
+  referrerUserId: string,
+  ip: string,
+  extraOptions?: { fingerprint?: string; email?: string }
+): { quarantined: boolean; riskScore: number; reason?: string } {
   const now = new Date().toISOString();
+  const fingerprint = extraOptions?.fingerprint || '';
+  const email = extraOptions?.email || '';
 
-  // Self-referral check
-  if (newUserId === referrerUserId) {
+  // Perform risk evaluation using Anti-Fraud Engine
+  const risk = evaluateReferralRisk({
+    referrerId: referrerUserId,
+    referredUserId: newUserId,
+    email,
+    ip,
+    fingerprint
+  });
+
+  if (risk.quarantineRequired || risk.isSelfReferral) {
     const fraudId = `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     db.prepare(
       'INSERT INTO referral_fraud_log (id, referral_code, ip_address, reason, created_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(fraudId, 'SELF_REFERRAL', ip, `User ${newUserId} attempted self-referral`, now);
-    return;
+    ).run(fraudId, risk.isSelfReferral ? 'SELF_REFERRAL' : 'HIGH_RISK_REFERRAL', ip, `Quarantined referral (${newUserId} -> ${referrerUserId}): ${risk.reason || 'High risk score'}`, now);
+
+    // Update commission ledger entry to 'quarantined' if created
+    db.prepare(`
+      UPDATE commission_ledger
+      SET status = 'quarantined', notes = ?, updated_at = ?
+      WHERE referred_user_id = ? AND referrer_user_id = ?
+    `).run(`QUARANTINED: ${risk.reason || 'Suspicious self-referral/pattern'} (Risk Score: ${risk.riskScore})`, now, newUserId, referrerUserId);
+
+    recordAuditLog(newUserId, 'REFERRAL_QUARANTINED', 'commission_ledger', newUserId, {
+      referrer_id: referrerUserId,
+      riskScore: risk.riskScore,
+      reason: risk.reason
+    });
+
+    return { quarantined: true, riskScore: risk.riskScore, reason: risk.reason };
   }
 
-  // Same IP warning (flag for review, don't block)
-  const referrerClicks = db.prepare(
-    "SELECT ip_address FROM referral_clicks WHERE referrer_user_id = ? AND ip_address = ? AND created_at > datetime('now', '-7 days') LIMIT 1"
-  ).get(referrerUserId, ip) as any;
-
-  if (referrerClicks) {
+  if (risk.isSuspicious) {
     const fraudId = `fraud_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     db.prepare(
       'INSERT INTO referral_fraud_log (id, referral_code, ip_address, reason, created_at) VALUES (?, ?, ?, ?, ?)'
-    ).run(fraudId, 'SAME_IP_WARNING', ip, `New user ${newUserId} same IP as referrer ${referrerUserId} — flagged for review`, now);
+    ).run(fraudId, 'SUSPICIOUS_PATTERN_WARNING', ip, `Flagged referral (${newUserId} -> ${referrerUserId}): ${risk.reason}`, now);
   }
 
   // Mark most recent click as converted
