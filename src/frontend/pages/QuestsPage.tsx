@@ -58,6 +58,8 @@ export const QuestsPage: React.FC = () => {
           undefined,
           e ? { x: e.clientX, y: e.clientY } : undefined
         );
+        // Automatically open Mystery Loot Crate on claim completion for gacha thrill!
+        setIsLootModalOpen(true);
         await fetchQuests();
         await refreshUser();
         setTimeout(() => setToast(null), 5000);
@@ -191,16 +193,16 @@ export const QuestsPage: React.FC = () => {
 
                 {isClaimed ? (
                   <span className="inline-flex items-center gap-1 text-xs font-mono text-emerald-400 font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                    <Check className="w-3.5 h-3.5" /> Claimed
+                    <Check className="w-3.5 h-3.5" /> Claimed & Loot Rolled
                   </span>
                 ) : (
                   <button
                     onClick={(e) => handleClaim(task.id, e)}
                     disabled={isClaiming === task.id}
-                    className="px-5 py-2.5 bg-plug-accent hover:bg-plug-accentHover text-plug-dark font-extrabold text-xs rounded-xl transition-all shadow-md shadow-plug-accent/20 flex items-center gap-1.5 disabled:opacity-50"
+                    className="px-5 py-2.5 bg-gradient-to-r from-emerald-400 via-plug-accent to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 font-black text-xs rounded-xl transition-all shadow-md shadow-plug-accent/20 flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    {isClaiming === task.id ? 'Claiming...' : 'Claim Reward & XP'}
+                    <Sparkles className="w-3.5 h-3.5 fill-current" />
+                    {isClaiming === task.id ? 'Verifying & Claiming...' : 'Verify & Roll Loot Box'}
                   </button>
                 )}
               </div>
