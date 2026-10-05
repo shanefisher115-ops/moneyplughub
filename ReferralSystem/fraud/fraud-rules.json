@@ -1,0 +1,11 @@
+{
+  "fraudRules": {
+    "deviceFingerprinting": true,
+    "identityTriangulation": ["email", "phone", "bankAccount"],
+    "milestoneBasedRewards": true,
+    "velocityLimits": {
+      "maxReferralsPerDay": 5,
+      "maxReferralsPerWeek": 20
+    }
+  }
+}
