@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { readLedger } from "../ledger/read-ledger.js";
 
 export function rollback(version, dbUrl = process.env.DATABASE_URL) {
@@ -17,9 +17,9 @@ export function rollback(version, dbUrl = process.env.DATABASE_URL) {
 
   try {
     if (dbUrl) {
-      execSync(`psql "${dbUrl}" -f "${diffFile}"`, { stdio: "inherit" });
+      execFileSync("psql", [dbUrl, "-f", diffFile], { stdio: "inherit" });
     } else {
-      execSync("npx supabase db reset", { stdio: "inherit" });
+      execFileSync("npx", ["supabase", "db", "reset"], { stdio: "inherit" });
     }
     console.log(`? Rollback complete for version: ${version}`);
   } catch (error) {
