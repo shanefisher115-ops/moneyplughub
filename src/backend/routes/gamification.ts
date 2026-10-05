@@ -42,7 +42,7 @@ router.get('/quests', (req: AuthenticatedRequest, res: Response) => {
  * Each quest verifies real database state before awarding XP.
  * Users CANNOT cheat — XP is only granted when the action is proven.
  */
-function verifyQuestCompletion(userId: string, taskId: string): { verified: boolean; reason: string } {
+export function verifyQuestCompletion(userId: string, taskId: string): { verified: boolean; reason: string } {
   switch (taskId) {
     case 'task_budget_checkin': {
       // Verify: user has at least 1 budget category set
