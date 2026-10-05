@@ -358,14 +358,6 @@ class ForgeAudioEngine {
   /**
    * Precision Magnetic Snap for 0° Right-Side-Up Lock
    */
-  public playChime() {
-    this.playAscensionChord();
-  }
-
-  public playIgnite() {
-    this.playIgnitionSequence();
-  }
-
   public playOrientSnap() {
     const ctx = this.getContext();
     if (!ctx) return;

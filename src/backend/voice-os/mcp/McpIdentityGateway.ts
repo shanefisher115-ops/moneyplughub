@@ -17,7 +17,6 @@ export class McpIdentityGateway {
 
   validateDevicePosture(posture: { warpConnected?: boolean; diskEncrypted?: boolean; firewallEnabled?: boolean; trustScore?: number }) {
     const { warpConnected, diskEncrypted, firewallEnabled, trustScore = 0 } = posture || {};
-    if (!posture) return false;
 
     return Boolean(warpConnected && diskEncrypted && firewallEnabled && trustScore >= 80);
   }

@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { db, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { generateFCPXML, DaVinciProjectExport, TimelineClip } from '../davinci/davinciBridge';
-import { execFile } from 'child_process';
+import { exec } from 'child_process';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
@@ -726,8 +726,9 @@ router.post('/davinci-dispatch', authenticateToken, (req: AuthenticatedRequest, 
     fs.writeFileSync(manifestPath, JSON.stringify(storyboard, null, 2), 'utf8');
 
     const scriptPath = path.resolve(process.cwd(), 'scripts', 'davinci_resolve_bridge.py');
+    const cmd = `python "${scriptPath}" --manifest "${manifestPath}" --project "${storyboard.title.replace(/"/g, '')}"`;
 
-    execFile('python', [scriptPath, '--manifest', manifestPath, '--project', storyboard.title], (error, stdout, stderr) => {
+    exec(cmd, (error, stdout, stderr) => {
       if (error) {
         console.log('DaVinci bridge notification (Studio process check):', error.message);
       }
@@ -737,7 +738,7 @@ router.post('/davinci-dispatch', authenticateToken, (req: AuthenticatedRequest, 
         data: {
           manifestPath,
           stdout: stdout.trim() || 'Python bridge executed.',
-          command: 'execFile (args omitted)'
+          command: cmd
         }
       });
     });
