@@ -1,7 +1,7 @@
 function Calculate-CLVUplift {
     param(
-        [float] \,
-        [float] \
+        [float] $BaseCLV,
+        [float] $UpliftPercent
     )
-    return \ * (1 + (\ / 100))
+    return $BaseCLV * (1 + ($UpliftPercent / 100))
 }

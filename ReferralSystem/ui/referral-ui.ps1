@@ -1,4 +1,4 @@
 function Show-ReferralMoment {
-    param([string] \)
-    Write-Output \"Referral Moment Triggered: \\"
+    param([string] $EventName)
+    Write-Output "Referral Moment Triggered: $EventName"
 }
