@@ -1279,10 +1279,15 @@ export function seedAllReferralPrograms(): void {
   ];
 
   const now = new Date().toISOString();
-  const validSlugs = verifiedPrograms.map(p => `'${p.slug}'`).join(',');
   
   // Clean out any unverified placeholder rows
-  db.exec(`DELETE FROM crypto_referral_programs WHERE slug NOT IN (${validSlugs})`);
+  if (verifiedPrograms.length > 0) {
+    const placeholders = verifiedPrograms.map(() => '?').join(',');
+    const deleteStmt = db.prepare(`DELETE FROM crypto_referral_programs WHERE slug NOT IN (${placeholders})`);
+    deleteStmt.run(...verifiedPrograms.map(p => p.slug));
+  } else {
+    db.exec('DELETE FROM crypto_referral_programs');
+  }
 
   const stmt = db.prepare(`
     INSERT OR REPLACE INTO crypto_referral_programs (
