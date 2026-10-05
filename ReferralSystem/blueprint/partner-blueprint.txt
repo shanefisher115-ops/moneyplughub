@@ -1,0 +1,8 @@
+MoneyPlugHub Referral Blueprint
+-------------------------------
+1. Use two-sided incentives.
+2. Trigger referral prompts at satisfaction peaks.
+3. Enforce fraud controls globally.
+4. Use CLV uplift (16-25%) to justify reward levels.
+5. Embed referral UI moments into app flows.
+6. Use analytics to optimize referral performance.

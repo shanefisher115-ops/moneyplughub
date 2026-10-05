@@ -1,0 +1,10 @@
+{
+  "triggers": [
+    { "event": "loan_approved", "action": "send_referral_prompt" },
+    { "event": "cashback_paid", "action": "send_referral_prompt" },
+    { "event": "credit_score_increase", "action": "send_referral_prompt" },
+    { "event": "savings_milestone", "action": "send_referral_prompt" },
+    { "event": "idle_14_days", "action": "send_referral_prompt" },
+    { "event": "onboarding_complete", "action": "send_referral_prompt" }
+  ]
+}
