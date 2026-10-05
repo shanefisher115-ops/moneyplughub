@@ -110,6 +110,39 @@ function verifyQuestCompletion(userId: string, taskId: string): { verified: bool
       return { verified: true, reason: '' };
     }
 
+    case 'task_viral_hook_post': {
+      // Verify: user has created or queued at least 1 short-form video in content_queue
+      const queueCount = db.prepare(
+        "SELECT COUNT(*) as cnt FROM content_queue WHERE user_id = ? AND status IN ('Scripted', 'Ready to Post', 'Posted')"
+      ).get(userId) as any;
+      if (Number(queueCount?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need at least 1 scripted or queued viral video script in your Creator Content Queue.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
+    case 'task_squad_coop': {
+      // Verify: user is a member or leader of a viral squad
+      const squadMember = db.prepare(
+        'SELECT COUNT(*) as cnt FROM viral_squad_members WHERE user_id = ?'
+      ).get(userId) as any;
+      if (Number(squadMember?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need to join or form a Viral Squad first. Visit Squad Co-Op in Viral Engine.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
+    case 'task_sigil_flex': {
+      // Verify: user has a unique referral code and at least 1 referral click
+      const userClicks = db.prepare(
+        'SELECT COUNT(*) as cnt FROM referral_clicks WHERE referrer_user_id = ?'
+      ).get(userId) as any;
+      if (Number(userClicks?.cnt || 0) < 1) {
+        return { verified: false, reason: 'You need at least 1 tracked referral click on your cryptographic Sigil link.' };
+      }
+      return { verified: true, reason: '' };
+    }
+
     default:
       // Unknown quest — block by default (safe fail)
       return { verified: false, reason: 'This quest cannot be verified. Contact support.' };
