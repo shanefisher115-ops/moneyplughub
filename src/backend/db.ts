@@ -52,7 +52,7 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 // Periodic background WAL flush to disk
 setInterval(() => {
   checkpointWal();
-}, 60000);
+}, 60000).unref();
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');

@@ -3,6 +3,7 @@ import { db, runInTransaction, recordAuditLog } from '../db';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 import { config } from '../config';
 import { generateSigil } from './sigil';
+import { generateOpenGraphSvg } from './og';
 
 const router = Router();
 
@@ -603,93 +604,16 @@ router.get(['/share-card/:code', '/achievement-card/:code'], (req, res) => {
   };
   const tier = tierColors[user.tier_title] || { hex: '#00ff88', glow: 'rgba(0,255,136,0.4)', name: user.tier_title || 'Novice Plug' };
 
-  // 1200x630 Scalable High-Res SVG Card with Automated FTC 16 CFR Part 255 Disclosure Overlays
-  const cardSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid meet">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#070a14"/>
-      <stop offset="50%" stop-color="#0b1124"/>
-      <stop offset="100%" stop-color="#140f2d"/>
-    </linearGradient>
-    <radialGradient id="aura" cx="25%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="${tier.hex}" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#070a14" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <!-- Background -->
-  <rect width="1200" height="630" fill="url(#bgGrad)"/>
-  <rect width="1200" height="630" fill="url(#aura)"/>
-  
-  <!-- Outer Cosmic Border -->
-  <rect x="8" y="8" width="1184" height="614" rx="28" fill="none" stroke="${tier.hex}" stroke-width="3" stroke-opacity="0.45"/>
-  <rect x="18" y="18" width="1164" height="594" rx="20" fill="none" stroke="${tier.hex}" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="8 6"/>
-
-  <!-- Automated FTC 16 CFR Part 255 Watermark Badge Overlay -->
-  <g transform="translate(760, 32)">
-    <rect x="0" y="0" width="380" height="30" rx="8" fill="#0f172a" fill-opacity="0.92" stroke="${tier.hex}" stroke-width="1" stroke-opacity="0.5"/>
-    <circle cx="16" cy="15" r="4" fill="#f59e0b"/>
-    <text x="28" y="20" fill="#cbd5e1" font-family="'JetBrains Mono', monospace, sans-serif" font-size="11" font-weight="700" letter-spacing="0.5">#ad · Paid Referral Link · Creator Money OS</text>
-  </g>
-
-  <!-- Left: Glowing Procedural Sigil -->
-  <g transform="translate(60, 140)">
-    <circle cx="175" cy="175" r="190" fill="${tier.hex}" fill-opacity="0.06" filter="url(#glow)"/>
-    <image href="data:image/svg+xml;base64,${sigilB64}" x="0" y="0" width="350" height="350"/>
-  </g>
-
-  <!-- Right: Identity & Leveling Stats -->
-  <g transform="translate(480, 120)">
-    <!-- Brand / Ecosystem Header -->
-    <text x="0" y="30" fill="#64748b" font-family="'JetBrains Mono', monospace, sans-serif" font-size="16" font-weight="700" letter-spacing="4">MONEYPLUGHUB • CREATOR MONEY OS</text>
-    
-    <!-- User Display Name -->
-    <text x="0" y="105" fill="#ffffff" font-family="Inter, -apple-system, sans-serif" font-size="52" font-weight="900" letter-spacing="-1">${escSvg(user.display_name)}</text>
-    
-    <!-- Tier Badge & Level Pill -->
-    <rect x="0" y="130" width="360" height="42" rx="12" fill="${tier.hex}" fill-opacity="0.15" stroke="${tier.hex}" stroke-width="1.5"/>
-    <circle cx="20" cy="151" r="6" fill="${tier.hex}"/>
-    <text x="36" y="157" fill="${tier.hex}" font-family="Inter, sans-serif" font-size="18" font-weight="800">${escSvg(tier.name)} • Level ${user.level || 1}</text>
-
-    <!-- Metrics Grid -->
-    <g transform="translate(0, 205)">
-      <!-- XP -->
-      <rect x="0" y="0" width="180" height="75" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-      <text x="18" y="28" fill="#64748b" font-family="sans-serif" font-size="12" font-weight="700">STORED XP</text>
-      <text x="18" y="58" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="800">${(user.xp || 0).toLocaleString()}</text>
-
-      <!-- Referrals -->
-      <rect x="195" y="0" width="180" height="75" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-      <text x="213" y="28" fill="#64748b" font-family="sans-serif" font-size="12" font-weight="700">REFERRALS</text>
-      <text x="213" y="58" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="800">${user.referral_count || 0}</text>
-
-      <!-- Multiplier -->
-      <rect x="390" y="0" width="180" height="75" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
-      <text x="408" y="28" fill="#64748b" font-family="sans-serif" font-size="12" font-weight="700">STATUS MULTIPLIER</text>
-      <text x="408" y="58" fill="${tier.hex}" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="800">${getTierBooster(user.tier_title)}×</text>
-    </g>
-
-    <!-- CTA Button Block -->
-    <g transform="translate(0, 315)">
-      <rect x="0" y="0" width="460" height="60" rx="16" fill="${tier.hex}" filter="url(#glow)" opacity="0.95"/>
-      <text x="230" y="38" fill="#070a14" font-family="Inter, sans-serif" font-size="20" font-weight="900" text-anchor="middle" letter-spacing="1">JOIN MY PRIVATE NETWORK →</text>
-    </g>
-  </g>
-
-  <!-- Footer Info Bar & FTC 16 CFR Part 255 Disclosure Notice -->
-  <line x1="60" y1="550" x2="1140" y2="550" stroke="#1e293b" stroke-width="1"/>
-  <text x="60" y="575" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="13">AUTHENTICATED DETERMINISTIC SIGIL HASH • SHA-256(${user.referral_code})</text>
-  <text x="1140" y="575" fill="${tier.hex}" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="800" text-anchor="end">${user.referral_code}</text>
-  <text x="60" y="598" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600">FTC 16 CFR PART 255 DISCLOSURE: Material connection exists. Referring creator receives affiliate commissions &amp; XP rewards.</text>
-  <text x="1140" y="598" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600" text-anchor="end">#ad · Paid Referral Link · Creator Money OS</text>
-</svg>`;
+  // Delegate rendering to dynamic OpenGraph image generation engine
+  const cardSvg = generateOpenGraphSvg({
+    referralCode: user.referral_code,
+    displayName: user.display_name,
+    tierTitle: user.tier_title,
+    level: user.level,
+    xp: user.xp,
+    referralCount: user.referral_count,
+    sigilConfig: customConfig,
+  });
 
   // 1. JSON Request
   if (req.query.format === 'json') {
