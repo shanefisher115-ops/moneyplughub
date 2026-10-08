@@ -151,8 +151,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         {/* Trust Metrics */}
         <div className="mt-12 pt-8 border-t border-plug-border/50 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono text-slate-400">
           <div className="flex flex-col items-center">
-            <span className="text-lg font-bold text-white">$10.00</span>
-            <span>Per Referral</span>
+            <span className="text-lg font-bold text-white">Up to $10</span>
+            <span>Per Referral (varies)</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-bold text-plug-accent">25+</span>
@@ -160,7 +160,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-bold text-sky-400">AI Voice</span>
-            <span>Powered by ElevenLabs</span>
+            <span>Talk to your dashboard</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-bold text-indigo-400">Real-Time</span>
@@ -219,10 +219,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
               <div className="mt-6 space-y-3">
                 {[
-                  { icon: <Mic className="w-4 h-4" />, text: '"Send $200 from savings to checking" — executed instantly' },
+                  { icon: <Mic className="w-4 h-4" />, text: '"How much is in savings?" — answered instantly' },
                   { icon: <Bot className="w-4 h-4" />, text: '"Take me to my net worth" — navigates you there' },
-                  { icon: <CreditCard className="w-4 h-4" />, text: '"Pay $150 on my credit card" — debt payment recorded' },
-                  { icon: <Target className="w-4 h-4" />, text: '"Set food budget to $500" — budget enforced' },
+                  { icon: <CreditCard className="w-4 h-4" />, text: '"How much debt do I have left?" — answered from your data' },
+                  { icon: <Target className="w-4 h-4" />, text: '"Set food budget to $500" — updates your budget plan' },
                   { icon: <Sparkles className="w-4 h-4" />, text: '"Tell me a joke" — it responds to anything' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
@@ -291,7 +291,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                     <div key={i} className="w-1 bg-indigo-400 rounded-full animate-pulse" style={{ height: `${h * 3}px`, animationDelay: `${i * 80}ms` }} />
                   ))}
                 </div>
-                <span className="text-[10px] text-indigo-400 font-mono ml-2">Premium AI Voice — ElevenLabs eleven_v3</span>
+                <span className="text-[10px] text-indigo-400 font-mono ml-2">Demo conversation — sample data</span>
               </div>
             </div>
           </div>
@@ -317,7 +317,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             { icon: <Landmark className="w-5 h-5" />, title: 'Living Vault™', desc: 'A breathing visual canvas that evolves with your revenue. 4 tiers, 5 palettes.', color: 'text-purple-400' },
             { icon: <Bot className="w-5 h-5" />, title: '12 AI Modules', desc: 'VisionCore, PulseWave, SignalCore, Osmium — orchestrated swarm intelligence.', color: 'text-cyan-400' },
             { icon: <Award className="w-5 h-5" />, title: 'Quests & XP', desc: 'Gamified financial milestones. Earn points, climb leaderboards, unlock badges.', color: 'text-yellow-400' },
-            { icon: <Lock className="w-5 h-5" />, title: 'Bank-Grade Security', desc: 'bcrypt hashing, JWT auth, ACID transactions, SQLite WAL journaling.', color: 'text-slate-300' },
+            { icon: <Lock className="w-5 h-5" />, title: 'Secure by Design', desc: 'Encrypted connections, signed-in access control, and an append-only ledger.', color: 'text-slate-300' },
           ].map((item, i) => (
             <div key={i} className="bg-plug-card border border-plug-border rounded-2xl p-5 group hover:border-plug-accent/40 transition-all">
               <div className={`${item.color} mb-3`}>{item.icon}</div>
@@ -511,7 +511,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-plug-accent/20 text-plug-accent border border-plug-accent/30">
                     ⚡ Creator Referral Engine
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400 font-bold">$0 Capital Risk</span>
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold">No upfront cost</span>
                 </div>
 
                 <div>
@@ -531,11 +531,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Time to Cashflow:</span>
-                    <strong className="text-white">1–7 Days</strong>
+                    <strong className="text-white">Varies by program</strong>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Profit Margin:</span>
-                    <strong className="text-plug-accent">100% Pure Revenue</strong>
+                    <strong className="text-plug-accent">Before taxes &amp; program terms</strong>
                   </div>
                 </div>
               </div>
@@ -585,7 +585,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               </div>
 
               <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 font-mono text-center">
-                Generating <strong className="text-white">${monthlyReferralIncome}/mo</strong> in referrals gives you the power of a <strong className="text-plug-accent">${requiredStockPortfolio.toLocaleString()}</strong> investment fund on Day 1.
+                Generating <strong className="text-white">${monthlyReferralIncome}/mo</strong> in referrals would be comparable cashflow to a <strong className="text-plug-accent">${requiredStockPortfolio.toLocaleString()}</strong> portfolio at the chosen yield. Illustrative only; not guaranteed, not financial advice.
               </div>
             </div>
 
@@ -661,20 +661,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-sky-500/10 text-sky-400 text-xs font-semibold mb-4">
                 <ShieldCheck className="w-4 h-4" />
-                Audited & Transparent
+                Transparent Ledger
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Real Money. Real Ledger. Zero Gimmicks.
+                A clear ledger for your referral earnings.
               </h2>
               <p className="text-xs text-slate-400 mt-3 leading-relaxed">
-                Creator Money OS runs on ACID-compliant SQLite with complete audit trails. Every referral, every commission, every transaction is permanently recorded and verifiable.
+                Every referral and commission is recorded in an audit trail you can review.
               </p>
 
               <div className="mt-6 space-y-3 text-xs text-slate-300">
                 {[
-                  'Permanent WAL journal — zero lost referrals or transactions.',
+                  'Durable, journaled storage with daily backups.',
                   'Admin audit portal for approving and tracking payout batches.',
-                  'Cryptographic password hashing (bcrypt) and signed JWT auth.',
+                  'Signed-token sign-in and encrypted connections.',
                   'Real-time net worth calculations across all linked accounts.',
                 ].map((text, i) => (
                   <div key={i} className="flex items-center gap-2">
@@ -687,12 +687,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
             <div className="bg-plug-card border border-plug-border rounded-2xl p-6 space-y-4 font-mono text-xs shadow-xl">
               <div className="text-slate-400 border-b border-plug-border pb-2 flex items-center justify-between">
-                <span>// CREATOR PAYOUT RECORD</span>
-                <span className="text-emerald-400">STATUS: PAID ✓</span>
+                <span>// EXAMPLE PAYOUT RECORD (SAMPLE DATA)</span>
+                <span className="text-emerald-400">STATUS: EXAMPLE</span>
               </div>
               <div className="space-y-1 text-slate-300">
                 <div><span className="text-slate-500">tx_id:</span> comm_892348a</div>
-                <div><span className="text-slate-500">creator:</span> @shane_official</div>
+                <div><span className="text-slate-500">creator:</span> @example_creator</div>
                 <div><span className="text-slate-500">source:</span> YouTube Bio Link</div>
                 <div><span className="text-slate-500">referrals:</span> 47 signups</div>
                 <div><span className="text-slate-500">commission:</span> <span className="text-plug-accent font-bold">$470.00 USD</span></div>
@@ -703,6 +703,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      <p className="max-w-3xl mx-auto px-4 mt-8 pb-8 text-[11px] text-slate-500 text-center leading-relaxed">
+        MoneyPlugHub is not a bank, broker, or financial advisor. Examples, simulators and sample records are illustrative only and are not financial advice.
+        Referral earnings depend on third-party programs and are not guaranteed.
+      </p>
 
       {/* ═══ PRICING CTA ═══ */}
       <section className="max-w-4xl mx-auto px-4">
