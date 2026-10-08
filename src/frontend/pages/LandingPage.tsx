@@ -151,12 +151,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         {/* Trust Metrics */}
         <div className="mt-12 pt-8 border-t border-plug-border/50 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono text-slate-400">
           <div className="flex flex-col items-center">
-            <span className="text-lg font-bold text-white">Up to $10</span>
-            <span>Per Referral (varies)</span>
+            <span className="text-lg font-bold text-white">Free</span>
+            <span>To Get Started</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-lg font-bold text-plug-accent">25+</span>
-            <span>Partner Programs</span>
+            <span className="text-lg font-bold text-plug-accent">Browse</span>
+            <span>Referral Programs</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-lg font-bold text-sky-400">AI Voice</span>
@@ -184,7 +184,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           {[
             { step: '01', icon: <Play className="w-5 h-5" />, title: 'Create Content', desc: 'Post on any platform — YouTube, TikTok, X, Instagram, blogs.', color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
             { step: '02', icon: <Globe className="w-5 h-5" />, title: 'Share Links', desc: 'Drop your unique referral links in descriptions, bios, and DMs.', color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
-            { step: '03', icon: <Users className="w-5 h-5" />, title: 'Earn Referrals', desc: 'Every signup locks to your profile. $10 commission per referral.', color: 'text-plug-accent', bg: 'bg-plug-accent/10', border: 'border-plug-accent/20' },
+            { step: '03', icon: <Users className="w-5 h-5" />, title: 'Earn Referrals', desc: 'Track the signups and earnings from your referral links in one place.', color: 'text-plug-accent', bg: 'bg-plug-accent/10', border: 'border-plug-accent/20' },
             { step: '04', icon: <DollarSign className="w-5 h-5" />, title: 'Collect Payouts', desc: 'Commissions tracked in your ACID ledger. Transparent, auditable.', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
             { step: '05', icon: <TrendingUp className="w-5 h-5" />, title: 'Grow Net Worth', desc: 'Budget, invest, and watch your Living Vault evolve in real-time.', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
           ].map((item) => (
@@ -309,7 +309,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
-            { icon: <DollarSign className="w-5 h-5" />, title: '25+ Referral Programs', desc: 'Cash App, Webull, Robinhood, Rakuten, Fetch, and more. Pre-verified links.', color: 'text-emerald-400' },
+            { icon: <DollarSign className="w-5 h-5" />, title: 'Browse Referral Programs', desc: 'Find programs like Cash App, Webull, Robinhood and Rakuten, and track your own links.', color: 'text-emerald-400' },
             { icon: <PieChart className="w-5 h-5" />, title: 'Smart Budget Control', desc: '50/30/20 rule enforcement with category limits and monthly spend tracking.', color: 'text-sky-400' },
             { icon: <CreditCard className="w-5 h-5" />, title: 'Debt Eliminator', desc: 'Avalanche & snowball strategies. See your debt-free date and interest saved.', color: 'text-rose-400' },
             { icon: <Target className="w-5 h-5" />, title: 'Savings Goals', desc: 'Set milestones. Track progress with velocity meters and target dates.', color: 'text-amber-400' },
@@ -719,9 +719,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { name: 'Free Lite', price: '$0', desc: 'Get started' },
-              { name: 'Creator', price: '$29/mo', desc: 'Most popular', highlight: true },
-              { name: 'Pro', price: '$149/mo', desc: 'Scale up' },
-              { name: 'Enterprise', price: '$499+', desc: 'Custom' },
+              { name: 'Creator', price: '$29/mo', desc: 'Coming soon', highlight: true },
+              { name: 'Pro', price: '$149/mo', desc: 'Coming soon' },
+              { name: 'Enterprise', price: '$499+', desc: 'Coming soon' },
             ].map((tier, i) => (
               <button
                 key={i}

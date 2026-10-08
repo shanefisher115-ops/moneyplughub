@@ -26,7 +26,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
     },
     {
       name: "Creator",
-      tag: "Most Popular",
+      tag: "Coming soon",
       price: isAnnual ? "$24" : "$29",
       period: "/mo",
       description: "Everything you need to grow your financial empire.",
@@ -40,7 +40,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
         "Cashback pack access",
         "Priority support"
       ],
-      cta: "Start Creator Plan",
+      cta: "Join waitlist",
       highlight: true
     },
     {
@@ -59,7 +59,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
         "API access",
         "Dedicated account manager"
       ],
-      cta: "Go Pro",
+      cta: "Join waitlist",
       highlight: false
     },
     {
@@ -120,7 +120,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate }) => {
             {plan.highlight && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-plug-accent text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                 <Zap size={12} className="fill-current" />
-                Most Popular
+                Coming soon
               </div>
             )}
             
