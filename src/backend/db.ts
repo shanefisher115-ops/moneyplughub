@@ -558,7 +558,7 @@ export function initDb(): void {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
-    -- DAILY INSIGHTS & EVENTS
+     -- DAILY INSIGHTS & EVENTS
     CREATE TABLE IF NOT EXISTS daily_insights (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
@@ -571,16 +571,23 @@ export function initDb(): void {
       UNIQUE(user_id, date)
     );
 
-    -- ORCHESTRATOR STATE & EVENTS
-    CREATE TABLE IF NOT EXISTS orchestrator_state (
-      user_id TEXT PRIMARY KEY,
-      status TEXT NOT NULL DEFAULT 'operational' CHECK(status IN ('operational', 'degraded', 'cooldown', 'busy')),
-      consecutive_failures INTEGER NOT NULL DEFAULT 0,
-      last_run_at TEXT,
-      degraded_reason TEXT,
-      updated_at TEXT NOT NULL,
+    -- INSIGHT AGENT EVENTS
+    CREATE TABLE IF NOT EXISTS insight_events (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      event_type TEXT NOT NULL CHECK(event_type IN ('insight.generated', 'insight.failed')),
+      payload TEXT,
+      created_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
+    CREATE INDEX IF NOT EXISTS idx_insight_events_user
+      ON insight_events(user_id);
+
+    CREATE INDEX IF NOT EXISTS idx_insight_events_created
+      ON insight_events(created_at);
+
+    -- ORCHESTRATOR STATE & EVENTS
 
     CREATE TABLE IF NOT EXISTS orchestrator_events (
       id TEXT PRIMARY KEY,
