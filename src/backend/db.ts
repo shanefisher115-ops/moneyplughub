@@ -586,7 +586,46 @@ export function initDb(): void {
 
     CREATE INDEX IF NOT EXISTS idx_insight_events_created
       ON insight_events(created_at);
+    -- PRIMORDIA MEMORY GRAPH
 
+    CREATE TABLE IF NOT EXISTS memory_nodes (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      node_type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      content TEXT,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS memory_edges (
+      id TEXT PRIMARY KEY,
+      from_node_id TEXT NOT NULL,
+      to_node_id TEXT NOT NULL,
+      relationship_type TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS memory_events (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      event_type TEXT NOT NULL,
+      payload TEXT,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_memory_nodes_user
+      ON memory_nodes(user_id);
+
+    CREATE INDEX IF NOT EXISTS idx_memory_edges_from
+      ON memory_edges(from_node_id);
+
+    CREATE INDEX IF NOT EXISTS idx_memory_edges_to
+      ON memory_edges(to_node_id);
+
+    CREATE INDEX IF NOT EXISTS idx_memory_events_user
+      ON memory_events(user_id);
     -- ORCHESTRATOR STATE & EVENTS
 
     CREATE TABLE IF NOT EXISTS orchestrator_events (
