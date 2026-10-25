@@ -1,3 +1,5 @@
+﻿import { ProspectingEngineWidget } from '../components/ProspectingEngineWidget';
+import { PipelineExecutionTab } from '../components/PipelineExecutionTab';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { OrchestratorWidget } from '../components/OrchestratorWidget';
@@ -135,7 +137,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
         },
         body: JSON.stringify({ content: scratchpad }),
       });
-      setToast('📝 Scratchpad saved.');
+      setToast('ðŸ“ Scratchpad saved.');
       setTimeout(() => setToast(null), 2500);
     } catch (e) {
       console.error(e);
@@ -145,6 +147,10 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
   const formatUsd = (cents: number = 0) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
+    <div className="my-6"><ProspectingEngineWidget /></div>
+    <div className="w-full max-w-[1920px] mx-auto px-4 py-4 space-y-6">
+      <PipelineExecutionTab />
+    </div>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 font-sans">
       {toast && (
         <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold shadow-lg flex items-center gap-2">
@@ -153,23 +159,23 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
         </div>
       )}
 
-      {/* 🟩 TOP HEADER: Plug In OS — Command Center */}
+      {/* ðŸŸ© TOP HEADER: Plug In OS â€” Command Center */}
       <div className="bg-plug-card border border-plug-border p-8 rounded-3xl shadow-2xl relative overflow-hidden space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 rounded-full bg-plug-accent/20 text-plug-accent text-xs font-mono font-bold uppercase tracking-wider">
-                🟩 Plug In OS
+                ðŸŸ© Plug In OS
               </span>
               <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold">
-                Adaptive • Behavior-Aware
+                Adaptive â€¢ Behavior-Aware
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mt-2">
-              ⭐ Command Center (Full Rebuild)
+              â­ Command Center (Full Rebuild)
             </h1>
             <p className="text-sm sm:text-base text-slate-300 font-semibold mt-1">
-              Your adaptive, behavior‑aware money system.
+              Your adaptive, behaviorâ€‘aware money system.
             </p>
           </div>
 
@@ -195,7 +201,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
       {/* Level Progression & Next Chamber Unlock Milestone HUD */}
       <ProgressionMilestoneBar onNavigate={onNavigate} />
 
-      {/* 🚀 WHY UPGRADE NOW: High-Converting Value & ROI CTA */}
+      {/* ðŸš€ WHY UPGRADE NOW: High-Converting Value & ROI CTA */}
       <WhyUpgradeNowCard onNavigate={onNavigate} />
 
       {/* StarterOrchestrator HUD & InsightAgent */}
@@ -203,11 +209,11 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
       <InsightAgentWidget />
       <ViralEngineWidget onNavigate={onNavigate} />
 
-      {/* 📊 DASHBOARD OVERVIEW: Live Snapshot */}
+      {/* ðŸ“Š DASHBOARD OVERVIEW: Live Snapshot */}
       <div className="bg-plug-card border border-plug-border p-8 rounded-3xl shadow-xl space-y-6">
         <div className="flex items-center justify-between border-b border-plug-border/80 pb-4">
           <h2 className="text-xl font-black text-white flex items-center gap-2">
-            📊 Dashboard Overview (Live Snapshot)
+            ðŸ“Š Dashboard Overview (Live Snapshot)
           </h2>
           <span className="text-xs font-mono text-slate-500">Live Telemetry Rollup</span>
         </div>
@@ -217,7 +223,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400 uppercase font-bold flex items-center gap-1.5">
-                <CheckSquare className="w-4 h-4 text-emerald-400" /> Today’s Actions
+                <CheckSquare className="w-4 h-4 text-emerald-400" /> Todayâ€™s Actions
               </span>
               <span className="text-emerald-400 font-bold">XP Actions DB</span>
             </div>
@@ -279,10 +285,10 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
         </div>
       </div>
 
-      {/* 📚 OS MODULES (Navigation Bar / Hubs) */}
+      {/* ðŸ“š OS MODULES (Navigation Bar / Hubs) */}
       <div className="bg-plug-card border border-plug-border p-6 rounded-3xl shadow-xl space-y-4">
         <h3 className="text-sm font-bold text-slate-400 font-mono uppercase">
-          📚 OS Modules Navigation
+          ðŸ“š OS Modules Navigation
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs font-mono">
@@ -327,7 +333,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
             }`}
           >
             <Brain className="w-4 h-4 text-pink-400" />
-            <div className="font-bold">Self‑Understanding</div>
+            <div className="font-bold">Selfâ€‘Understanding</div>
             <div className="text-[10px] text-slate-400">Patterns & Insights</div>
           </button>
 
@@ -355,11 +361,11 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
         </div>
       </div>
 
-      {/* 🗂 7 LINKED DATABASES (LIVE) EXPLORER */}
+      {/* ðŸ—‚ 7 LINKED DATABASES (LIVE) EXPLORER */}
       <div className="bg-plug-card border border-plug-border rounded-3xl p-8 shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-plug-border/80 pb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🗂</span>
+            <span className="text-xl">ðŸ—‚</span>
             <h2 className="text-xl font-black text-white">
               7 Linked Databases (LIVE)
             </h2>
@@ -371,52 +377,52 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
               onClick={() => { setActiveDb('profile'); setDbView('all'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'profile' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              1. 👤 Profile
+              1. ðŸ‘¤ Profile
             </button>
             <button
               onClick={() => { setActiveDb('xp_actions'); setDbView('today'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'xp_actions' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              2. ⚡ XP Actions
+              2. âš¡ XP Actions
             </button>
             <button
               onClick={() => { setActiveDb('programs'); setDbView('all'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'programs' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              3. 💰 Programs
+              3. ðŸ’° Programs
             </button>
             <button
               onClick={() => { setActiveDb('tracker'); setDbView('this_week'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'tracker' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              4. 📈 Tracker
+              4. ðŸ“ˆ Tracker
             </button>
             <button
               onClick={() => { setActiveDb('content'); setDbView('ready_to_post'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'content' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              5. 🎥 Content
+              5. ðŸŽ¥ Content
             </button>
             <button
               onClick={() => { setActiveDb('automations'); setDbView('active'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'automations' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              6. 🔁 Automations
+              6. ðŸ” Automations
             </button>
             <button
               onClick={() => { setActiveDb('self_understanding'); setDbView('confirmed'); }}
               className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${activeDb === 'self_understanding' ? 'bg-plug-accent text-plug-dark' : 'text-slate-400 hover:text-white'}`}
             >
-              7. 🧠 Self‑Understanding
+              7. ðŸ§  Selfâ€‘Understanding
             </button>
           </div>
         </div>
 
-        {/* 1. 👤 USER PROFILE (DB) */}
+        {/* 1. ðŸ‘¤ USER PROFILE (DB) */}
         {activeDb === 'profile' && profileData && (
           <div className="space-y-4 text-xs font-mono">
             <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
-              <h3 className="text-base font-black text-white">👤 User Profile (Adaptive Behavior Engine)</h3>
+              <h3 className="text-base font-black text-white">ðŸ‘¤ User Profile (Adaptive Behavior Engine)</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
@@ -446,7 +452,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
                 </div>
 
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-                  <span className="text-slate-400 font-bold uppercase">Stress Level (1–5):</span>
+                  <span className="text-slate-400 font-bold uppercase">Stress Level (1â€“5):</span>
                   <div className="text-lg font-black text-amber-400">{profileData.stress_level} / 5 (Low / Manageable)</div>
                 </div>
 
@@ -459,16 +465,16 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 2. ⚡ XP ACTIONS (DB) */}
+        {/* 2. âš¡ XP ACTIONS (DB) */}
         {activeDb === 'xp_actions' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">⚡ XP Actions DB (Daily Micro-Tasks)</h3>
+                <h3 className="text-base font-bold text-white">âš¡ XP Actions DB (Daily Micro-Tasks)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('today')} className={`px-2.5 py-1 rounded ${dbView === 'today' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Today</button>
                   <button onClick={() => setDbView('quick_wins')} className={`px-2.5 py-1 rounded ${dbView === 'quick_wins' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Quick Wins (&lt;5 min)</button>
-                  <button onClick={() => setDbView('money_first')} className={`px-2.5 py-1 rounded ${dbView === 'money_first' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Money‑First</button>
+                  <button onClick={() => setDbView('money_first')} className={`px-2.5 py-1 rounded ${dbView === 'money_first' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Moneyâ€‘First</button>
                   <button onClick={() => setDbView('all')} className={`px-2.5 py-1 rounded ${dbView === 'all' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>All</button>
                 </div>
               </div>
@@ -503,7 +509,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
                       <td className="py-3 px-4 text-slate-400 font-bold">{act.difficulty}</td>
                       <td className="py-3 px-4 text-slate-400">{act.time_required}</td>
                       <td className="py-3 px-4 text-amber-400 font-bold">+{act.xp_value} XP</td>
-                      <td className="py-3 px-4">{act.is_automated ? '⚡ Yes' : 'No'}</td>
+                      <td className="py-3 px-4">{act.is_automated ? 'âš¡ Yes' : 'No'}</td>
                       <td className="py-3 px-4 text-right">
                         <button
                           onClick={() => handleToggleXpAction(act.id)}
@@ -523,12 +529,12 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 3. 💰 REFERRAL PROGRAMS (DB) */}
+        {/* 3. ðŸ’° REFERRAL PROGRAMS (DB) */}
         {activeDb === 'programs' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">💰 Referral Programs DB (Earning Ecosystem)</h3>
+                <h3 className="text-base font-bold text-white">ðŸ’° Referral Programs DB (Earning Ecosystem)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('high_payout')} className={`px-2.5 py-1 rounded ${dbView === 'high_payout' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>High Payout</button>
                   <button onClick={() => setDbView('easy_wins')} className={`px-2.5 py-1 rounded ${dbView === 'easy_wins' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Easy Wins</button>
@@ -572,12 +578,12 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 4. 📈 PROGRAM TRACKER (DB) */}
+        {/* 4. ðŸ“ˆ PROGRAM TRACKER (DB) */}
         {activeDb === 'tracker' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">📈 Program Tracker DB (Conversions + Earnings)</h3>
+                <h3 className="text-base font-bold text-white">ðŸ“ˆ Program Tracker DB (Conversions + Earnings)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('this_week')} className={`px-2.5 py-1 rounded ${dbView === 'this_week' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>This Week</button>
                   <button onClick={() => setDbView('top_earners')} className={`px-2.5 py-1 rounded ${dbView === 'top_earners' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Top Earners</button>
@@ -617,12 +623,12 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 5. 🎥 CONTENT QUEUE (DB) */}
+        {/* 5. ðŸŽ¥ CONTENT QUEUE (DB) */}
         {activeDb === 'content' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">🎥 Content Queue DB (Faceless Content Engine)</h3>
+                <h3 className="text-base font-bold text-white">ðŸŽ¥ Content Queue DB (Faceless Content Engine)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('ready_to_post')} className={`px-2.5 py-1 rounded ${dbView === 'ready_to_post' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Ready to Post</button>
                   <button onClick={() => setDbView('high_performers')} className={`px-2.5 py-1 rounded ${dbView === 'high_performers' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>High Performers</button>
@@ -646,7 +652,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
                     <p className="text-slate-400 text-[11px]">{c.script}</p>
                   </div>
                   <div className="pt-2 border-t border-slate-800 text-[10px] text-slate-500 flex items-center justify-between">
-                    <span>Performance: {c.views.toLocaleString()} Views • {c.ctr}% CTR • {c.saves} Saves</span>
+                    <span>Performance: {c.views.toLocaleString()} Views â€¢ {c.ctr}% CTR â€¢ {c.saves} Saves</span>
                     <button
                       onClick={() => copyToClipboard(c.script, `content_${c.id}`)}
                       className="text-plug-accent hover:text-white font-bold"
@@ -660,12 +666,12 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 6. 🔁 AUTOMATIONS (DB) */}
+        {/* 6. ðŸ” AUTOMATIONS (DB) */}
         {activeDb === 'automations' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">🔁 Automations DB (Make.com + Zapier Workflow Map)</h3>
+                <h3 className="text-base font-bold text-white">ðŸ” Automations DB (Make.com + Zapier Workflow Map)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('active')} className={`px-2.5 py-1 rounded ${dbView === 'active' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Active</button>
                   <button onClick={() => setDbView('all')} className={`px-2.5 py-1 rounded ${dbView === 'all' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>All</button>
@@ -704,12 +710,12 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           </div>
         )}
 
-        {/* 7. 🧠 SELF-UNDERSTANDING (DB) */}
+        {/* 7. ðŸ§  SELF-UNDERSTANDING (DB) */}
         {activeDb === 'self_understanding' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">🧠 Self‑Understanding DB (Adaptive Behavior Engine)</h3>
+                <h3 className="text-base font-bold text-white">ðŸ§  Selfâ€‘Understanding DB (Adaptive Behavior Engine)</h3>
                 <div className="flex gap-1 bg-slate-950 p-1 rounded-lg text-xs font-mono border border-slate-800">
                   <button onClick={() => setDbView('confirmed')} className={`px-2.5 py-1 rounded ${dbView === 'confirmed' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>Confirmed Insights</button>
                   <button onClick={() => setDbView('all')} className={`px-2.5 py-1 rounded ${dbView === 'all' ? 'bg-plug-accent text-plug-dark font-bold' : 'text-slate-400'}`}>All Observations</button>
@@ -729,7 +735,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
                           p.confirmed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'
                         }`}
                       >
-                        {p.confirmed ? '✓ Confirmed' : 'Unconfirmed'}
+                        {p.confirmed ? 'âœ“ Confirmed' : 'Unconfirmed'}
                       </button>
                     </div>
                     <p className="text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
@@ -745,13 +751,13 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
         )}
       </div>
 
-      {/* 🟩 DAILY OS (Embedded View) */}
+      {/* ðŸŸ© DAILY OS (Embedded View) */}
       <div className="bg-plug-card border border-plug-border rounded-3xl p-8 shadow-2xl space-y-6">
         <div className="flex items-center justify-between border-b border-plug-border/80 pb-4">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-plug-accent/20 text-plug-accent text-xs font-mono font-bold uppercase">
-                🟩 Daily OS (Embedded View)
+                ðŸŸ© Daily OS (Embedded View)
               </span>
             </div>
             <h2 className="text-2xl font-black text-white mt-1">Your day in one screen.</h2>
@@ -795,13 +801,13 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
             </h4>
             <div className="space-y-2">
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Review Daily Budget Remaining (2 min)
+                â€¢ Review Daily Budget Remaining (2 min)
               </div>
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Copy Cash App promo script to IG (1 min)
+                â€¢ Copy Cash App promo script to IG (1 min)
               </div>
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Confirm morning energy insight (1 min)
+                â€¢ Confirm morning energy insight (1 min)
               </div>
             </div>
           </div>
@@ -813,10 +819,10 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
             </h4>
             <div className="space-y-2">
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Film 15-sec Command Center walkthrough
+                â€¢ Film 15-sec Command Center walkthrough
               </div>
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Reply to comments with Cashtag video
+                â€¢ Reply to comments with Cashtag video
               </div>
             </div>
           </div>
@@ -828,10 +834,10 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
             </h4>
             <div className="space-y-2">
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Verify Make.com scenarios status
+                â€¢ Verify Make.com scenarios status
               </div>
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-                • Run weekly net worth snapshot sync
+                â€¢ Run weekly net worth snapshot sync
               </div>
             </div>
           </div>
@@ -864,3 +870,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
     </div>
   );
 };
+
+
+
+

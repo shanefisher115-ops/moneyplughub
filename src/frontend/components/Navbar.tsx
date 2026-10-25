@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLivingRealm } from '../context/LivingRealmContext';
 import { useAdaptiveProfile } from '../context/AdaptiveProfileContext';
@@ -44,12 +44,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
   }, []);
 
   const secondaryTabs = [
-    { id: 'supabase', label: '🗄️ Supabase Cloud', icon: Database, color: 'text-emerald-400' },
-    { id: 'signal-realm', label: '📡 Signal Realm', icon: Send, color: 'text-cyan-400' },
-    { id: 'creator-os', label: '🎨 Creator OS Studio', icon: Sparkles, color: 'text-pink-400' },
-    { id: 'video', label: '🎬 Omni Flash & Loops', icon: Film, color: 'text-pink-400' },
-    { id: 'reality-engine', label: '☢️ Reality Engine', icon: Orbit, color: 'text-cyan-400' },
-    { id: 'agent-swarm', label: '🤖 Agent Swarm Protocol', icon: Bot, color: 'text-emerald-400' },
+    { id: 'pipeline', label: '⚡ Autonomous Pipeline', icon: Rocket, color: 'text-plug-accent' },
+    { id: 'supabase', label: 'ðŸ—„ï¸ Supabase Cloud', icon: Database, color: 'text-emerald-400' },
+    { id: 'signal-realm', label: 'ðŸ“¡ Signal Realm', icon: Send, color: 'text-cyan-400' },
+    { id: 'creator-os', label: 'ðŸŽ¨ Creator OS Studio', icon: Sparkles, color: 'text-pink-400' },
+    { id: 'video', label: 'ðŸŽ¬ Omni Flash & Loops', icon: Film, color: 'text-pink-400' },
+    { id: 'reality-engine', label: 'â˜¢ï¸ Reality Engine', icon: Orbit, color: 'text-cyan-400' },
+    { id: 'agent-swarm', label: 'ðŸ¤– Agent Swarm Protocol', icon: Bot, color: 'text-emerald-400' },
     { id: 'net-worth', label: 'Living Vault', icon: Wallet, color: 'text-amber-400', minLevel: 3 },
     { id: 'budget', label: 'Budget Shield', icon: PieChart, color: 'text-sky-400', minLevel: 3 },
     { id: 'generate', label: 'AI Studio', icon: Sparkles, color: 'text-pink-400', minLevel: 6 },
@@ -66,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
     <header className="sticky top-0 z-40 w-full border-b border-plug-border/80 bg-plug-dark/95 backdrop-blur-md">
       <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-5 lg:px-6 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         
-        {/* ── Left: Brand Logo ── */}
+        {/* â”€â”€ Left: Brand Logo â”€â”€ */}
         <button
           onClick={() => {
             setCurrentTab(user ? 'overview' : 'landing');
@@ -91,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
           </div>
         </button>
 
-        {/* ── Center: Core Nav Links (Desktop, Tablet & Laptop) ── */}
+        {/* â”€â”€ Center: Core Nav Links (Desktop, Tablet & Laptop) â”€â”€ */}
         {user ? (
           <nav className="hidden md:flex items-center gap-1 bg-slate-900/80 p-1 rounded-2xl border border-slate-800 text-xs font-mono shrink min-w-0">
             <button
@@ -271,7 +272,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
           </nav>
         )}
 
-        {/* ── Right Controls: Action Badges & Profile Menu ── */}
+        {/* â”€â”€ Right Controls: Action Badges & Profile Menu â”€â”€ */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
           {/* Category B: User Inventory / Vault (Segmented Split Badge) */}
@@ -285,7 +286,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               title="Daily Mystery Loot Crate"
             >
-              <span>📦</span>
+              <span>ðŸ“¦</span>
               <span className="text-slate-400">Crates:</span>
               <span className="font-bold text-amber-400">1</span>
             </button>
@@ -297,7 +298,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               title="Creator Level & Experience"
             >
-              <span className="text-amber-400 font-bold">⚡</span>
+              <span className="text-amber-400 font-bold">âš¡</span>
               <span className="font-bold text-white">Lv.{user?.level || 4}</span>
               <span className="text-slate-400 text-[10px]">| {(user?.xp || 1250).toLocaleString()} XP</span>
             </button>
@@ -312,7 +313,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               title="Claimable Revenue"
             >
-              <span className="text-emerald-400">🪙</span>
+              <span className="text-emerald-400">ðŸª™</span>
               <span className="font-bold text-emerald-400">$0.00</span>
               <span className="text-slate-400 text-[10px]">Claimable</span>
             </button>
@@ -345,7 +346,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
                       {user.display_name}
                     </div>
                     <div className="text-[9px] text-plug-accent font-mono -mt-0.5 font-semibold">
-                      Lv.{user.level || 1} • {user.role === 'admin' ? 'Admin' : (profile?.archetypeTitle || 'Creator')}
+                      Lv.{user.level || 1} â€¢ {user.role === 'admin' ? 'Admin' : (profile?.archetypeTitle || 'Creator')}
                     </div>
                   </div>
                   <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block ${isProfileMenuOpen ? 'rotate-180 text-plug-accent' : ''}`} />
@@ -451,12 +452,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
                 className="px-4 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black text-xs rounded-full transition-all shadow-lg shadow-emerald-400/25 flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
               >
                 <span>Start Free</span>
-                <span className="font-bold">→</span>
+                <span className="font-bold">â†’</span>
               </button>
             </div>
           )}
 
-          {/* ── Mobile Hamburger Toggle (under xl screens) ── */}
+          {/* â”€â”€ Mobile Hamburger Toggle (under xl screens) â”€â”€ */}
           <button
             onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
             className="xl:hidden p-1.5 sm:p-2 rounded-xl bg-slate-800/90 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
@@ -467,7 +468,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
         </div>
       </div>
 
-      {/* ── Mobile Navigation Drawer ── */}
+      {/* â”€â”€ Mobile Navigation Drawer â”€â”€ */}
       {isMobileNavOpen && (
         <div className="xl:hidden border-t border-slate-800 bg-slate-950/98 backdrop-blur-2xl px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-150 max-h-[85vh] overflow-y-auto">
           {user ? (
@@ -657,3 +658,4 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
 };
 
 export default Navbar;
+

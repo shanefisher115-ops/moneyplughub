@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+﻿import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -62,8 +62,10 @@ import { unrealRouter } from './routes/unrealEngine';
 import { unrealBridge } from './unreal/unrealBridge';
 import { agentProtocolRouter } from './routes/agentProtocol';
 import { AgentSwarmEngine } from './agents/agentSwarmEngine';
+import prospectingEngineRoutes from './routes/prospectingengineRoutes';
 
 const app = express();
+app.use('/api/prospecting-engine', prospectingEngineRoutes);
 
 // High-speed compression (gzip / brotli) for all responses
 app.use(compression({
@@ -165,7 +167,7 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.json({
     status: 'healthy',
-    system: 'Plug In OS v5.0 — Sellable AI Orchestrator SaaS Engine Active',
+    system: 'Plug In OS v5.0 â€” Sellable AI Orchestrator SaaS Engine Active',
     commission_rate_usd: config.commissionAmountUsd,
     environment: config.nodeEnv,
     timestamp: new Date().toISOString()
@@ -228,7 +230,7 @@ setupSyndicateWebSocket(server);
 unrealBridge.init(server);
 
 server.listen(3001, () => {
-  console.log(`⚡ Plug In OS v5.0 Server running on port 3001`);
+  console.log(`âš¡ Plug In OS v5.0 Server running on port 3001`);
 });
 
 // Also start secondary listener on Port 3000 to catch legacy 3000 tunnel routes
@@ -239,7 +241,7 @@ setupVoiceWebSocket(server3000);
 setupSyndicateWebSocket(server3000);
 
 server3000.listen(3000, () => {
-  console.log(`⚡ Plug In OS v5.0 Dual Listener running on port 3000`);
+  console.log(`âš¡ Plug In OS v5.0 Dual Listener running on port 3000`);
 }).on('error', (err: any) => {
   if (err.code === 'EADDRINUSE') {
     console.log('Port 3000 already bound; primary 3001 is active.');
@@ -262,3 +264,9 @@ process.on('SIGINT', handleShutdown);
 process.on('SIGTERM', handleShutdown);
 
 export default app;
+
+import pipelineRouter from "./routes/pipelineRoutes";
+// Auto-mounted by Primordia pipeline connector
+app.use("/api/pipeline", pipelineRouter);
+
+
