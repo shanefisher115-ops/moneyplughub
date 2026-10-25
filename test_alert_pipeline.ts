@@ -2,10 +2,10 @@
 import { PlannerRealm } from "./src/backend/realms/PlannerRealm.ts";
 import { BuilderRealm } from "./src/backend/realms/BuilderRealm.ts";
 
-async function scaffoldAlertSystem() {
+async function scaffoldAlertWidget() {
   const synthesis = { 
-    intent: "Build Alert System and Notification Dispatcher for automated system anomaly handling", 
-    targetDomain: "AlertRealm" 
+    intent: "Build AlertRealm dashboard widget for live anomaly tracking and notification logs", 
+    targetDomain: "AlertRealmWidget" 
   };
 
   const architect = new ArchitectRealm();
@@ -17,8 +17,8 @@ async function scaffoldAlertSystem() {
   const builder = new BuilderRealm();
   const result = await builder.executePlan(plan);
 
-  console.log("\n--- ALERT SYSTEM SCAFFOLD RESULT ---");
+  console.log("\n--- ALERT WIDGET SCAFFOLD RESULT ---");
   console.dir(result, { depth: null });
 }
 
-scaffoldAlertSystem();
+scaffoldAlertWidget();
