@@ -65,6 +65,8 @@ import { AgentSwarmEngine } from './agents/agentSwarmEngine';
 import prospectingEngineRoutes from './routes/prospectingengineRoutes';
 
 const app = express();
+import analyticsRealmRoutes from './routes/analyticsrealmRoutes';
+app.use('/api/analytics-realm', analyticsRealmRoutes);
 import integrationRealmRoutes from './routes/integrationrealmRoutes';
 app.use('/api/integration-realm', integrationRealmRoutes);
 import securityRealmRoutes from './routes/securityrealmRoutes';
@@ -290,6 +292,7 @@ export default app;
 import pipelineRouter from "./routes/pipelineRoutes";
 // Auto-mounted by Primordia pipeline connector
 app.use("/api/pipeline", pipelineRouter);
+
 
 
 

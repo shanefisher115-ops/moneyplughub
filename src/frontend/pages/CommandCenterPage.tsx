@@ -1,4 +1,5 @@
-﻿import { IntegrationRealmWidget } from '../components/IntegrationRealmWidget';
+﻿import { AnalyticsRealmWidget } from '../components/AnalyticsRealmWidget';
+import { IntegrationRealmWidget } from '../components/IntegrationRealmWidget';
 import { SecurityRealmWidget } from '../components/SecurityRealmWidget';
 import { AutomatonRealmWidget } from '../components/AutomatonRealmWidget';
 import { ShaderRealmWidget } from '../components/ShaderRealmWidget';
@@ -158,6 +159,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
   const formatUsd = (cents: number = 0) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
+    <div className="my-6"><AnalyticsRealmWidget /></div>
     <div className="my-6"><IntegrationRealmWidget /></div>
     <div className="my-6"><SecurityRealmWidget /></div>
     <div className="my-6"><AutomatonRealmWidget /></div>
@@ -892,6 +894,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
     </div>
   );
 };
+
 
 
 
