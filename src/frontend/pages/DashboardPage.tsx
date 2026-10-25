@@ -146,7 +146,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               Approved funds are automatically queued for disbursement.
             </h3>
             <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              When someone registers using your link, their $10.00 commission is held in <strong>Pending</strong> during initial verification. Once approved by the auditor, it moves to <strong>Approved</strong> and is disbursed via your configured payout channel.
+              When someone registers using your link, their referral reward (if any) is held in <strong>Pending</strong> during initial verification. Once approved by the auditor, it moves to <strong>Approved</strong> and is disbursed via your configured payout channel.
             </p>
           </div>
 

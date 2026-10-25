@@ -5,6 +5,11 @@ import { db, initDb, runInTransaction, initializeUserFinancialProfile } from './
 import { seed } from './seed';
 import { StarterOrchestrator } from './orchestrator/starterOrchestrator';
 import { BASE_PERSONAS, PERSONA_FUSION_MAP, EMOTIONAL_OVERLAYS, classifyVoiceIntentAndEmotion } from './routes/tts';
+import { generateOpenGraphSvg } from './routes/og';
+import { generateSigil } from './routes/sigil';
+import { McpIdentityGateway } from './voice-os/mcp/McpIdentityGateway';
+import { EventEmitter } from 'events';
+
 import { PERSONA_PROFILES, injectSpeechProsody } from './voice/persona';
 import { VoiceWebSocketManager } from './voice/ws';
 

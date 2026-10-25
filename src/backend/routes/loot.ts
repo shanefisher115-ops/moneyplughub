@@ -490,7 +490,7 @@ router.post('/daily/overcharge', (req: Request, res: Response) => {
 
     const winRoll = Math.random() * 100;
     // 70% win chance for high streaks/levels, 60% standard
-    const winThreshold = (user && user.level >= 5) ? 30 : 40;
+    const winThreshold = (user && (user.level ?? 1) >= 5) ? 30 : 40;
     const isWin = winRoll >= winThreshold;
 
     const now = new Date().toISOString();

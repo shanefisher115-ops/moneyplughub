@@ -318,12 +318,12 @@ export class VoiceEngineKernel {
           } else {
             interim += event.results[i][0].transcript;
           }
-        }
-        const text = final || interim;
-        if (text && this.onTranscriptCb) {
-          this.onTranscriptCb(text, !!final);
-        }
-      };
+          const text = final || interim;
+          if (text && this.onTranscriptCb) {
+            this.onTranscriptCb(text, !!final);
+          }
+        };
+      }
 
       recog.onerror = () => {
         if (this.state === 'listening') this.setState('idle');

@@ -161,7 +161,7 @@ try { db.exec(`
 // ═══════════════════════════════════════════════════════════════════
 //  CORE: Tier Booster Multiplier (⚡4)
 // ═══════════════════════════════════════════════════════════════════
-function getTierBooster(tierTitle: string): number {
+export function getTierBooster(tierTitle: string): number {
   const boosters: Record<string, number> = {
     'Novice Plug': 1.0,
     'Budget Apprentice': 1.0,
@@ -727,7 +727,7 @@ router.get(['/share-card/:code', '/achievement-card/:code'], (req, res) => {
   <!-- OpenGraph / Twitter Meta Tags (FTC Compliant) -->
   <meta property="og:title" content="${escSvg(user.display_name)} • ${escSvg(tier.name)} (Level ${user.level || 1})">
   <meta property="og:description" content="[#ad] Claim your starter XP & join my private wealth network with code ${user.referral_code} · Paid Referral Link · FTC 16 CFR Part 255 Compliant">
-  <meta property="og:image" content="${config.appUrl}/api/growth/share-card/${user.referral_code}?format=svg">
+  <meta property="og:image" content="${config.appUrl}/api/og/${user.referral_code}?format=svg">
   <meta name="twitter:card" content="summary_large_image">
   
   <style>

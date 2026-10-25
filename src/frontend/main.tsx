@@ -10,6 +10,13 @@ import { PeerPushProvider } from './context/PeerPushContext';
 import { ClerkAuthWrapper } from './context/ClerkAuthWrapper';
 import { App } from './App';
 import './index.css';
+import * as Sentry from '@sentry/react';
+
+// Error monitoring: only active when VITE_SENTRY_DSN is set (Vercel env var). No personal data is sent.
+const sentryDsn = (import.meta as any).env?.VITE_SENTRY_DSN as string | undefined;
+if (sentryDsn) {
+  Sentry.init({ dsn: sentryDsn, sendDefaultPii: false, tracesSampleRate: 0 });
+}
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

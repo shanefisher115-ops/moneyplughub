@@ -51,9 +51,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
 }
 
 // Periodic background WAL flush to disk
-setInterval(() => {
+const walInterval = setInterval(() => {
   checkpointWal();
 }, 60000);
+if (walInterval.unref) {
+  walInterval.unref();
+}
 
 export function runInTransaction<T>(fn: () => T): T {
   db.exec('BEGIN IMMEDIATE TRANSACTION;');
@@ -100,7 +103,7 @@ export function initDb(): void {
       referred_user_id TEXT NOT NULL UNIQUE,
       amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
       currency TEXT NOT NULL DEFAULT 'USD',
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'paid', 'quarantined')),
       notes TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
@@ -556,7 +559,7 @@ export function initDb(): void {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
-    -- DAILY INSIGHTS & EVENTS
+     -- DAILY INSIGHTS & EVENTS
     CREATE TABLE IF NOT EXISTS daily_insights (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
@@ -569,16 +572,23 @@ export function initDb(): void {
       UNIQUE(user_id, date)
     );
 
-    -- ORCHESTRATOR STATE & EVENTS
-    CREATE TABLE IF NOT EXISTS orchestrator_state (
-      user_id TEXT PRIMARY KEY,
-      status TEXT NOT NULL DEFAULT 'operational' CHECK(status IN ('operational', 'degraded', 'cooldown', 'busy')),
-      consecutive_failures INTEGER NOT NULL DEFAULT 0,
-      last_run_at TEXT,
-      degraded_reason TEXT,
-      updated_at TEXT NOT NULL,
+    -- INSIGHT AGENT EVENTS
+    CREATE TABLE IF NOT EXISTS insight_events (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      event_type TEXT NOT NULL CHECK(event_type IN ('insight.generated', 'insight.failed')),
+      payload TEXT,
+      created_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
+    CREATE INDEX IF NOT EXISTS idx_insight_events_user
+      ON insight_events(user_id);
+
+    CREATE INDEX IF NOT EXISTS idx_insight_events_created
+      ON insight_events(created_at);
+
+    -- ORCHESTRATOR STATE & EVENTS
 
     CREATE TABLE IF NOT EXISTS orchestrator_events (
       id TEXT PRIMARY KEY,
@@ -808,6 +818,22 @@ export function initDb(): void {
       created_at TEXT NOT NULL
     );
   `);
+
+  const refClickCols = [
+    "client_fingerprint TEXT",
+    "source_category TEXT",
+    "ai_platform TEXT",
+    "intent_score REAL DEFAULT 0.5",
+    "utm_source TEXT",
+    "utm_medium TEXT",
+    "utm_campaign TEXT",
+  ];
+
+  for (const col of refClickCols) {
+    try {
+      db.exec(`ALTER TABLE referral_clicks ADD COLUMN ${col};`);
+    } catch (e) {}
+  }
 
   const progCols = [
     "payout_type TEXT NOT NULL DEFAULT 'Cash Bonus'",
@@ -1261,10 +1287,15 @@ export function seedAllReferralPrograms(): void {
   ];
 
   const now = new Date().toISOString();
-  const validSlugs = verifiedPrograms.map(p => `'${p.slug}'`).join(',');
   
   // Clean out any unverified placeholder rows
-  db.exec(`DELETE FROM crypto_referral_programs WHERE slug NOT IN (${validSlugs})`);
+  if (verifiedPrograms.length > 0) {
+    const placeholders = verifiedPrograms.map(() => '?').join(',');
+    const deleteStmt = db.prepare(`DELETE FROM crypto_referral_programs WHERE slug NOT IN (${placeholders})`);
+    deleteStmt.run(...verifiedPrograms.map(p => p.slug));
+  } else {
+    db.exec('DELETE FROM crypto_referral_programs');
+  }
 
   const stmt = db.prepare(`
     INSERT OR REPLACE INTO crypto_referral_programs (
@@ -1394,6 +1425,9 @@ export function seedDefaultTasks(): void {
     { id: 'task_crypto_stack', title: 'Stack Crypto Holdings', description: 'Review your multi-asset crypto ledger and verify wallet transactions.', category: 'crypto', reward_cents: 75, reward_xp: 100, task_type: 'daily' },
     { id: 'task_refer_friend', title: 'Invite A Financial Peer', description: 'Share your MoneyPlugHub link to earn real commissions and rank up.', category: 'referral', reward_cents: 1000, reward_xp: 350, task_type: 'milestone' },
     { id: 'task_networth_sync', title: 'Calculate Weekly Net Worth', description: 'Sync all connected bank, crypto, and liability accounts.', category: 'learning', reward_cents: 100, reward_xp: 110, task_type: 'daily' },
+    { id: 'task_viral_hook_post', title: 'Viral Video Script Draft', description: 'Script or queue 1 short-form TikTok/Reels video using high-converting hooks.', category: 'referral', reward_cents: 150, reward_xp: 200, task_type: 'daily' },
+    { id: 'task_squad_coop', title: 'Form / Join A Viral Squad', description: 'Team up with creator peers in a Squad to unlock 1.25x cluster multipliers.', category: 'referral', reward_cents: 200, reward_xp: 250, task_type: 'milestone' },
+    { id: 'task_sigil_flex', title: 'Track Cryptographic Sigil Clicks', description: 'Share your unique procedural Sigil link and register active audience clicks.', category: 'referral', reward_cents: 100, reward_xp: 150, task_type: 'daily' },
   ];
 
   const stmt = db.prepare(`

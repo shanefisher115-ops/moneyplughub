@@ -105,6 +105,10 @@ router.get('/models', (req: Request, res: Response) => {
   res.json({ success: true, data: rows });
 });
 
+router.get('/test-agent-probe', (req: Request, res: Response) => {
+  res.json({ probe: 'active_from_src' });
+});
+
 /**
  * GET /api/v5/pulse - Pulse Engine Telemetry
  */

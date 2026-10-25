@@ -11,7 +11,28 @@ import { forgeAudio } from '../utils/forgeAudio';
 export const SigilPassportModal: React.FC = () => {
   const { isPassportOpen, setIsPassportOpen, passportTargetCode, playSound } = useLivingRealm();
   const { awardXp } = useGamificationXp();
-  const [passportData, setPassportData] = useState<any>(null);
+  interface PassportData {
+    passport_number: string;
+    sigil_svg_data_uri: string;
+    verification_hash: string;
+    creator: {
+      display_name: string;
+      level: number;
+      tier_title: string;
+      referral_code: string;
+      xp: number;
+    };
+    stats: {
+      annual_arr: number;
+    };
+    equipped_artifacts?: Array<{
+      id: string;
+      name: string;
+      preview_accent?: string;
+    }>;
+  }
+
+  const [passportData, setPassportData] = useState<PassportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedHash, setCopiedHash] = useState(false);
@@ -210,13 +231,13 @@ export const SigilPassportModal: React.FC = () => {
             </div>
 
             {/* Equipped Artifact Suite Chips */}
-            {passportData.equipped_artifacts?.length > 0 && (
+            {Boolean(passportData.equipped_artifacts && passportData.equipped_artifacts.length > 0) && (
               <div className="space-y-2 font-mono">
                 <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
                   Equipped Cosmic Artifacts:
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {passportData.equipped_artifacts.map((art: any) => (
+                  {passportData.equipped_artifacts!.map((art) => (
                     <div
                       key={art.id}
                       className="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2 text-xs text-slate-300"

@@ -36,6 +36,17 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+// Healthcheck Endpoint
+app.get(['/api/health', '/health'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.json({
+    status: 'healthy',
+    system: 'Plug In OS v5.0 — MoneyPlugHub Economic Realm Engine Active',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ==========================================
 // 1. GET /api/paywall/check
 // ==========================================

@@ -134,10 +134,33 @@ export async function runFullSupabaseSync(): Promise<{
 
   try {
     // 1. Sync Users
-    const users = db.prepare('SELECT * FROM users LIMIT 500').all() as any[];
-    for (const u of users) {
-      const ok = await syncUserToSupabase(u);
-      if (ok) results.syncedUsers++;
+    try {
+      const users = db.prepare('SELECT * FROM users LIMIT 500').all() as any[];
+      if (users.length > 0) {
+        const payload = users.map(u => ({
+          id: u.id,
+          email: u.email,
+          display_name: u.display_name,
+          role: u.role,
+          referral_code: u.referral_code,
+          referrer_user_id: u.referrer_user_id,
+          referral_count: u.referral_count || 0,
+          level: u.level || 1,
+          xp: u.xp || 0,
+          streak_days: u.streak_days || 1,
+          tier_title: u.tier_title || 'Novice Plug',
+          total_earnings_usd: (u.total_earnings_cents ? u.total_earnings_cents / 100 : (u.total_earnings_usd || 0)),
+          updated_at: new Date().toISOString(),
+        }));
+        const { error } = await client.from('moneyplughub_users').upsert(payload);
+        if (error) {
+          results.errors.push(`Users sync: ${error.message}`);
+        } else {
+          results.syncedUsers = users.length;
+        }
+      }
+    } catch (e: any) {
+      results.errors.push(`Users sync query notice: ${e.message}`);
     }
 
     // 2. Sync Commission Ledger

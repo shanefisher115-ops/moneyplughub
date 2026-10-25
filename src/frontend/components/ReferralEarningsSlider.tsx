@@ -328,7 +328,7 @@ export const ReferralEarningsSlider: React.FC<ReferralEarningsSliderProps> = ({
             </p>
           </div>
           <span className="text-xs font-mono font-bold text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full self-start sm:self-auto flex items-center gap-1">
-            <InfinityIcon className="w-3.5 h-3.5" /> Infinite RoIC (Zero Capital Risk)
+            <InfinityIcon className="w-3.5 h-3.5" /> No upfront cost
           </span>
         </div>
 

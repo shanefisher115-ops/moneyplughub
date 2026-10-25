@@ -1,0 +1,14 @@
+{
+    "description":  "Monitors cashflow velocity and referral surges; dispatches agentapi alerts",
+    "env":  {
+                "VELOCITY_ALERT_THRESHOLD":  "0.005",
+                "MONEYPLUG_POLL_INTERVAL_MS":  "30000",
+                "MONEYPLUG_API_URL":  "https://moneyplughub.com/api/v1"
+            },
+    "restart_policy":  "always",
+    "command":  "node",
+    "args":  [
+                 "runner.mjs"
+             ],
+    "display_name":  "MoneyPlugHub Velocity Sentinel"
+}

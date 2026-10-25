@@ -5,14 +5,33 @@ import { PayoutValidator } from "./PayoutValidator";
 import { PayoutExecutor } from "./PayoutExecutor";
 import { PayoutEvents, XP_BEHAVIORAL_MATRIX } from "./PayoutEvents";
 
+interface McpClient {
+  identity: {
+    bindIdentity(sessionId: string, identity?: { userId: string }): unknown;
+  };
+  zeroTrust: {
+    enforce(sessionId: string, riskScore?: number, flags?: unknown): { action: string };
+  };
+  swarm: {
+    emitDirective(target: string, directive: string): void;
+  };
+}
+
+interface SessionContext {
+  id: string;
+  identity?: { userId: string };
+  awaitPhrase(): Promise<string>;
+  getAcousticMetrics(): Promise<{ riskScore?: number; flags?: unknown; jitter?: number; tremor?: number; stress?: number; deepfakeProbability?: number }>;
+}
+
 export class PayoutFlow {
   private bus: EventEmitter;
   private challenge: PayoutChallenge;
   private validator: PayoutValidator;
   private executor: PayoutExecutor;
-  private mcp: any;
+  private mcp: McpClient;
 
-  constructor(bus: EventEmitter, mcp: any) {
+  constructor(bus: EventEmitter, mcp: McpClient) {
     this.bus = bus;
     this.mcp = mcp;
 
@@ -21,7 +40,7 @@ export class PayoutFlow {
     this.executor = new PayoutExecutor();
   }
 
-  async start(intent: any, session: any) {
+  async start(intent: { entities: { amount?: number; currency?: string } }, session: SessionContext) {
     const { amount, currency } = intent.entities;
     const userId = session.identity?.userId || "u_unknown";
 

@@ -82,7 +82,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, initialR
           </div>
           <h2 className="text-2xl font-black text-white">Join MoneyPlugHub</h2>
           <p className="text-xs text-slate-400 mt-1">
-            Get your instant referral code and start collecting $10 commissions.
+            Get your referral code and start tracking your referral links.
           </p>
         </div>
 
@@ -171,7 +171,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, initialR
               <div className="mt-2 p-2.5 rounded-xl bg-plug-accent/10 border border-plug-accent/30 text-plug-accent text-xs flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>
-                  Referred by <strong>{referrerInfo.name}</strong>. $10.00 commission will be credited!
+                  Referred by <strong>{referrerInfo.name}</strong>. Welcome aboard!
                 </span>
               </div>
             )}
