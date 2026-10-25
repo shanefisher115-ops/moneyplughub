@@ -2,10 +2,10 @@
 import { PlannerRealm } from "./src/backend/realms/PlannerRealm.ts";
 import { BuilderRealm } from "./src/backend/realms/BuilderRealm.ts";
 
-async function scaffoldTelemetryDaemon() {
+async function scaffoldTelemetryWidget() {
   const synthesis = { 
-    intent: "Build Autonomous Telemetry Daemon for real-time system health checks and metrics logging", 
-    targetDomain: "TelemetryDaemon" 
+    intent: "Build Telemetry Daemon dashboard widget for live health monitoring and system metrics", 
+    targetDomain: "TelemetryDaemonWidget" 
   };
 
   const architect = new ArchitectRealm();
@@ -17,8 +17,8 @@ async function scaffoldTelemetryDaemon() {
   const builder = new BuilderRealm();
   const result = await builder.executePlan(plan);
 
-  console.log("\n--- TELEMETRY DAEMON SCAFFOLD RESULT ---");
+  console.log("\n--- TELEMETRY WIDGET SCAFFOLD RESULT ---");
   console.dir(result, { depth: null });
 }
 
-scaffoldTelemetryDaemon();
+scaffoldTelemetryWidget();

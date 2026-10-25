@@ -1,4 +1,5 @@
-﻿import { ProspectingEngineWidget } from '../components/ProspectingEngineWidget';
+﻿import { TelemetryDaemonWidget } from '../components/TelemetryDaemonWidget';
+import { ProspectingEngineWidget } from '../components/ProspectingEngineWidget';
 import { PipelineExecutionTab } from '../components/PipelineExecutionTab';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -147,6 +148,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
   const formatUsd = (cents: number = 0) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
+    <div className="my-6"><TelemetryDaemonWidget /></div>
     <div className="my-6"><ProspectingEngineWidget /></div>
     <div className="w-full max-w-[1920px] mx-auto px-4 py-4 space-y-6">
       <PipelineExecutionTab />
@@ -870,6 +872,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
     </div>
   );
 };
+
 
 
 
