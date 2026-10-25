@@ -5,6 +5,13 @@ dotenv.config({ override: true });
 
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
+  cors: {
+    // APP_URL is always allowed so the deployed frontend keeps working without extra config
+    allowedOrigins: Array.from(new Set([
+      ...(process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',').map(o => o.trim()).filter(Boolean),
+      process.env.APP_URL || 'http://localhost:3000',
+    ])),
+  },
   nodeEnv: process.env.NODE_ENV || 'development',
   isProd: process.env.NODE_ENV === 'production',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
@@ -94,10 +101,10 @@ export const config = {
       return parseInt(process.env.AWS_SES_SMTP_PORT || '587', 10);
     },
     get user(): string {
-      return process.env.AWS_SES_SMTP_USER || 'inp-ikzfukep4wgbxjfcpiyxen3a';
+      return process.env.AWS_SES_SMTP_USER || '';
     },
     get pass(): string {
-      return process.env.AWS_SES_SMTP_PASS || 'Demoniac666$';
+      return process.env.AWS_SES_SMTP_PASS || '';
     },
     get from(): string {
       return process.env.AWS_SES_FROM || 'Shane <sovereign-relay@primordialorigin.com>';

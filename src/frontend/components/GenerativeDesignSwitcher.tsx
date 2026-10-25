@@ -210,7 +210,7 @@ export const GenerativeDesignSwitcher: React.FC = () => {
         }}
       >
         <span className="text-sm">🏦</span>
-        <span className="text-slate-400">Living Vault:</span>
+        <span className="text-slate-400">Living Vault (demo):</span>
         <strong className="text-emerald-400 font-extrabold">${netWorthUsd.toLocaleString()}</strong>
         <span className="text-emerald-400 text-xs font-bold transition-transform duration-200">{isOpen ? '▾' : '▴'}</span>
       </button>

@@ -1,0 +1,7 @@
+{
+  "system": "MoneyPlugHub Referral Engine",
+  "version": "1.0.0",
+  "defaultIncentiveModel": "two-sided",
+  "fraudProtection": true,
+  "clvUpliftRange": "16-25%"
+}

@@ -1,0 +1,14 @@
+{
+  "twoSided": {
+    "referrer": {
+      "cashBonus": 10,
+      "feeWaiverDays": 30,
+      "cashbackMultiplier": 1.2
+    },
+    "referee": {
+      "signupBonus": 5,
+      "firstTransactionBoost": 1.5,
+      "feeReductionDays": 30
+    }
+  }
+}

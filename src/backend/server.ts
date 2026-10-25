@@ -84,12 +84,15 @@ AgentSwarmEngine.initSchema();
 // Middlewares
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    return callback(null, true);
+    if (!origin) return callback(null, true); // Allow non-browser clients
+    if (config.cors.allowedOrigins.includes(origin) || config.cors.allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '10mb', verify: (req, res, buf) => { (req as any).rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { db, runInTransaction, recordAuditLog, initializeUserFinancialProfile } from '../db';
 import { config } from '../config';
@@ -26,12 +27,9 @@ const loginSchema = z.object({
 });
 
 function generateReferralCode(): string {
-  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let code = 'PLUG-';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
+  // Using 3 bytes gives 6 hex characters. Very fast and high entropy.
+  // DB UNIQUE constraint handles practically impossible collisions.
+  return 'PLUG-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
 /**
@@ -94,9 +92,6 @@ router.post('/register', (req: Request, res: Response) => {
   }
 
   let newUserCode = generateReferralCode();
-  while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-    newUserCode = generateReferralCode();
-  }
 
   const userId = `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   const salt = bcrypt.genSaltSync(10);
@@ -111,21 +106,33 @@ router.post('/register', (req: Request, res: Response) => {
   try {
     runInTransaction(() => {
       // 1. Insert User with initial starter XP
-      db.prepare(`
-        INSERT INTO users (
-          id, email, password_hash, display_name, role, referral_code, 
-          referrer_user_id, referral_count, xp, level, streak_days, tier_title, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, 'user', ?, ?, 0, 100, 1, 1, 'Novice Plug', ?, ?)
-      `).run(
-        userId,
-        normalizedEmail,
-        passwordHash,
-        display_name.trim(),
-        newUserCode,
-        referrer ? referrer.id : null,
-        now,
-        now
-      );
+      let success = false;
+      while (!success) {
+        try {
+          db.prepare(`
+            INSERT INTO users (
+              id, email, password_hash, display_name, role, referral_code,
+              referrer_user_id, referral_count, xp, level, streak_days, tier_title, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, 'user', ?, ?, 0, 100, 1, 1, 'Novice Plug', ?, ?)
+          `).run(
+            userId,
+            normalizedEmail,
+            passwordHash,
+            display_name.trim(),
+            newUserCode,
+            referrer ? referrer.id : null,
+            now,
+            now
+          );
+          success = true;
+        } catch (error: any) {
+          if (error.message && error.message.includes('UNIQUE constraint failed: users.referral_code')) {
+            newUserCode = generateReferralCode();
+          } else {
+            throw error;
+          }
+        }
+      }
 
       // 2. If valid referrer exists, record referral and create real commission entry + XP bonus for referrer
       if (referrer) {
@@ -360,9 +367,6 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
       }
 
       let newUserCode = generateReferralCode();
-      while (db.prepare('SELECT id FROM users WHERE referral_code = ?').get(newUserCode)) {
-        newUserCode = generateReferralCode();
-      }
 
       const insertUser = db.prepare(`
         INSERT INTO users (
@@ -372,22 +376,34 @@ router.post('/clerk-sync', (req: Request, res: Response) => {
       `);
 
       runInTransaction(() => {
-        insertUser.run(
-          effectiveId,
-          normalizedEmail,
-          'CLERK_MANAGED_AUTH',
-          displayName?.trim() || normalizedEmail.split('@')[0],
-          'user',
-          newUserCode,
-          referrer ? referrer.id : null,
-          0,
-          100, // starter XP
-          1,
-          1,
-          'Novice Plug',
-          now,
-          now
-        );
+        let success = false;
+        while (!success) {
+          try {
+            insertUser.run(
+              effectiveId,
+              normalizedEmail,
+              'CLERK_MANAGED_AUTH',
+              displayName?.trim() || normalizedEmail.split('@')[0],
+              'user',
+              newUserCode,
+              referrer ? referrer.id : null,
+              0,
+              100, // starter XP
+              1,
+              1,
+              'Novice Plug',
+              now,
+              now
+            );
+            success = true;
+          } catch (error: any) {
+            if (error.message && error.message.includes('UNIQUE constraint failed: users.referral_code')) {
+              newUserCode = generateReferralCode();
+            } else {
+              throw error;
+            }
+          }
+        }
 
         initializeUserFinancialProfile(effectiveId, normalizedEmail);
 

@@ -12,10 +12,15 @@ export const LiveCompoundingTicker: React.FC<LiveCompoundingTickerProps> = ({ on
     <div className="w-full bg-slate-950/95 border-b border-slate-800/80 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300 shadow-inner relative z-30">
       {/* Telemetry Pills Row: [ STATUS ] [ METRIC NAME ]: [ VALUE ] */}
       <div className="flex items-center gap-2.5 flex-wrap">
+        {/* Honesty label: these figures are simulated, not real earnings */}
+        <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-300" title="These figures are a simulation, not real earnings">
+          Demo data
+        </span>
+
         {/* Metric 1: Live Stream (Read-Only) */}
         <div className="pill-metric inline-flex items-center gap-2 bg-slate-900/90 border border-emerald-500/30 rounded-full px-3 py-1 shadow-sm">
           <span className="pill-dot live w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
-          <span className="pill-label text-slate-400 font-medium">Live Stream:</span>
+          <span className="pill-label text-slate-400 font-medium">Simulated Stream:</span>
           <span className="pill-value text-emerald-400 font-bold font-mono">
             +${(liveEarnedCents / 100).toFixed(4)}/s
           </span>
@@ -33,7 +38,7 @@ export const LiveCompoundingTicker: React.FC<LiveCompoundingTickerProps> = ({ on
         {/* Metric 3: Run Rate (Read-Only) */}
         <div className="pill-metric inline-flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 rounded-full px-3 py-1">
           <span className="pill-icon text-sky-400 font-bold">📈</span>
-          <span className="pill-label text-slate-400 font-medium">Run Rate:</span>
+          <span className="pill-label text-slate-400 font-medium">Projected Run Rate:</span>
           <span className="pill-value text-white font-bold font-mono">
             ${annualRunRateUsd.toLocaleString()}/yr
           </span>

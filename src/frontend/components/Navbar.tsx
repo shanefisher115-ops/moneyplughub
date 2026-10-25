@@ -438,8 +438,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, onOpe
               </div>
             </>
           ) : (
-            {/* Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) */}
             <div className="flex items-center gap-2">
+              {/* Category C: Primary Action (Solid Accent Pill vs Ghost Border Only) */}
               <button
                 onClick={() => setCurrentTab('login')}
                 className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white rounded-full border border-slate-700 hover:border-slate-500 bg-transparent transition-all cursor-pointer"
