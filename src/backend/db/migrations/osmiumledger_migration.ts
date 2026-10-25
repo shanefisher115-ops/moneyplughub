@@ -1,5 +1,5 @@
 // Auto-generated Migration: OsmiumLedger
-import { db } from "../db.ts";
+import { db } from "../../db.js";
 
 export async function up() {
   console.log("Executing migration for OsmiumLedger...");
@@ -8,3 +8,5 @@ export async function up() {
 export async function down() {
   console.log("Reverting migration for OsmiumLedger...");
 }
+
+

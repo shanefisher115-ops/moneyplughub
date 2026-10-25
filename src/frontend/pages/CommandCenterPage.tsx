@@ -1,3 +1,4 @@
+import { TelemetryRealmWidget } from '../components/TelemetryRealmWidget';
 ﻿import { AnalyticsRealmWidget } from '../components/AnalyticsRealmWidget';
 import { IntegrationRealmWidget } from '../components/IntegrationRealmWidget';
 import { SecurityRealmWidget } from '../components/SecurityRealmWidget';
@@ -159,7 +160,24 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
   const formatUsd = (cents: number = 0) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
-    <div className="my-6"><AnalyticsRealmWidget /></div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+
+        <div className="space-y-6 my-6 grid grid-cols-1 gap-6">
+          <AnalyticsRealmWidget />
+          <IntegrationRealmWidget />
+          <SecurityRealmWidget />
+          <AutomatonRealmWidget />
+          <ShaderRealmWidget />
+          <VoiceRealmWidget />
+          <NeuralRealmWidget />
+          <MonetizationRealmWidget />
+          <OsmiumLedgerWidget />
+          <OrchestratorRealmWidget />
+          <AlertRealmWidget />
+          <TelemetryRealmWidget />
+        </div>
+
+        <div className="my-6"><AnalyticsRealmWidget /></div>
     <div className="my-6"><IntegrationRealmWidget /></div>
     <div className="my-6"><SecurityRealmWidget /></div>
     <div className="my-6"><AutomatonRealmWidget /></div>
@@ -891,6 +909,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
           />
         </div>
       </div>
+    </div>
     </div>
   );
 };

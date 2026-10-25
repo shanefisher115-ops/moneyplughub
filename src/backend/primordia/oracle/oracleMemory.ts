@@ -1,4 +1,4 @@
-import { db } from "../../db";
+﻿import { db } from "../../db";
 
 export interface MemoryRecord {
   node_type: string;
@@ -19,7 +19,7 @@ export class OracleMemory {
         ORDER BY created_at DESC
       `);
 
-      return stmt.all() as MemoryRecord[];
+      return stmt.all() as unknown as MemoryRecord[];
 
     } catch (err) {
 
@@ -32,3 +32,4 @@ export class OracleMemory {
     }
   }
 }
+
