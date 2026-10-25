@@ -45,13 +45,13 @@ export class InsightAgent {
       // Referral Suggestions
       const latestRefSug = db.prepare(`
         SELECT * FROM referral_suggestions WHERE user_id = ? ORDER BY created_at DESC LIMIT 1
-      `).get(userId) as { program?: string; suggested_action?: string } | undefined;
+      `).get(userId) as { program: string; suggested_action: string } | undefined;
 
       // Automation Runs Today
       const runsToday = db.prepare(`
         SELECT * FROM automation_runs 
         WHERE user_id = ? AND started_at LIKE ?
-      `).all(userId, `${dateStr}%`) as Array<{ status?: string }>;
+      `).all(userId, `${dateStr}%`) as Array<{ status: string }>;
 
       const successfulRuns = runsToday.filter(r => r.status === 'success').length;
       const failedRuns = runsToday.filter(r => r.status === 'failure').length;
@@ -135,10 +135,10 @@ export class InsightAgent {
         message: `InsightAgent successfully synthesized daily financial insights for ${dateStr}.`,
       };
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'InsightAgent failed to generate insight.';
+      const errorMsg = err instanceof Error ? err.message : 'InsightAgent failed to generate insight.';
       console.error('InsightAgent error:', err);
       this.recordEvent(userId, 'insight.failed', {
-        error: errMsg,
+        error: errorMsg,
         trigger,
         timestamp,
       });
@@ -147,7 +147,7 @@ export class InsightAgent {
         success: false,
         insight: null,
         event: 'insight.failed',
-        message: errMsg,
+        message: errorMsg,
       };
     }
   }

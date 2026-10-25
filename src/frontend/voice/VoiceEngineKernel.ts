@@ -28,7 +28,7 @@ export class VoiceEngineKernel {
   private currentGeneration: number = 0;
   private currentAudio: HTMLAudioElement | null = null;
   private activeAbortController: AbortController | null = null;
-  private speechRecognition: { start: () => void; stop: () => void; continuous: boolean; interimResults: boolean; lang: string; onresult: (event: any) => void; onerror: () => void; onend: () => void } | null = null;
+  private speechRecognition: unknown = null;
 
   // WebSocket duplex stream support
   private ws: WebSocket | null = null;
@@ -204,7 +204,8 @@ export class VoiceEngineKernel {
   }
 
   private handleServerWsFrame(frame: Record<string, unknown>): void {
-    switch (frame.type) {
+    const frameType = typeof frame.type === 'string' ? frame.type : '';
+    switch (frameType) {
       case 'transcript':
         if (typeof frame.text === 'string' && this.onTranscriptCb) {
           this.onTranscriptCb(frame.text, Boolean(frame.isFinal));
@@ -290,23 +291,32 @@ export class VoiceEngineKernel {
   private initWebSpeech(): void {
     if (typeof window === 'undefined') return;
     const win = window as unknown as Record<string, unknown>;
-    const SpeechRecognition = (win.SpeechRecognition || win.webkitSpeechRecognition) as { new (): any } | undefined;
-    if (SpeechRecognition) {
-      this.speechRecognition = new SpeechRecognition();
-      if (this.speechRecognition) {
-        this.speechRecognition.continuous = false;
-        this.speechRecognition.interimResults = true;
-        this.speechRecognition.lang = 'en-US';
+    const SpeechRecognitionConstructor = (win.SpeechRecognition || win.webkitSpeechRecognition) as { new (): {
+      continuous: boolean;
+      interimResults: boolean;
+      lang: string;
+      onresult: ((event: { resultIndex: number; results: Array<Array<{ transcript: string }> & { isFinal?: boolean }> }) => void) | null;
+      onerror: (() => void) | null;
+      onend: (() => void) | null;
+      start: () => void;
+      stop: () => void;
+    } } | undefined;
 
-        this.speechRecognition.onresult = (event: { resultIndex: number; results: Array<{ isFinal: boolean; 0: { transcript: string } }> }) => {
-          let interim = '';
-          let final = '';
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              final += event.results[i][0].transcript;
-            } else {
-              interim += event.results[i][0].transcript;
-            }
+    if (SpeechRecognitionConstructor) {
+      const recog = new SpeechRecognitionConstructor();
+      this.speechRecognition = recog;
+      recog.continuous = false;
+      recog.interimResults = true;
+      recog.lang = 'en-US';
+
+      recog.onresult = (event) => {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
           }
           const text = final || interim;
           if (text && this.onTranscriptCb) {
@@ -315,15 +325,13 @@ export class VoiceEngineKernel {
         };
       }
 
-      if (this.speechRecognition) {
-        this.speechRecognition.onerror = () => {
-          if (this.state === 'listening') this.setState('idle');
-        };
+      recog.onerror = () => {
+        if (this.state === 'listening') this.setState('idle');
+      };
 
-        this.speechRecognition.onend = () => {
-          if (this.state === 'listening') this.setState('idle');
-        };
-      }
+      recog.onend = () => {
+        if (this.state === 'listening') this.setState('idle');
+      };
     }
   }
 
@@ -333,7 +341,7 @@ export class VoiceEngineKernel {
 
     if (this.speechRecognition) {
       try {
-        this.speechRecognition.start?.();
+        (this.speechRecognition as { start: () => void }).start();
       } catch {}
     }
   }
@@ -341,7 +349,7 @@ export class VoiceEngineKernel {
   public stopListening(): void {
     if (this.speechRecognition) {
       try {
-        this.speechRecognition.stop?.();
+        (this.speechRecognition as { stop: () => void }).stop();
       } catch {}
     }
     if (this.state === 'listening') {

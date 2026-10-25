@@ -39,11 +39,12 @@ export function verifyDiskIntegrity(): { ok: boolean; sizeBytes: number; message
       message: ok ? 'Physical SQLite disk file verified healthy (ACID WAL mode).' : `Integrity notice: ${JSON.stringify(check)}`,
       dbPath: config.dbPath
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
     return {
       ok: false,
       sizeBytes: 0,
-      message: `Integrity check failed: ${err.message}`,
+      message: `Integrity check failed: ${msg}`,
       dbPath: config.dbPath
     };
   }
@@ -1105,7 +1106,7 @@ export function seedClosedEconomy(): void {
 
   // 3. Initial Active Marketplace Listings
   try {
-    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as { c?: number } | undefined)?.c || 0;
+    const listCount = (db.prepare("SELECT COUNT(*) as c FROM marketplace_listings WHERE status = 'active'").get() as { c: number } | undefined)?.c || 0;
     if (listCount < 6) {
       const insertListing = db.prepare(`
         INSERT OR IGNORE INTO marketplace_listings (id, seller_id, seller_name, item_id, item_name, item_type, rarity, price_core_units, status, buyer_id, created_at, sold_at)
@@ -1725,7 +1726,7 @@ export function recordAuditLog(
   action: string,
   targetEntity: string,
   targetId: string | null,
-  details: Record<string, any> | null
+  details: Record<string, unknown> | null
 ): void {
   const stmt = db.prepare(`
     INSERT INTO audit_logs (id, actor_user_id, action, target_entity, target_id, details, created_at)

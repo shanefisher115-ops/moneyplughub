@@ -26,7 +26,7 @@ export interface User {
   lifetime_earnings?: number;
   total_referrals?: number;
   active_referrals?: number;
-  created_at: string;
+  created_at?: string;
   updated_at?: string;
 }
 

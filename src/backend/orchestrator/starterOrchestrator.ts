@@ -100,9 +100,9 @@ export class StarterOrchestrator {
         }
 
         case 'referral_suggest': {
-          const res = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', typeof payload?.preferredSlug === 'string' ? payload.preferredSlug : undefined);
-          if (!res.success) throw new Error(res.message);
-          resultData = res;
+          const preferredSlug = typeof payload?.preferredSlug === 'string' ? payload.preferredSlug : undefined;
+          resultData = await ReferralAgent.runDailySuggestion(userId, 'manual: user_command', preferredSlug);
+          if (!(resultData as { success: boolean; message: string }).success) throw new Error((resultData as { message: string }).message);
           break;
         }
 
