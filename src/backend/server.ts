@@ -65,6 +65,8 @@ import { AgentSwarmEngine } from './agents/agentSwarmEngine';
 import prospectingEngineRoutes from './routes/prospectingengineRoutes';
 
 const app = express();
+import telemetryDaemonRoutes from './routes/telemetrydaemonRoutes';
+app.use('/api/telemetry-daemon', telemetryDaemonRoutes);
 app.use('/api/prospecting-engine', prospectingEngineRoutes);
 
 // High-speed compression (gzip / brotli) for all responses
@@ -268,5 +270,6 @@ export default app;
 import pipelineRouter from "./routes/pipelineRoutes";
 // Auto-mounted by Primordia pipeline connector
 app.use("/api/pipeline", pipelineRouter);
+
 
 
