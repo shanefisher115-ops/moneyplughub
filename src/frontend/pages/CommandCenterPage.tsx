@@ -1,4 +1,5 @@
-﻿import { VoiceRealmWidget } from '../components/VoiceRealmWidget';
+﻿import { ShaderRealmWidget } from '../components/ShaderRealmWidget';
+import { VoiceRealmWidget } from '../components/VoiceRealmWidget';
 import { NeuralRealmWidget } from '../components/NeuralRealmWidget';
 import { MonetizationRealmWidget } from '../components/MonetizationRealmWidget';
 import { OsmiumLedgerWidget } from '../components/OsmiumLedgerWidget';
@@ -154,6 +155,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
   const formatUsd = (cents: number = 0) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return (
+    <div className="my-6"><ShaderRealmWidget /></div>
     <div className="my-6"><VoiceRealmWidget /></div>
     <div className="my-6"><NeuralRealmWidget /></div>
     <div className="my-6"><MonetizationRealmWidget /></div>
@@ -884,6 +886,7 @@ export const CommandCenterPage: React.FC<{ onNavigate?: (tab: string) => void }>
     </div>
   );
 };
+
 
 
 
