@@ -1,0 +1,1 @@
+module.exports = { getApexSigil: () => 'SIGIL-GOTHIC-VALLEY-V2' };

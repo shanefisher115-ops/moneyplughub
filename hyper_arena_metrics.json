@@ -1,702 +1,422 @@
 [
   {
     "generation": 1,
-    "apex_index": 1.18,
-    "architect_potency": 1.18,
-    "sentinel_potency": 1.03,
-    "mutator_potency": 0.8
+    "apex_index": 28.54,
+    "architect_potency": 22.63,
+    "sentinel_potency": 28.54,
+    "mutator_potency": 25.8
   },
   {
     "generation": 2,
-    "apex_index": 1.16,
-    "architect_potency": 1.09,
-    "sentinel_potency": 1.16,
-    "mutator_potency": 0.91
+    "apex_index": 28.58,
+    "architect_potency": 22.91,
+    "sentinel_potency": 28.58,
+    "mutator_potency": 25.42
   },
   {
     "generation": 3,
-    "apex_index": 1.44,
-    "architect_potency": 1.44,
-    "sentinel_potency": 1.28,
-    "mutator_potency": 1.02
+    "apex_index": 28.68,
+    "architect_potency": 23.31,
+    "sentinel_potency": 28.68,
+    "mutator_potency": 25.7
   },
   {
     "generation": 4,
-    "apex_index": 1.61,
-    "architect_potency": 1.61,
-    "sentinel_potency": 1.49,
-    "mutator_potency": 1.05
+    "apex_index": 28.72,
+    "architect_potency": 23.44,
+    "sentinel_potency": 28.72,
+    "mutator_potency": 25.75
   },
   {
     "generation": 5,
-    "apex_index": 1.76,
-    "architect_potency": 1.76,
-    "sentinel_potency": 1.4,
-    "mutator_potency": 1.04
+    "apex_index": 28.97,
+    "architect_potency": 23.41,
+    "sentinel_potency": 28.97,
+    "mutator_potency": 25.89
   },
   {
     "generation": 6,
-    "apex_index": 1.97,
-    "architect_potency": 1.97,
-    "sentinel_potency": 1.49,
-    "mutator_potency": 0.97
+    "apex_index": 28.94,
+    "architect_potency": 23.61,
+    "sentinel_potency": 28.94,
+    "mutator_potency": 25.88
   },
   {
     "generation": 7,
-    "apex_index": 1.9,
-    "architect_potency": 1.9,
-    "sentinel_potency": 1.55,
-    "mutator_potency": 0.81
+    "apex_index": 29.18,
+    "architect_potency": 23.7,
+    "sentinel_potency": 29.18,
+    "mutator_potency": 26.03
   },
   {
     "generation": 8,
-    "apex_index": 1.85,
-    "architect_potency": 1.85,
-    "sentinel_potency": 1.41,
-    "mutator_potency": 0.77
+    "apex_index": 29.42,
+    "architect_potency": 24.02,
+    "sentinel_potency": 29.42,
+    "mutator_potency": 26.09
   },
   {
     "generation": 9,
-    "apex_index": 1.82,
-    "architect_potency": 1.82,
-    "sentinel_potency": 1.62,
-    "mutator_potency": 0.74
+    "apex_index": 30.15,
+    "architect_potency": 23.89,
+    "sentinel_potency": 30.15,
+    "mutator_potency": 26.26
   },
   {
     "generation": 10,
-    "apex_index": 2.0,
-    "architect_potency": 2.0,
-    "sentinel_potency": 1.99,
-    "mutator_potency": 0.88
+    "apex_index": 30.27,
+    "architect_potency": 24.29,
+    "sentinel_potency": 30.27,
+    "mutator_potency": 26.48
   },
   {
     "generation": 11,
-    "apex_index": 2.62,
-    "architect_potency": 2.12,
-    "sentinel_potency": 2.62,
-    "mutator_potency": 1.18
+    "apex_index": 30.08,
+    "architect_potency": 24.52,
+    "sentinel_potency": 30.08,
+    "mutator_potency": 26.44
   },
   {
     "generation": 12,
-    "apex_index": 3.19,
-    "architect_potency": 2.04,
-    "sentinel_potency": 3.19,
-    "mutator_potency": 1.12
+    "apex_index": 30.36,
+    "architect_potency": 24.67,
+    "sentinel_potency": 30.36,
+    "mutator_potency": 26.99
   },
   {
     "generation": 13,
-    "apex_index": 3.48,
-    "architect_potency": 2.31,
-    "sentinel_potency": 3.48,
-    "mutator_potency": 1.29
+    "apex_index": 30.72,
+    "architect_potency": 24.63,
+    "sentinel_potency": 30.72,
+    "mutator_potency": 27.12
   },
   {
     "generation": 14,
-    "apex_index": 3.85,
-    "architect_potency": 2.47,
-    "sentinel_potency": 3.85,
-    "mutator_potency": 1.22
+    "apex_index": 30.85,
+    "architect_potency": 24.44,
+    "sentinel_potency": 30.85,
+    "mutator_potency": 27.02
   },
   {
     "generation": 15,
-    "apex_index": 3.91,
-    "architect_potency": 2.68,
-    "sentinel_potency": 3.91,
-    "mutator_potency": 1.75
+    "apex_index": 30.76,
+    "architect_potency": 24.46,
+    "sentinel_potency": 30.76,
+    "mutator_potency": 27.56
   },
   {
     "generation": 16,
-    "apex_index": 4.25,
-    "architect_potency": 2.9,
-    "sentinel_potency": 4.25,
-    "mutator_potency": 1.97
+    "apex_index": 30.73,
+    "architect_potency": 24.53,
+    "sentinel_potency": 30.73,
+    "mutator_potency": 27.61
   },
   {
     "generation": 17,
-    "apex_index": 4.54,
-    "architect_potency": 3.15,
-    "sentinel_potency": 4.54,
-    "mutator_potency": 1.98
+    "apex_index": 31.0,
+    "architect_potency": 24.51,
+    "sentinel_potency": 31.0,
+    "mutator_potency": 27.12
   },
   {
     "generation": 18,
-    "apex_index": 4.51,
-    "architect_potency": 3.42,
-    "sentinel_potency": 4.51,
-    "mutator_potency": 2.22
+    "apex_index": 31.51,
+    "architect_potency": 24.53,
+    "sentinel_potency": 31.51,
+    "mutator_potency": 27.74
   },
   {
     "generation": 19,
-    "apex_index": 4.57,
-    "architect_potency": 3.27,
-    "sentinel_potency": 4.57,
-    "mutator_potency": 2.45
+    "apex_index": 31.45,
+    "architect_potency": 24.75,
+    "sentinel_potency": 31.45,
+    "mutator_potency": 27.67
   },
   {
     "generation": 20,
-    "apex_index": 4.96,
-    "architect_potency": 3.54,
-    "sentinel_potency": 4.96,
-    "mutator_potency": 2.61
+    "apex_index": 31.82,
+    "architect_potency": 24.89,
+    "sentinel_potency": 31.82,
+    "mutator_potency": 27.69
   },
   {
     "generation": 21,
-    "apex_index": 5.05,
-    "architect_potency": 3.67,
-    "sentinel_potency": 5.05,
-    "mutator_potency": 2.81
+    "apex_index": 31.63,
+    "architect_potency": 25.24,
+    "sentinel_potency": 31.63,
+    "mutator_potency": 27.41
   },
   {
     "generation": 22,
-    "apex_index": 5.23,
-    "architect_potency": 3.69,
-    "sentinel_potency": 5.23,
-    "mutator_potency": 2.88
+    "apex_index": 31.76,
+    "architect_potency": 25.45,
+    "sentinel_potency": 31.76,
+    "mutator_potency": 27.29
   },
   {
     "generation": 23,
-    "apex_index": 5.25,
-    "architect_potency": 3.94,
-    "sentinel_potency": 5.25,
-    "mutator_potency": 2.75
+    "apex_index": 31.81,
+    "architect_potency": 25.56,
+    "sentinel_potency": 31.81,
+    "mutator_potency": 27.71
   },
   {
     "generation": 24,
-    "apex_index": 5.28,
-    "architect_potency": 4.18,
-    "sentinel_potency": 5.28,
-    "mutator_potency": 2.83
+    "apex_index": 31.98,
+    "architect_potency": 25.61,
+    "sentinel_potency": 31.98,
+    "mutator_potency": 27.95
   },
   {
     "generation": 25,
-    "apex_index": 5.66,
-    "architect_potency": 4.27,
-    "sentinel_potency": 5.66,
-    "mutator_potency": 2.9
+    "apex_index": 32.6,
+    "architect_potency": 25.73,
+    "sentinel_potency": 32.6,
+    "mutator_potency": 27.85
   },
   {
     "generation": 26,
-    "apex_index": 6.21,
-    "architect_potency": 4.26,
-    "sentinel_potency": 6.21,
-    "mutator_potency": 2.98
+    "apex_index": 32.61,
+    "architect_potency": 25.85,
+    "sentinel_potency": 32.61,
+    "mutator_potency": 28.1
   },
   {
     "generation": 27,
-    "apex_index": 5.96,
-    "architect_potency": 4.76,
-    "sentinel_potency": 5.96,
-    "mutator_potency": 3.2
+    "apex_index": 32.76,
+    "architect_potency": 26.03,
+    "sentinel_potency": 32.76,
+    "mutator_potency": 27.85
   },
   {
     "generation": 28,
-    "apex_index": 6.29,
-    "architect_potency": 5.02,
-    "sentinel_potency": 6.29,
-    "mutator_potency": 3.38
+    "apex_index": 32.6,
+    "architect_potency": 26.25,
+    "sentinel_potency": 32.6,
+    "mutator_potency": 28.0
   },
   {
     "generation": 29,
-    "apex_index": 6.7,
-    "architect_potency": 5.17,
-    "sentinel_potency": 6.7,
-    "mutator_potency": 3.53
+    "apex_index": 32.85,
+    "architect_potency": 26.63,
+    "sentinel_potency": 32.85,
+    "mutator_potency": 28.25
   },
   {
     "generation": 30,
-    "apex_index": 7.43,
-    "architect_potency": 5.11,
-    "sentinel_potency": 7.43,
-    "mutator_potency": 3.38
+    "apex_index": 33.38,
+    "architect_potency": 26.82,
+    "sentinel_potency": 33.38,
+    "mutator_potency": 28.6
   },
   {
     "generation": 31,
-    "apex_index": 7.85,
-    "architect_potency": 5.48,
-    "sentinel_potency": 7.85,
-    "mutator_potency": 3.37
+    "apex_index": 33.95,
+    "architect_potency": 26.84,
+    "sentinel_potency": 33.95,
+    "mutator_potency": 28.58
   },
   {
     "generation": 32,
-    "apex_index": 8.35,
-    "architect_potency": 5.57,
-    "sentinel_potency": 8.35,
-    "mutator_potency": 3.64
+    "apex_index": 34.34,
+    "architect_potency": 27.01,
+    "sentinel_potency": 34.34,
+    "mutator_potency": 28.53
   },
   {
     "generation": 33,
-    "apex_index": 8.92,
-    "architect_potency": 6.09,
-    "sentinel_potency": 8.92,
-    "mutator_potency": 3.65
+    "apex_index": 34.44,
+    "architect_potency": 27.08,
+    "sentinel_potency": 34.44,
+    "mutator_potency": 28.58
   },
   {
     "generation": 34,
-    "apex_index": 9.29,
-    "architect_potency": 6.17,
-    "sentinel_potency": 9.29,
-    "mutator_potency": 3.75
+    "apex_index": 34.55,
+    "architect_potency": 27.22,
+    "sentinel_potency": 34.55,
+    "mutator_potency": 28.67
   },
   {
     "generation": 35,
-    "apex_index": 9.39,
-    "architect_potency": 6.34,
-    "sentinel_potency": 9.39,
-    "mutator_potency": 3.97
+    "apex_index": 34.38,
+    "architect_potency": 27.34,
+    "sentinel_potency": 34.38,
+    "mutator_potency": 28.75
   },
   {
     "generation": 36,
-    "apex_index": 10.16,
-    "architect_potency": 6.49,
-    "sentinel_potency": 10.16,
-    "mutator_potency": 4.1
+    "apex_index": 34.61,
+    "architect_potency": 27.32,
+    "sentinel_potency": 34.61,
+    "mutator_potency": 28.88
   },
   {
     "generation": 37,
-    "apex_index": 10.9,
-    "architect_potency": 7.02,
-    "sentinel_potency": 10.9,
-    "mutator_potency": 4.13
+    "apex_index": 34.38,
+    "architect_potency": 27.33,
+    "sentinel_potency": 34.38,
+    "mutator_potency": 28.99
   },
   {
     "generation": 38,
-    "apex_index": 11.3,
-    "architect_potency": 7.21,
-    "sentinel_potency": 11.3,
-    "mutator_potency": 4.43
+    "apex_index": 34.59,
+    "architect_potency": 27.31,
+    "sentinel_potency": 34.59,
+    "mutator_potency": 29.34
   },
   {
     "generation": 39,
-    "apex_index": 11.13,
-    "architect_potency": 7.44,
-    "sentinel_potency": 11.13,
-    "mutator_potency": 4.43
+    "apex_index": 34.62,
+    "architect_potency": 27.45,
+    "sentinel_potency": 34.62,
+    "mutator_potency": 29.47
   },
   {
     "generation": 40,
-    "apex_index": 10.81,
-    "architect_potency": 7.54,
-    "sentinel_potency": 10.81,
-    "mutator_potency": 4.58
+    "apex_index": 34.52,
+    "architect_potency": 27.62,
+    "sentinel_potency": 34.52,
+    "mutator_potency": 29.59
   },
   {
     "generation": 41,
-    "apex_index": 11.27,
-    "architect_potency": 7.94,
-    "sentinel_potency": 11.27,
-    "mutator_potency": 4.37
+    "apex_index": 34.54,
+    "architect_potency": 27.55,
+    "sentinel_potency": 34.54,
+    "mutator_potency": 29.43
   },
   {
     "generation": 42,
-    "apex_index": 11.69,
-    "architect_potency": 7.94,
-    "sentinel_potency": 11.69,
-    "mutator_potency": 4.19
+    "apex_index": 34.46,
+    "architect_potency": 27.62,
+    "sentinel_potency": 34.46,
+    "mutator_potency": 29.34
   },
   {
     "generation": 43,
-    "apex_index": 11.66,
-    "architect_potency": 7.93,
-    "sentinel_potency": 11.66,
-    "mutator_potency": 4.33
+    "apex_index": 34.83,
+    "architect_potency": 28.11,
+    "sentinel_potency": 34.83,
+    "mutator_potency": 29.47
   },
   {
     "generation": 44,
-    "apex_index": 11.44,
-    "architect_potency": 8.18,
-    "sentinel_potency": 11.44,
-    "mutator_potency": 4.52
+    "apex_index": 35.23,
+    "architect_potency": 27.85,
+    "sentinel_potency": 35.23,
+    "mutator_potency": 29.35
   },
   {
     "generation": 45,
-    "apex_index": 11.67,
-    "architect_potency": 8.16,
-    "sentinel_potency": 11.67,
-    "mutator_potency": 4.75
+    "apex_index": 34.94,
+    "architect_potency": 28.03,
+    "sentinel_potency": 34.94,
+    "mutator_potency": 29.92
   },
   {
     "generation": 46,
-    "apex_index": 11.79,
-    "architect_potency": 8.37,
-    "sentinel_potency": 11.79,
-    "mutator_potency": 5.04
+    "apex_index": 34.79,
+    "architect_potency": 28.07,
+    "sentinel_potency": 34.79,
+    "mutator_potency": 30.08
   },
   {
     "generation": 47,
-    "apex_index": 11.35,
-    "architect_potency": 8.22,
-    "sentinel_potency": 11.35,
-    "mutator_potency": 4.76
+    "apex_index": 34.99,
+    "architect_potency": 28.14,
+    "sentinel_potency": 34.99,
+    "mutator_potency": 30.32
   },
   {
     "generation": 48,
-    "apex_index": 11.41,
-    "architect_potency": 8.59,
-    "sentinel_potency": 11.41,
-    "mutator_potency": 4.78
+    "apex_index": 35.16,
+    "architect_potency": 28.3,
+    "sentinel_potency": 35.16,
+    "mutator_potency": 29.91
   },
   {
     "generation": 49,
-    "apex_index": 11.3,
-    "architect_potency": 9.01,
-    "sentinel_potency": 11.3,
-    "mutator_potency": 4.5
+    "apex_index": 35.26,
+    "architect_potency": 28.39,
+    "sentinel_potency": 35.26,
+    "mutator_potency": 29.71
   },
   {
     "generation": 50,
-    "apex_index": 11.34,
-    "architect_potency": 8.74,
-    "sentinel_potency": 11.34,
-    "mutator_potency": 4.46
+    "apex_index": 35.17,
+    "architect_potency": 28.38,
+    "sentinel_potency": 35.17,
+    "mutator_potency": 29.91
   },
   {
     "generation": 51,
-    "apex_index": 11.39,
-    "architect_potency": 9.23,
-    "sentinel_potency": 11.39,
-    "mutator_potency": 4.67
+    "apex_index": 35.14,
+    "architect_potency": 28.3,
+    "sentinel_potency": 35.14,
+    "mutator_potency": 30.92
   },
   {
     "generation": 52,
-    "apex_index": 11.53,
-    "architect_potency": 9.39,
-    "sentinel_potency": 11.53,
-    "mutator_potency": 4.63
+    "apex_index": 35.6,
+    "architect_potency": 28.31,
+    "sentinel_potency": 35.6,
+    "mutator_potency": 31.11
   },
   {
     "generation": 53,
-    "apex_index": 11.33,
-    "architect_potency": 9.18,
-    "sentinel_potency": 11.33,
-    "mutator_potency": 4.62
+    "apex_index": 35.61,
+    "architect_potency": 28.64,
+    "sentinel_potency": 35.61,
+    "mutator_potency": 29.97
   },
   {
     "generation": 54,
-    "apex_index": 11.47,
-    "architect_potency": 9.14,
-    "sentinel_potency": 11.47,
-    "mutator_potency": 4.66
+    "apex_index": 35.58,
+    "architect_potency": 28.82,
+    "sentinel_potency": 35.58,
+    "mutator_potency": 30.81
   },
   {
     "generation": 55,
-    "apex_index": 11.56,
-    "architect_potency": 9.12,
-    "sentinel_potency": 11.56,
-    "mutator_potency": 4.81
+    "apex_index": 36.03,
+    "architect_potency": 29.11,
+    "sentinel_potency": 36.03,
+    "mutator_potency": 31.07
   },
   {
     "generation": 56,
-    "apex_index": 11.66,
-    "architect_potency": 9.31,
-    "sentinel_potency": 11.66,
-    "mutator_potency": 4.93
+    "apex_index": 36.76,
+    "architect_potency": 29.44,
+    "sentinel_potency": 36.76,
+    "mutator_potency": 31.2
   },
   {
     "generation": 57,
-    "apex_index": 11.84,
-    "architect_potency": 9.52,
-    "sentinel_potency": 11.84,
-    "mutator_potency": 4.88
+    "apex_index": 37.04,
+    "architect_potency": 29.62,
+    "sentinel_potency": 37.04,
+    "mutator_potency": 30.71
   },
   {
     "generation": 58,
-    "apex_index": 11.9,
-    "architect_potency": 9.16,
-    "sentinel_potency": 11.9,
-    "mutator_potency": 5.06
+    "apex_index": 37.15,
+    "architect_potency": 30.05,
+    "sentinel_potency": 37.15,
+    "mutator_potency": 30.48
   },
   {
     "generation": 59,
-    "apex_index": 12.02,
-    "architect_potency": 9.13,
-    "sentinel_potency": 12.02,
-    "mutator_potency": 5.32
+    "apex_index": 37.19,
+    "architect_potency": 29.86,
+    "sentinel_potency": 37.19,
+    "mutator_potency": 30.4
   },
   {
     "generation": 60,
-    "apex_index": 12.2,
-    "architect_potency": 9.19,
-    "sentinel_potency": 12.2,
-    "mutator_potency": 5.01
-  },
-  {
-    "generation": 61,
-    "apex_index": 12.4,
-    "architect_potency": 8.78,
-    "sentinel_potency": 12.4,
-    "mutator_potency": 4.97
-  },
-  {
-    "generation": 62,
-    "apex_index": 12.32,
-    "architect_potency": 8.75,
-    "sentinel_potency": 12.32,
-    "mutator_potency": 5.05
-  },
-  {
-    "generation": 63,
-    "apex_index": 12.38,
-    "architect_potency": 8.88,
-    "sentinel_potency": 12.38,
-    "mutator_potency": 4.9
-  },
-  {
-    "generation": 64,
-    "apex_index": 12.47,
-    "architect_potency": 9.46,
-    "sentinel_potency": 12.47,
-    "mutator_potency": 4.86
-  },
-  {
-    "generation": 65,
-    "apex_index": 12.47,
-    "architect_potency": 9.14,
-    "sentinel_potency": 12.47,
-    "mutator_potency": 4.9
-  },
-  {
-    "generation": 66,
-    "apex_index": 12.64,
-    "architect_potency": 9.22,
-    "sentinel_potency": 12.64,
-    "mutator_potency": 4.93
-  },
-  {
-    "generation": 67,
-    "apex_index": 12.67,
-    "architect_potency": 9.25,
-    "sentinel_potency": 12.67,
-    "mutator_potency": 4.95
-  },
-  {
-    "generation": 68,
-    "apex_index": 12.92,
-    "architect_potency": 9.1,
-    "sentinel_potency": 12.92,
-    "mutator_potency": 5.42
-  },
-  {
-    "generation": 69,
-    "apex_index": 12.77,
-    "architect_potency": 9.2,
-    "sentinel_potency": 12.77,
-    "mutator_potency": 5.4
-  },
-  {
-    "generation": 70,
-    "apex_index": 12.85,
-    "architect_potency": 8.9,
-    "sentinel_potency": 12.85,
-    "mutator_potency": 5.77
-  },
-  {
-    "generation": 71,
-    "apex_index": 13.1,
-    "architect_potency": 8.67,
-    "sentinel_potency": 13.1,
-    "mutator_potency": 5.76
-  },
-  {
-    "generation": 72,
-    "apex_index": 13.24,
-    "architect_potency": 8.79,
-    "sentinel_potency": 13.24,
-    "mutator_potency": 5.69
-  },
-  {
-    "generation": 73,
-    "apex_index": 13.35,
-    "architect_potency": 8.72,
-    "sentinel_potency": 13.35,
-    "mutator_potency": 5.79
-  },
-  {
-    "generation": 74,
-    "apex_index": 13.69,
-    "architect_potency": 8.75,
-    "sentinel_potency": 13.69,
-    "mutator_potency": 5.9
-  },
-  {
-    "generation": 75,
-    "apex_index": 14.21,
-    "architect_potency": 8.78,
-    "sentinel_potency": 14.21,
-    "mutator_potency": 5.85
-  },
-  {
-    "generation": 76,
-    "apex_index": 14.46,
-    "architect_potency": 8.78,
-    "sentinel_potency": 14.46,
-    "mutator_potency": 5.94
-  },
-  {
-    "generation": 77,
-    "apex_index": 14.66,
-    "architect_potency": 8.84,
-    "sentinel_potency": 14.66,
-    "mutator_potency": 6.38
-  },
-  {
-    "generation": 78,
-    "apex_index": 14.68,
-    "architect_potency": 9.14,
-    "sentinel_potency": 14.68,
-    "mutator_potency": 6.21
-  },
-  {
-    "generation": 79,
-    "apex_index": 15.41,
-    "architect_potency": 9.03,
-    "sentinel_potency": 15.41,
-    "mutator_potency": 6.2
-  },
-  {
-    "generation": 80,
-    "apex_index": 15.92,
-    "architect_potency": 9.16,
-    "sentinel_potency": 15.92,
-    "mutator_potency": 6.35
-  },
-  {
-    "generation": 81,
-    "apex_index": 16.41,
-    "architect_potency": 9.17,
-    "sentinel_potency": 16.41,
-    "mutator_potency": 6.72
-  },
-  {
-    "generation": 82,
-    "apex_index": 16.83,
-    "architect_potency": 9.43,
-    "sentinel_potency": 16.83,
-    "mutator_potency": 7.22
-  },
-  {
-    "generation": 83,
-    "apex_index": 17.23,
-    "architect_potency": 9.73,
-    "sentinel_potency": 17.23,
-    "mutator_potency": 7.73
-  },
-  {
-    "generation": 84,
-    "apex_index": 17.49,
-    "architect_potency": 9.92,
-    "sentinel_potency": 17.49,
-    "mutator_potency": 8.61
-  },
-  {
-    "generation": 85,
-    "apex_index": 17.63,
-    "architect_potency": 9.84,
-    "sentinel_potency": 17.63,
-    "mutator_potency": 8.81
-  },
-  {
-    "generation": 86,
-    "apex_index": 17.81,
-    "architect_potency": 9.79,
-    "sentinel_potency": 17.81,
-    "mutator_potency": 9.16
-  },
-  {
-    "generation": 87,
-    "apex_index": 18.15,
-    "architect_potency": 10.17,
-    "sentinel_potency": 18.15,
-    "mutator_potency": 9.08
-  },
-  {
-    "generation": 88,
-    "apex_index": 18.45,
-    "architect_potency": 10.39,
-    "sentinel_potency": 18.45,
-    "mutator_potency": 9.26
-  },
-  {
-    "generation": 89,
-    "apex_index": 18.74,
-    "architect_potency": 10.76,
-    "sentinel_potency": 18.74,
-    "mutator_potency": 9.31
-  },
-  {
-    "generation": 90,
-    "apex_index": 19.36,
-    "architect_potency": 10.93,
-    "sentinel_potency": 19.36,
-    "mutator_potency": 9.56
-  },
-  {
-    "generation": 91,
-    "apex_index": 19.73,
-    "architect_potency": 11.43,
-    "sentinel_potency": 19.73,
-    "mutator_potency": 9.63
-  },
-  {
-    "generation": 92,
-    "apex_index": 19.98,
-    "architect_potency": 11.65,
-    "sentinel_potency": 19.98,
-    "mutator_potency": 9.76
-  },
-  {
-    "generation": 93,
-    "apex_index": 20.17,
-    "architect_potency": 11.79,
-    "sentinel_potency": 20.17,
-    "mutator_potency": 10.0
-  },
-  {
-    "generation": 94,
-    "apex_index": 19.97,
-    "architect_potency": 11.78,
-    "sentinel_potency": 19.97,
-    "mutator_potency": 9.89
-  },
-  {
-    "generation": 95,
-    "apex_index": 20.3,
-    "architect_potency": 11.86,
-    "sentinel_potency": 20.3,
-    "mutator_potency": 9.64
-  },
-  {
-    "generation": 96,
-    "apex_index": 20.5,
-    "architect_potency": 12.06,
-    "sentinel_potency": 20.5,
-    "mutator_potency": 9.96
-  },
-  {
-    "generation": 97,
-    "apex_index": 20.56,
-    "architect_potency": 11.75,
-    "sentinel_potency": 20.56,
-    "mutator_potency": 9.82
-  },
-  {
-    "generation": 98,
-    "apex_index": 20.52,
-    "architect_potency": 12.17,
-    "sentinel_potency": 20.52,
-    "mutator_potency": 10.12
-  },
-  {
-    "generation": 99,
-    "apex_index": 20.62,
-    "architect_potency": 12.18,
-    "sentinel_potency": 20.62,
-    "mutator_potency": 10.31
-  },
-  {
-    "generation": 100,
-    "apex_index": 20.62,
-    "architect_potency": 12.54,
-    "sentinel_potency": 20.62,
-    "mutator_potency": 10.21
+    "apex_index": 37.48,
+    "architect_potency": 29.65,
+    "sentinel_potency": 37.48,
+    "mutator_potency": 30.55
   }
 ]

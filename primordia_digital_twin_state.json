@@ -1,0 +1,114 @@
+{
+  "timestamp": "2026-10-26T10:30:51.904Z",
+  "system_status": "SYNCHRONIZED",
+  "apex_index": 52.5,
+  "active_threshold": 17.65,
+  "metrics": {
+    "total_sigils_scribed": 8,
+    "pending_compute_tasks": 0,
+    "economic_gateway": "MoneyPlugHub Active",
+    "motherboard_workspace": "C:\\Users\\Shane\\moneyplughub"
+  },
+  "nodes": [
+    {
+      "id": "847D44BB3C2C",
+      "name": "SIGIL-OBSIDIAN-VAULT",
+      "domain": "BINDING",
+      "biome": "Subterranean Citadel",
+      "lighting": "#0A0014",
+      "density": "Sparse",
+      "referral": "https://moneyplughub.com/ref/847D44BB3C2C",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "2C85510E19AB",
+      "name": "SIGIL-CHRONO-LOCK",
+      "domain": "BINDING",
+      "biome": "Temporal Anchorage",
+      "lighting": "#1A2F4C",
+      "density": "Dense",
+      "referral": "https://moneyplughub.com/ref/2C85510E19AB",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "02FF9B610D94",
+      "name": "SIGIL-VOID-NEXUS",
+      "domain": "UNRAVELING",
+      "biome": "Entropic Collapse Zone",
+      "lighting": "#FF0033",
+      "density": "Sparse",
+      "referral": "https://moneyplughub.com/ref/02FF9B610D94",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "501030385CB3",
+      "name": "SIGIL-ENTROPY-SPIRE",
+      "domain": "UNRAVELING",
+      "biome": "Decaying Cyber Ruins",
+      "lighting": "#4A0000",
+      "density": "Dense",
+      "referral": "https://moneyplughub.com/ref/501030385CB3",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "26A1378EE2A6",
+      "name": "SIGIL-NEON-OASIS",
+      "domain": "AMPLIFICATION",
+      "biome": "Cyberpunk Metropolis",
+      "lighting": "#FF00FF",
+      "density": "Infinite",
+      "referral": "https://moneyplughub.com/ref/26A1378EE2A6",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "7F57EE817072",
+      "name": "SIGIL-AETHER-SPIRE",
+      "domain": "AMPLIFICATION",
+      "biome": "Floating Crystalline Spires",
+      "lighting": "#00FFCC",
+      "density": "Dense",
+      "referral": "https://moneyplughub.com/ref/7F57EE817072",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "112AFF07D28D",
+      "name": "SIGIL-GOTHIC-CATHEDRAL",
+      "domain": "MANIFESTATION",
+      "biome": "Obsidian Gothic Temple",
+      "lighting": "#9900CC",
+      "density": "Infinite",
+      "referral": "https://moneyplughub.com/ref/112AFF07D28D",
+      "status": "SYNCHRONIZED"
+    },
+    {
+      "id": "7031095BBE0C",
+      "name": "SIGIL-SOLARIS-CROWN",
+      "domain": "MANIFESTATION",
+      "biome": "Radiant Solar Throne",
+      "lighting": "#FF6600",
+      "density": "Infinite",
+      "referral": "https://moneyplughub.com/ref/7031095BBE0C",
+      "status": "SYNCHRONIZED"
+    }
+  ],
+  "recent_telemetry": [
+    "[2026-10-26T08:22:03.389Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (BINDING) SIGIL-OBSIDIAN-VAULT -> Biome: Subterranean Citadel\" | COMPLEXITY: 12 | REQ_THRESH: 9 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:11.402Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (BINDING) SIGIL-CHRONO-LOCK -> Biome: Temporal Anchorage\" | COMPLEXITY: 14 | REQ_THRESH: 10.5 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:19.402Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (UNRAVELING) SIGIL-VOID-NEXUS -> Biome: Entropic Collapse Zone\" | COMPLEXITY: 18.5 | REQ_THRESH: 13.88 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:27.410Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (UNRAVELING) SIGIL-ENTROPY-SPIRE -> Biome: Decaying Cyber Ruins\" | COMPLEXITY: 21 | REQ_THRESH: 15.75 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:35.421Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (AMPLIFICATION) SIGIL-NEON-OASIS -> Biome: Cyberpunk Metropolis\" | COMPLEXITY: 24 | REQ_THRESH: 18 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:43.425Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (AMPLIFICATION) SIGIL-AETHER-SPIRE -> Biome: Floating Crystalline Spires\" | COMPLEXITY: 26 | REQ_THRESH: 19.5 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:51.431Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (MANIFESTATION) SIGIL-GOTHIC-CATHEDRAL -> Biome: Obsidian Gothic Temple\" | COMPLEXITY: 29.5 | REQ_THRESH: 22.13 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:22:59.446Z] STATUS: MUTATION_MUTATING | TASK: \"[SPELLWRIGHT_MANIFEST] (MANIFESTATION) SIGIL-SOLARIS-CROWN -> Biome: Radiant Solar Throne\" | COMPLEXITY: 32 | REQ_THRESH: 24 | APEX: 23.53 (ARC: 21.57, SEN: 23.53, MUT: 21.04)",
+    "[2026-10-26T08:23:01.244Z] STATUS: MUTATION_COMPLETE | TASK: \"[SPELLWRIGHT_MANIFEST] (MANIFESTATION) SIGIL-SOLARIS-CROWN -> Biome: Radiant Solar Throne\" | COMPLEXITY: 32 | REQ_THRESH: 24 | APEX: 24.17 (ARC: 24.17, SEN: 22.73, MUT: 22.95)",
+    "[2026-10-26T08:23:07.459Z] STATUS: EXECUTED_SUCCESS | TASK: \"[SPELLWRIGHT_MANIFEST] (MANIFESTATION) SIGIL-SOLARIS-CROWN -> Biome: Radiant Solar Throne\" | COMPLEXITY: 32 | REQ_THRESH: 24 | APEX: 24.17 (ARC: 24.17, SEN: 22.73, MUT: 22.95)"
+  ],
+  "last_cloud_sync": "2026-10-26T08:39:57.818Z",
+  "sigil": "SIGIL-GOTHIC-VALLEY",
+  "last_learned_habit": "SYNC_TELEMETRY",
+  "adaptation_status": "OPTIMIZED_TO_USER_RHYTHM",
+  "last_executed_task": "WRITE_FILE",
+  "last_spawned_agent": "task_1793009085360_4ugqc",
+  "last_built_file": "test_greeting.js",
+  "last_execution_status": "SUCCESS"
+}

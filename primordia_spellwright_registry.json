@@ -1,0 +1,82 @@
+[
+  {
+    "sigil": "SIGIL-OBSIDIAN-VAULT",
+    "hash": "847D44BB3C2C",
+    "domain": "BINDING",
+    "biome": "Subterranean Citadel",
+    "lighting": "#0A0014",
+    "density": "Sparse",
+    "referralUrl": "https://moneyplughub.com/ref/847D44BB3C2C",
+    "multiplier": 1.25
+  },
+  {
+    "sigil": "SIGIL-CHRONO-LOCK",
+    "hash": "2C85510E19AB",
+    "domain": "BINDING",
+    "biome": "Temporal Anchorage",
+    "lighting": "#1A2F4C",
+    "density": "Dense",
+    "referralUrl": "https://moneyplughub.com/ref/2C85510E19AB",
+    "multiplier": 1.35
+  },
+  {
+    "sigil": "SIGIL-VOID-NEXUS",
+    "hash": "02FF9B610D94",
+    "domain": "UNRAVELING",
+    "biome": "Entropic Collapse Zone",
+    "lighting": "#FF0033",
+    "density": "Sparse",
+    "referralUrl": "https://moneyplughub.com/ref/02FF9B610D94",
+    "multiplier": 1.5
+  },
+  {
+    "sigil": "SIGIL-ENTROPY-SPIRE",
+    "hash": "501030385CB3",
+    "domain": "UNRAVELING",
+    "biome": "Decaying Cyber Ruins",
+    "lighting": "#4A0000",
+    "density": "Dense",
+    "referralUrl": "https://moneyplughub.com/ref/501030385CB3",
+    "multiplier": 1.6
+  },
+  {
+    "sigil": "SIGIL-NEON-OASIS",
+    "hash": "26A1378EE2A6",
+    "domain": "AMPLIFICATION",
+    "biome": "Cyberpunk Metropolis",
+    "lighting": "#FF00FF",
+    "density": "Infinite",
+    "referralUrl": "https://moneyplughub.com/ref/26A1378EE2A6",
+    "multiplier": 2
+  },
+  {
+    "sigil": "SIGIL-AETHER-SPIRE",
+    "hash": "7F57EE817072",
+    "domain": "AMPLIFICATION",
+    "biome": "Floating Crystalline Spires",
+    "lighting": "#00FFCC",
+    "density": "Dense",
+    "referralUrl": "https://moneyplughub.com/ref/7F57EE817072",
+    "multiplier": 2.2
+  },
+  {
+    "sigil": "SIGIL-GOTHIC-CATHEDRAL",
+    "hash": "112AFF07D28D",
+    "domain": "MANIFESTATION",
+    "biome": "Obsidian Gothic Temple",
+    "lighting": "#9900CC",
+    "density": "Infinite",
+    "referralUrl": "https://moneyplughub.com/ref/112AFF07D28D",
+    "multiplier": 3
+  },
+  {
+    "sigil": "SIGIL-SOLARIS-CROWN",
+    "hash": "7031095BBE0C",
+    "domain": "MANIFESTATION",
+    "biome": "Radiant Solar Throne",
+    "lighting": "#FF6600",
+    "density": "Infinite",
+    "referralUrl": "https://moneyplughub.com/ref/7031095BBE0C",
+    "multiplier": 3.5
+  }
+]

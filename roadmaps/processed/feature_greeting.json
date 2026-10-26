@@ -1,0 +1,26 @@
+{
+  "projectName": "Primordia Greeting Module",
+  "version": "2.1.0",
+  "steps": [
+    {
+      "action": "WRITE_FILE",
+      "payload": {
+        "filename": "greeting_module.js",
+        "content": "module.exports = { greet: (name) => `🔮 [Cosmic Link] Greetings, ${name}. System synchronized.` };\n"
+      }
+    },
+    {
+      "action": "WRITE_FILE",
+      "payload": {
+        "filename": "test_greeting.js",
+        "content": "const greeter = require('./greeting_module');\nconsole.log(greeter.greet('Operator Shane'));\n"
+      }
+    },
+    {
+      "action": "EXECUTE_SCRIPT",
+      "payload": {
+        "command": "node test_greeting.js"
+      }
+    }
+  ]
+}
