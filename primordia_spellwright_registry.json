@@ -1,59 +1,70 @@
 {
+  "version": "1.0.0",
+  "engine": "primordia-spellwright",
   "active_campaigns": [
     {
-      "id": "camp_ai_suite",
+      "id": "bolt-new-user-referral",
+      "name": "Bolt.new AI App Builder",
+      "keywords": [
+        "bolt",
+        "bolt.new",
+        "ai builder",
+        "ai coding assistant",
+        "full stack builder",
+        "web generator",
+        "app accelerator"
+      ],
+      "target_url": "https://bolt.cello.so/uugCkUiwCIo",
+      "payout_tier": "Referral Credits & Payout Tier",
+      "active": true
+    },
+    {
+      "id": "ai-automation-saas",
       "name": "AI Automation SaaS Suite",
-      "target_url": "https://moneyplughub.com/go/ai-suite?ref=primordia",
-      "payout_tier": "$45 recurring / sale",
       "keywords": [
         "ai automation",
         "workflow builder",
-        "make.com alternative",
-        "node.js backend tools"
+        "automation tool"
       ],
-      "status": "active"
+      "target_url": "https://moneyplughub.com/go/ai-suite?ref=primordia",
+      "payout_tier": "$45 recurring",
+      "active": true
     },
     {
-      "id": "camp_cloud_infra",
+      "id": "cloud-run-edge",
       "name": "High-Performance Cloud Run & Edge Hosting",
-      "target_url": "https://moneyplughub.com/go/cloud-host?ref=primordia",
-      "payout_tier": "$60 CPA + 20% lifetime",
       "keywords": [
         "cloud run",
-        "serverless",
-        "deployment",
-        "docker container",
-        "cloudflare worker"
+        "edge hosting",
+        "serverless deployment"
       ],
-      "status": "active"
+      "target_url": "https://moneyplughub.com/go/cloud-run?ref=primordia",
+      "payout_tier": "$60 CPA + 20% lifetime",
+      "active": true
     },
     {
-      "id": "camp_db_sync",
+      "id": "supabase-scaling-kit",
       "name": "Enterprise Supabase & PostgreSQL Scaling Kit",
-      "target_url": "https://moneyplughub.com/go/db-scale?ref=primordia",
-      "payout_tier": "$35 recurring / sale",
       "keywords": [
         "database",
-        "supabase",
-        "postgres",
-        "sql migration",
+        "postgresql scaling",
         "row level security"
       ],
-      "status": "active"
+      "target_url": "https://moneyplughub.com/go/supabase-kit?ref=primordia",
+      "payout_tier": "$35 recurring",
+      "active": true
     },
     {
-      "id": "camp_dev_agents",
+      "id": "code-agent-pipeline",
       "name": "Autonomous Code Agent Pipeline",
-      "target_url": "https://moneyplughub.com/go/dev-agents?ref=primordia",
-      "payout_tier": "$100 CPA / sale",
       "keywords": [
         "coding assistant",
-        "ai developer",
-        "python script",
-        "typescript automation"
+        "code agent",
+        "developer pipeline"
       ],
-      "status": "active"
+      "target_url": "https://moneyplughub.com/go/code-agent?ref=primordia",
+      "payout_tier": "$100 CPA",
+      "active": true
     }
-  ],
-  "last_sync": "2026-10-26T22:40:09.838366"
+  ]
 }
