@@ -1,0 +1,5 @@
+{
+    "fusionBusEnabled": true,
+    "supervisorHooks": true,
+    "gpuIntelligence": true
+}

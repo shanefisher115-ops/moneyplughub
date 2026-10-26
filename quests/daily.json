@@ -1,0 +1,16 @@
+﻿[
+    {
+        "status":  "available",
+        "title":  "Deploy the First Plug",
+        "reward_xp":  150,
+        "quest_id":  "q_01",
+        "reward_credits":  50
+    },
+    {
+        "status":  "locked",
+        "title":  "Activate Automation Agent",
+        "reward_xp":  300,
+        "quest_id":  "q_02",
+        "reward_credits":  120
+    }
+]

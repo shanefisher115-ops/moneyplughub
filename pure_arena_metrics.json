@@ -1,0 +1,352 @@
+[
+  {
+    "generation": 1,
+    "forager_avg_evasion": 0.53,
+    "predator_avg_ambush": 0.55,
+    "forager_avg_fitness": 19.0,
+    "predator_avg_fitness": 197.33
+  },
+  {
+    "generation": 2,
+    "forager_avg_evasion": 0.68,
+    "predator_avg_ambush": 0.59,
+    "forager_avg_fitness": 28.5,
+    "predator_avg_fitness": 240.0
+  },
+  {
+    "generation": 3,
+    "forager_avg_evasion": 0.88,
+    "predator_avg_ambush": 0.73,
+    "forager_avg_fitness": 51.0,
+    "predator_avg_fitness": 186.67
+  },
+  {
+    "generation": 4,
+    "forager_avg_evasion": 1.09,
+    "predator_avg_ambush": 0.87,
+    "forager_avg_fitness": 67.0,
+    "predator_avg_fitness": 136.0
+  },
+  {
+    "generation": 5,
+    "forager_avg_evasion": 1.3,
+    "predator_avg_ambush": 0.9,
+    "forager_avg_fitness": 86.0,
+    "predator_avg_fitness": 80.0
+  },
+  {
+    "generation": 6,
+    "forager_avg_evasion": 1.5,
+    "predator_avg_ambush": 1.03,
+    "forager_avg_fitness": 111.0,
+    "predator_avg_fitness": -37.33
+  },
+  {
+    "generation": 7,
+    "forager_avg_evasion": 1.63,
+    "predator_avg_ambush": 1.05,
+    "forager_avg_fitness": 111.0,
+    "predator_avg_fitness": -93.33
+  },
+  {
+    "generation": 8,
+    "forager_avg_evasion": 1.68,
+    "predator_avg_ambush": 1.17,
+    "forager_avg_fitness": 116.0,
+    "predator_avg_fitness": -122.67
+  },
+  {
+    "generation": 9,
+    "forager_avg_evasion": 1.77,
+    "predator_avg_ambush": 1.33,
+    "forager_avg_fitness": 116.0,
+    "predator_avg_fitness": -101.33
+  },
+  {
+    "generation": 10,
+    "forager_avg_evasion": 1.83,
+    "predator_avg_ambush": 1.44,
+    "forager_avg_fitness": 115.0,
+    "predator_avg_fitness": -125.33
+  },
+  {
+    "generation": 11,
+    "forager_avg_evasion": 1.9,
+    "predator_avg_ambush": 1.65,
+    "forager_avg_fitness": 106.5,
+    "predator_avg_fitness": -85.33
+  },
+  {
+    "generation": 12,
+    "forager_avg_evasion": 2.03,
+    "predator_avg_ambush": 1.83,
+    "forager_avg_fitness": 76.5,
+    "predator_avg_fitness": 58.67
+  },
+  {
+    "generation": 13,
+    "forager_avg_evasion": 2.19,
+    "predator_avg_ambush": 1.99,
+    "forager_avg_fitness": 80.0,
+    "predator_avg_fitness": 58.67
+  },
+  {
+    "generation": 14,
+    "forager_avg_evasion": 2.34,
+    "predator_avg_ambush": 2.1,
+    "forager_avg_fitness": 86.5,
+    "predator_avg_fitness": 37.33
+  },
+  {
+    "generation": 15,
+    "forager_avg_evasion": 2.4,
+    "predator_avg_ambush": 2.23,
+    "forager_avg_fitness": 97.5,
+    "predator_avg_fitness": -2.67
+  },
+  {
+    "generation": 16,
+    "forager_avg_evasion": 2.58,
+    "predator_avg_ambush": 2.3,
+    "forager_avg_fitness": 89.5,
+    "predator_avg_fitness": 40.0
+  },
+  {
+    "generation": 17,
+    "forager_avg_evasion": 2.66,
+    "predator_avg_ambush": 2.23,
+    "forager_avg_fitness": 105.5,
+    "predator_avg_fitness": -64.0
+  },
+  {
+    "generation": 18,
+    "forager_avg_evasion": 2.78,
+    "predator_avg_ambush": 2.27,
+    "forager_avg_fitness": 108.5,
+    "predator_avg_fitness": -80.0
+  },
+  {
+    "generation": 19,
+    "forager_avg_evasion": 2.79,
+    "predator_avg_ambush": 2.34,
+    "forager_avg_fitness": 118.0,
+    "predator_avg_fitness": -133.33
+  },
+  {
+    "generation": 20,
+    "forager_avg_evasion": 2.84,
+    "predator_avg_ambush": 2.6,
+    "forager_avg_fitness": 94.5,
+    "predator_avg_fitness": -40.0
+  },
+  {
+    "generation": 21,
+    "forager_avg_evasion": 2.93,
+    "predator_avg_ambush": 2.96,
+    "forager_avg_fitness": 77.0,
+    "predator_avg_fitness": 74.67
+  },
+  {
+    "generation": 22,
+    "forager_avg_evasion": 3.06,
+    "predator_avg_ambush": 3.22,
+    "forager_avg_fitness": 33.0,
+    "predator_avg_fitness": 240.0
+  },
+  {
+    "generation": 23,
+    "forager_avg_evasion": 3.18,
+    "predator_avg_ambush": 3.43,
+    "forager_avg_fitness": 0.0,
+    "predator_avg_fitness": 296.0
+  },
+  {
+    "generation": 24,
+    "forager_avg_evasion": 3.3,
+    "predator_avg_ambush": 3.68,
+    "forager_avg_fitness": -38.0,
+    "predator_avg_fitness": 365.33
+  },
+  {
+    "generation": 25,
+    "forager_avg_evasion": 3.37,
+    "predator_avg_ambush": 3.86,
+    "forager_avg_fitness": -56.5,
+    "predator_avg_fitness": 376.0
+  },
+  {
+    "generation": 26,
+    "forager_avg_evasion": 3.48,
+    "predator_avg_ambush": 4.01,
+    "forager_avg_fitness": -82.0,
+    "predator_avg_fitness": 400.0
+  },
+  {
+    "generation": 27,
+    "forager_avg_evasion": 3.6,
+    "predator_avg_ambush": 4.15,
+    "forager_avg_fitness": -70.0,
+    "predator_avg_fitness": 373.33
+  },
+  {
+    "generation": 28,
+    "forager_avg_evasion": 3.68,
+    "predator_avg_ambush": 4.29,
+    "forager_avg_fitness": -48.0,
+    "predator_avg_fitness": 352.0
+  },
+  {
+    "generation": 29,
+    "forager_avg_evasion": 3.75,
+    "predator_avg_ambush": 4.57,
+    "forager_avg_fitness": -34.5,
+    "predator_avg_fitness": 320.0
+  },
+  {
+    "generation": 30,
+    "forager_avg_evasion": 3.82,
+    "predator_avg_ambush": 4.64,
+    "forager_avg_fitness": -72.5,
+    "predator_avg_fitness": 376.0
+  },
+  {
+    "generation": 31,
+    "forager_avg_evasion": 3.99,
+    "predator_avg_ambush": 4.68,
+    "forager_avg_fitness": -67.5,
+    "predator_avg_fitness": 370.67
+  },
+  {
+    "generation": 32,
+    "forager_avg_evasion": 4.06,
+    "predator_avg_ambush": 4.84,
+    "forager_avg_fitness": -67.5,
+    "predator_avg_fitness": 381.33
+  },
+  {
+    "generation": 33,
+    "forager_avg_evasion": 4.05,
+    "predator_avg_ambush": 4.9,
+    "forager_avg_fitness": -71.0,
+    "predator_avg_fitness": 376.0
+  },
+  {
+    "generation": 34,
+    "forager_avg_evasion": 4.47,
+    "predator_avg_ambush": 5.07,
+    "forager_avg_fitness": -71.5,
+    "predator_avg_fitness": 378.67
+  },
+  {
+    "generation": 35,
+    "forager_avg_evasion": 4.65,
+    "predator_avg_ambush": 5.08,
+    "forager_avg_fitness": -54.5,
+    "predator_avg_fitness": 360.0
+  },
+  {
+    "generation": 36,
+    "forager_avg_evasion": 4.82,
+    "predator_avg_ambush": 5.09,
+    "forager_avg_fitness": -39.5,
+    "predator_avg_fitness": 322.67
+  },
+  {
+    "generation": 37,
+    "forager_avg_evasion": 5.12,
+    "predator_avg_ambush": 5.1,
+    "forager_avg_fitness": 3.5,
+    "predator_avg_fitness": 242.67
+  },
+  {
+    "generation": 38,
+    "forager_avg_evasion": 5.36,
+    "predator_avg_ambush": 5.3,
+    "forager_avg_fitness": 49.0,
+    "predator_avg_fitness": 154.67
+  },
+  {
+    "generation": 39,
+    "forager_avg_evasion": 5.49,
+    "predator_avg_ambush": 5.58,
+    "forager_avg_fitness": 46.0,
+    "predator_avg_fitness": 189.33
+  },
+  {
+    "generation": 40,
+    "forager_avg_evasion": 5.75,
+    "predator_avg_ambush": 5.73,
+    "forager_avg_fitness": 14.0,
+    "predator_avg_fitness": 253.33
+  },
+  {
+    "generation": 41,
+    "forager_avg_evasion": 5.94,
+    "predator_avg_ambush": 5.87,
+    "forager_avg_fitness": 37.5,
+    "predator_avg_fitness": 200.0
+  },
+  {
+    "generation": 42,
+    "forager_avg_evasion": 6.12,
+    "predator_avg_ambush": 6.04,
+    "forager_avg_fitness": 69.0,
+    "predator_avg_fitness": 112.0
+  },
+  {
+    "generation": 43,
+    "forager_avg_evasion": 6.28,
+    "predator_avg_ambush": 6.22,
+    "forager_avg_fitness": 64.0,
+    "predator_avg_fitness": 152.0
+  },
+  {
+    "generation": 44,
+    "forager_avg_evasion": 6.4,
+    "predator_avg_ambush": 6.29,
+    "forager_avg_fitness": 75.5,
+    "predator_avg_fitness": 106.67
+  },
+  {
+    "generation": 45,
+    "forager_avg_evasion": 6.57,
+    "predator_avg_ambush": 6.44,
+    "forager_avg_fitness": 71.5,
+    "predator_avg_fitness": 114.67
+  },
+  {
+    "generation": 46,
+    "forager_avg_evasion": 6.73,
+    "predator_avg_ambush": 6.6,
+    "forager_avg_fitness": 82.5,
+    "predator_avg_fitness": 104.0
+  },
+  {
+    "generation": 47,
+    "forager_avg_evasion": 6.86,
+    "predator_avg_ambush": 6.64,
+    "forager_avg_fitness": 81.0,
+    "predator_avg_fitness": 93.33
+  },
+  {
+    "generation": 48,
+    "forager_avg_evasion": 6.95,
+    "predator_avg_ambush": 7.02,
+    "forager_avg_fitness": 85.0,
+    "predator_avg_fitness": 56.0
+  },
+  {
+    "generation": 49,
+    "forager_avg_evasion": 7.03,
+    "predator_avg_ambush": 7.14,
+    "forager_avg_fitness": 37.5,
+    "predator_avg_fitness": 197.33
+  },
+  {
+    "generation": 50,
+    "forager_avg_evasion": 7.12,
+    "predator_avg_ambush": 7.38,
+    "forager_avg_fitness": 13.5,
+    "predator_avg_fitness": 269.33
+  }
+]

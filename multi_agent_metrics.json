@@ -1,0 +1,3214 @@
+[
+  {
+    "epoch": 1,
+    "state_distribution": {
+      "Abundant Food": 3,
+      "Scarce Food": 4,
+      "Predators": 2,
+      "Competition": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 14.95,
+        "energy": 105.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 14.95,
+        "energy": 105.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 14.95,
+        "energy": 105.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 7.52,
+        "energy": 99.8
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 7.52,
+        "energy": 99.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 7.52,
+        "energy": 99.8
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 7.52,
+        "energy": 99.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 0.2,
+        "energy": 99.0
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 0.2,
+        "energy": 99.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 10.74,
+        "energy": 99.2
+      }
+    ]
+  },
+  {
+    "epoch": 2,
+    "state_distribution": {
+      "Abundant Food": 3,
+      "Competition": 5,
+      "Predators": 1,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 29.9,
+        "energy": 111.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 29.9,
+        "energy": 111.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 29.9,
+        "energy": 111.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 13.76,
+        "energy": 99.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 13.76,
+        "energy": 99.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 16.98,
+        "energy": 98.4
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 6.44,
+        "energy": 98.2
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 13.76,
+        "energy": 99.0
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 0.4,
+        "energy": 98.0
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 15.04,
+        "energy": 99.6
+      }
+    ]
+  },
+  {
+    "epoch": 3,
+    "state_distribution": {
+      "Competition": 4,
+      "Predators": 3,
+      "Abundant Food": 1,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 37.64,
+        "energy": 110.2
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 21.5,
+        "energy": 98.2
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 8.14,
+        "energy": 97.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 14.18,
+        "energy": 97.4
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 13.96,
+        "energy": 98.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 30.1,
+        "energy": 110.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 17.18,
+        "energy": 97.4
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 44.85,
+        "energy": 116.5
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 22.56,
+        "energy": 99.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 21.28,
+        "energy": 98.8
+      }
+    ]
+  },
+  {
+    "epoch": 4,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Scarce Food": 2,
+      "Competition": 3,
+      "Predators": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 51.09,
+        "energy": 115.7
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 34.95,
+        "energy": 103.7
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 43.55,
+        "energy": 115.5
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 36.01,
+        "energy": 104.9
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 21.48,
+        "energy": 97.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 52.37,
+        "energy": 116.3
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 17.38,
+        "energy": 96.4
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 26.42,
+        "energy": 96.6
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 30.52,
+        "energy": 98.0
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 14.38,
+        "energy": 96.4
+      }
+    ]
+  },
+  {
+    "epoch": 5,
+    "state_distribution": {
+      "Predators": 2,
+      "Abundant Food": 2,
+      "Competition": 4,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 51.29,
+        "energy": 114.7
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 35.15,
+        "energy": 102.7
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 36.43,
+        "energy": 103.3
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 58.5,
+        "energy": 121.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 60.11,
+        "energy": 115.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 25.12,
+        "energy": 95.6
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 34.16,
+        "energy": 95.8
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 38.26,
+        "energy": 97.2
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 43.53,
+        "energy": 104.7
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 21.9,
+        "energy": 96.2
+      }
+    ]
+  },
+  {
+    "epoch": 6,
+    "state_distribution": {
+      "Competition": 5,
+      "Abundant Food": 2,
+      "Scarce Food": 3
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 57.53,
+        "energy": 113.9
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 31.36,
+        "energy": 94.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 40.4,
+        "energy": 95.0
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 28.14,
+        "energy": 95.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 44.5,
+        "energy": 96.4
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 50.1,
+        "energy": 108.2
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 75.06,
+        "energy": 121.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 43.95,
+        "energy": 103.1
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 66.02,
+        "energy": 120.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 51.05,
+        "energy": 104.5
+      }
+    ]
+  },
+  {
+    "epoch": 7,
+    "state_distribution": {
+      "Predators": 2,
+      "Abundant Food": 3,
+      "Competition": 3,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 57.73,
+        "energy": 112.9
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 50.3,
+        "energy": 107.2
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 58.9,
+        "energy": 108.6
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 90.01,
+        "energy": 126.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 80.97,
+        "energy": 126.3
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 40.6,
+        "energy": 94.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 49.64,
+        "energy": 94.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 37.38,
+        "energy": 94.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 58.57,
+        "energy": 104.3
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 52.02,
+        "energy": 96.2
+      }
+    ]
+  },
+  {
+    "epoch": 8,
+    "state_distribution": {
+      "Abundant Food": 6,
+      "Scarce Food": 2,
+      "Competition": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 68.18,
+        "energy": 118.4
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 60.75,
+        "energy": 112.7
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 69.35,
+        "energy": 114.1
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 100.46,
+        "energy": 132.0
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 51.05,
+        "energy": 99.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 91.42,
+        "energy": 131.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 66.09,
+        "energy": 104.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 59.54,
+        "energy": 96.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 60.38,
+        "energy": 93.4
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 48.12,
+        "energy": 93.8
+      }
+    ]
+  },
+  {
+    "epoch": 9,
+    "state_distribution": {
+      "Abundant Food": 6,
+      "Competition": 3,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 78.63,
+        "energy": 123.9
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 110.91,
+        "energy": 137.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 61.5,
+        "energy": 105.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 101.87,
+        "energy": 137.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 70.83,
+        "energy": 98.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 69.99,
+        "energy": 101.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 69.99,
+        "energy": 111.9
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 78.59,
+        "energy": 113.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 57.36,
+        "energy": 93.0
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 73.61,
+        "energy": 103.9
+      }
+    ]
+  },
+  {
+    "epoch": 10,
+    "state_distribution": {
+      "Competition": 5,
+      "Abundant Food": 2,
+      "Predators": 1,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 84.87,
+        "energy": 123.1
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 84.83,
+        "energy": 112.5
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 77.07,
+        "energy": 98.1
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 63.6,
+        "energy": 92.2
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 76.23,
+        "energy": 100.7
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 84.94,
+        "energy": 117.4
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 125.86,
+        "energy": 143.0
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 61.7,
+        "energy": 104.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 109.39,
+        "energy": 137.1
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 81.13,
+        "energy": 103.7
+      }
+    ]
+  },
+  {
+    "epoch": 11,
+    "state_distribution": {
+      "Competition": 5,
+      "Abundant Food": 2,
+      "Scarce Food": 3
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 91.11,
+        "energy": 122.3
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 91.18,
+        "energy": 116.6
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 91.07,
+        "energy": 111.7
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 83.31,
+        "energy": 97.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 69.84,
+        "energy": 91.4
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 140.81,
+        "energy": 148.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 124.34,
+        "energy": 142.6
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 69.22,
+        "energy": 103.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 88.65,
+        "energy": 103.5
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 83.75,
+        "energy": 100.5
+      }
+    ]
+  },
+  {
+    "epoch": 12,
+    "state_distribution": {
+      "Abundant Food": 1,
+      "Competition": 4,
+      "Scarce Food": 4,
+      "Predators": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 106.06,
+        "energy": 127.8
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 98.92,
+        "energy": 115.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 76.96,
+        "energy": 103.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 91.05,
+        "energy": 96.5
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 91.49,
+        "energy": 99.7
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 98.59,
+        "energy": 111.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 148.33,
+        "energy": 148.3
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 131.86,
+        "energy": 142.4
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 77.36,
+        "energy": 91.2
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 88.85,
+        "energy": 102.5
+      }
+    ]
+  },
+  {
+    "epoch": 13,
+    "state_distribution": {
+      "Competition": 5,
+      "Scarce Food": 3,
+      "Predators": 1,
+      "Abundant Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 112.3,
+        "energy": 127.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 154.57,
+        "energy": 147.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 83.2,
+        "energy": 102.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 83.6,
+        "energy": 90.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 97.73,
+        "energy": 98.9
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 106.44,
+        "energy": 115.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 96.37,
+        "energy": 102.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 98.57,
+        "energy": 96.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 98.79,
+        "energy": 110.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 146.81,
+        "energy": 147.9
+      }
+    ]
+  },
+  {
+    "epoch": 14,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Scarce Food": 2,
+      "Competition": 2,
+      "Predators": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 125.75,
+        "energy": 132.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 119.89,
+        "energy": 121.1
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 168.02,
+        "energy": 153.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 160.26,
+        "energy": 153.4
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 106.31,
+        "energy": 110.3
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 103.89,
+        "energy": 102.1
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 93.94,
+        "energy": 101.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 108.47,
+        "energy": 98.1
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 98.77,
+        "energy": 95.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 83.8,
+        "energy": 89.4
+      }
+    ]
+  },
+  {
+    "epoch": 15,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Competition": 5,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 139.2,
+        "energy": 138.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 133.34,
+        "energy": 126.6
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 173.71,
+        "energy": 158.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 121.92,
+        "energy": 103.6
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 112.55,
+        "energy": 109.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 174.26,
+        "energy": 152.2
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 100.18,
+        "energy": 100.6
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 105.01,
+        "energy": 94.5
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 90.04,
+        "energy": 88.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 111.41,
+        "energy": 101.9
+      }
+    ]
+  },
+  {
+    "epoch": 16,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 2,
+      "Predators": 1,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 151.15,
+        "energy": 143.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 145.29,
+        "energy": 132.1
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 185.66,
+        "energy": 164.4
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 123.36,
+        "energy": 107.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 133.87,
+        "energy": 109.1
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 123.29,
+        "energy": 108.7
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 115.75,
+        "energy": 93.7
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 174.46,
+        "energy": 151.2
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 107.7,
+        "energy": 100.4
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 97.56,
+        "energy": 88.4
+      }
+    ]
+  },
+  {
+    "epoch": 17,
+    "state_distribution": {
+      "Predators": 1,
+      "Abundant Food": 3,
+      "Competition": 5,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 151.35,
+        "energy": 142.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 160.24,
+        "energy": 137.6
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 200.61,
+        "energy": 169.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 148.82,
+        "energy": 114.6
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 129.53,
+        "energy": 107.9
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 180.7,
+        "energy": 150.4
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 113.94,
+        "energy": 99.6
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 121.99,
+        "energy": 92.9
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 103.8,
+        "energy": 87.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 130.88,
+        "energy": 107.2
+      }
+    ]
+  },
+  {
+    "epoch": 18,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 4,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 163.3,
+        "energy": 148.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 141.48,
+        "energy": 113.4
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 192.65,
+        "energy": 155.9
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 212.56,
+        "energy": 175.4
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 142.83,
+        "energy": 112.7
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 167.98,
+        "energy": 136.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 121.68,
+        "energy": 98.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 129.73,
+        "energy": 92.1
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 111.54,
+        "energy": 86.8
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 156.34,
+        "energy": 114.4
+      }
+    ]
+  },
+  {
+    "epoch": 19,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Predators": 2,
+      "Scarce Food": 4
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 176.75,
+        "energy": 153.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 206.1,
+        "energy": 161.4
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 135.13,
+        "energy": 104.3
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 156.28,
+        "energy": 118.2
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 168.18,
+        "energy": 135.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 129.93,
+        "energy": 91.1
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 149.0,
+        "energy": 113.2
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 220.08,
+        "energy": 175.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 119.06,
+        "energy": 86.6
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 163.86,
+        "energy": 114.2
+      }
+    ]
+  },
+  {
+    "epoch": 20,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 3,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 188.7,
+        "energy": 159.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 180.13,
+        "energy": 141.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 160.95,
+        "energy": 118.7
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 218.05,
+        "energy": 166.9
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 232.03,
+        "energy": 180.7
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 144.37,
+        "energy": 103.5
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 139.17,
+        "energy": 90.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 128.3,
+        "energy": 85.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 163.8,
+        "energy": 118.0
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 171.38,
+        "energy": 114.0
+      }
+    ]
+  },
+  {
+    "epoch": 21,
+    "state_distribution": {
+      "Abundant Food": 3,
+      "Scarce Food": 4,
+      "Competition": 2,
+      "Predators": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 203.65,
+        "energy": 164.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 195.08,
+        "energy": 146.8
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 246.98,
+        "energy": 186.2
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 168.47,
+        "energy": 118.5
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 171.32,
+        "energy": 117.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 146.69,
+        "energy": 90.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 178.9,
+        "energy": 113.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 228.79,
+        "energy": 166.1
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 139.04,
+        "energy": 85.0
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 144.57,
+        "energy": 102.5
+      }
+    ]
+  },
+  {
+    "epoch": 22,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Scarce Food": 1,
+      "Competition": 5
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 217.1,
+        "energy": 170.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 208.53,
+        "energy": 152.3
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 260.43,
+        "energy": 191.7
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 184.77,
+        "energy": 123.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 175.99,
+        "energy": 118.3
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 235.03,
+        "energy": 165.3
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 150.81,
+        "energy": 101.7
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 152.93,
+        "energy": 89.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 145.28,
+        "energy": 84.2
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 185.14,
+        "energy": 113.0
+      }
+    ]
+  },
+  {
+    "epoch": 23,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 5
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 229.05,
+        "energy": 175.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 220.48,
+        "energy": 157.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 246.98,
+        "energy": 170.8
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 272.38,
+        "energy": 197.2
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 196.72,
+        "energy": 128.8
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 182.23,
+        "energy": 117.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 157.05,
+        "energy": 100.9
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 159.17,
+        "energy": 88.5
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 151.52,
+        "energy": 83.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 191.38,
+        "energy": 112.2
+      }
+    ]
+  },
+  {
+    "epoch": 24,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Predators": 1,
+      "Competition": 2,
+      "Scarce Food": 3
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 242.5,
+        "energy": 181.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 233.93,
+        "energy": 163.3
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 260.43,
+        "energy": 176.3
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 204.83,
+        "energy": 117.7
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Predators",
+        "reward": 0.2,
+        "fitness": 182.43,
+        "energy": 116.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 167.79,
+        "energy": 100.1
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 169.91,
+        "energy": 87.7
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 279.9,
+        "energy": 197.0
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 204.24,
+        "energy": 128.6
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 159.04,
+        "energy": 83.2
+      }
+    ]
+  },
+  {
+    "epoch": 25,
+    "state_distribution": {
+      "Abundant Food": 3,
+      "Scarce Food": 4,
+      "Competition": 3
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 257.45,
+        "energy": 186.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 248.88,
+        "energy": 168.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 184.86,
+        "energy": 93.2
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 189.95,
+        "energy": 116.3
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 267.95,
+        "energy": 176.1
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 287.42,
+        "energy": 196.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 211.76,
+        "energy": 128.4
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 177.03,
+        "energy": 99.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 168.28,
+        "energy": 82.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 214.07,
+        "energy": 116.9
+      }
+    ]
+  },
+  {
+    "epoch": 26,
+    "state_distribution": {
+      "Abundant Food": 6,
+      "Scarce Food": 3,
+      "Competition": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 267.9,
+        "energy": 192.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 259.33,
+        "energy": 174.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 200.4,
+        "energy": 121.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 278.4,
+        "energy": 181.6
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 187.48,
+        "energy": 104.8
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 224.52,
+        "energy": 122.4
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 294.94,
+        "energy": 196.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 219.28,
+        "energy": 128.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 175.8,
+        "energy": 82.2
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 195.6,
+        "energy": 92.4
+      }
+    ]
+  },
+  {
+    "epoch": 27,
+    "state_distribution": {
+      "Abundant Food": 6,
+      "Competition": 3,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 278.35,
+        "energy": 197.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 269.78,
+        "energy": 179.8
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 210.85,
+        "energy": 127.3
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 288.85,
+        "energy": 187.1
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 305.39,
+        "energy": 202.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 234.97,
+        "energy": 127.9
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 196.72,
+        "energy": 104.0
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 204.84,
+        "energy": 91.6
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 185.04,
+        "energy": 81.4
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 226.8,
+        "energy": 128.0
+      }
+    ]
+  },
+  {
+    "epoch": 28,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Competition": 4,
+      "Scarce Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 291.8,
+        "energy": 203.0
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 283.23,
+        "energy": 185.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 224.3,
+        "energy": 132.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 210.17,
+        "energy": 109.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 296.59,
+        "energy": 186.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 212.58,
+        "energy": 90.8
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 192.78,
+        "energy": 80.6
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 242.71,
+        "energy": 127.1
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 312.91,
+        "energy": 201.9
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 234.32,
+        "energy": 127.8
+      }
+    ]
+  },
+  {
+    "epoch": 29,
+    "state_distribution": {
+      "Abundant Food": 8,
+      "Scarce Food": 1,
+      "Competition": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 299.25,
+        "energy": 208.5
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 290.68,
+        "energy": 190.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 304.04,
+        "energy": 191.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 217.62,
+        "energy": 115.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 320.36,
+        "energy": 207.4
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 241.77,
+        "energy": 133.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 220.03,
+        "energy": 96.3
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 7.45,
+        "fitness": 250.16,
+        "energy": 132.6
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 231.82,
+        "energy": 132.6
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 203.52,
+        "energy": 79.8
+      }
+    ]
+  },
+  {
+    "epoch": 30,
+    "state_distribution": {
+      "Competition": 5,
+      "Abundant Food": 4,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 305.49,
+        "energy": 207.7
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 223.86,
+        "energy": 114.2
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 226.27,
+        "energy": 95.5
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 209.76,
+        "energy": 79.0
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 256.4,
+        "energy": 131.8
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 304.13,
+        "energy": 196.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 245.27,
+        "energy": 138.1
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 317.49,
+        "energy": 197.3
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 333.81,
+        "energy": 212.9
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 249.29,
+        "energy": 133.1
+      }
+    ]
+  },
+  {
+    "epoch": 31,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Scarce Food": 4,
+      "Competition": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 317.44,
+        "energy": 213.2
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 316.08,
+        "energy": 201.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 329.44,
+        "energy": 202.8
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 345.76,
+        "energy": 218.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 268.35,
+        "energy": 137.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 252.79,
+        "energy": 137.9
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 231.38,
+        "energy": 114.0
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 256.81,
+        "energy": 132.9
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 217.28,
+        "energy": 78.8
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 237.01,
+        "energy": 94.7
+      }
+    ]
+  },
+  {
+    "epoch": 32,
+    "state_distribution": {
+      "Abundant Food": 4,
+      "Scarce Food": 3,
+      "Competition": 3
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 330.89,
+        "energy": 218.7
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 342.89,
+        "energy": 208.3
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 359.21,
+        "energy": 223.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 13.45,
+        "fitness": 281.8,
+        "energy": 142.8
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 323.6,
+        "energy": 201.6
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 260.31,
+        "energy": 137.7
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 264.33,
+        "energy": 132.7
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 240.62,
+        "energy": 113.2
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 246.25,
+        "energy": 93.9
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 9.24,
+        "fitness": 226.52,
+        "energy": 78.0
+      }
+    ]
+  },
+  {
+    "epoch": 33,
+    "state_distribution": {
+      "Competition": 5,
+      "Scarce Food": 3,
+      "Abundant Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 337.13,
+        "energy": 217.9
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 329.84,
+        "energy": 200.8
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 365.45,
+        "energy": 223.1
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 252.49,
+        "energy": 93.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 288.04,
+        "energy": 142.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 267.83,
+        "energy": 137.5
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 271.85,
+        "energy": 132.5
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 234.04,
+        "energy": 77.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 357.84,
+        "energy": 213.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 255.57,
+        "energy": 118.7
+      }
+    ]
+  },
+  {
+    "epoch": 34,
+    "state_distribution": {
+      "Competition": 4,
+      "Scarce Food": 4,
+      "Abundant Food": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 344.87,
+        "energy": 217.1
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 337.58,
+        "energy": 200.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 365.58,
+        "energy": 213.0
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 241.78,
+        "energy": 77.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 275.35,
+        "energy": 137.3
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 279.37,
+        "energy": 132.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 260.01,
+        "energy": 92.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 295.56,
+        "energy": 141.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 270.52,
+        "energy": 124.2
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 14.95,
+        "fitness": 380.4,
+        "energy": 228.6
+      }
+    ]
+  },
+  {
+    "epoch": 35,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 4,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 356.82,
+        "energy": 222.6
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 349.53,
+        "energy": 205.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 377.53,
+        "energy": 218.5
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 282.47,
+        "energy": 129.7
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 392.35,
+        "energy": 234.1
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 283.09,
+        "energy": 136.5
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 287.11,
+        "energy": 131.5
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 267.75,
+        "energy": 92.1
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 249.52,
+        "energy": 76.2
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 303.08,
+        "energy": 141.6
+      }
+    ]
+  },
+  {
+    "epoch": 36,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 4,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 368.77,
+        "energy": 228.1
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 361.48,
+        "energy": 211.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 295.04,
+        "energy": 142.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 389.48,
+        "energy": 224.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 404.3,
+        "energy": 239.6
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 290.21,
+        "energy": 128.9
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 275.49,
+        "energy": 91.3
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 257.26,
+        "energy": 75.4
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 310.82,
+        "energy": 140.8
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 294.63,
+        "energy": 131.3
+      }
+    ]
+  },
+  {
+    "epoch": 37,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Scarce Food": 3,
+      "Competition": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 380.72,
+        "energy": 233.6
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 373.43,
+        "energy": 216.5
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 401.43,
+        "energy": 229.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 416.25,
+        "energy": 245.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 322.77,
+        "energy": 146.3
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 302.56,
+        "energy": 141.8
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 297.73,
+        "energy": 128.7
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 302.15,
+        "energy": 131.1
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 286.23,
+        "energy": 90.5
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 268.0,
+        "energy": 74.6
+      }
+    ]
+  },
+  {
+    "epoch": 38,
+    "state_distribution": {
+      "Abundant Food": 6,
+      "Scarce Food": 2,
+      "Competition": 2
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 391.17,
+        "energy": 239.1
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 383.88,
+        "energy": 222.0
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 411.88,
+        "energy": 235.0
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 426.7,
+        "energy": 250.6
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 312.6,
+        "energy": 136.6
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Abundant Food",
+        "reward": 10.45,
+        "fitness": 296.68,
+        "energy": 96.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 310.08,
+        "energy": 141.6
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 275.52,
+        "energy": 74.4
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 308.47,
+        "energy": 127.9
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 10.74,
+        "fitness": 333.51,
+        "energy": 145.5
+      }
+    ]
+  },
+  {
+    "epoch": 39,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 5
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 403.12,
+        "energy": 244.6
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 395.83,
+        "energy": 227.5
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 438.65,
+        "energy": 256.1
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 324.55,
+        "energy": 142.1
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 345.46,
+        "energy": 151.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 316.32,
+        "energy": 140.8
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 418.12,
+        "energy": 234.2
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 314.71,
+        "energy": 127.1
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 302.92,
+        "energy": 95.2
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 6.24,
+        "fitness": 281.76,
+        "energy": 73.6
+      }
+    ]
+  },
+  {
+    "epoch": 40,
+    "state_distribution": {
+      "Abundant Food": 5,
+      "Competition": 4,
+      "Scarce Food": 1
+    },
+    "agent_telemetry": [
+      {
+        "agent_id": "Agent_01",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 415.07,
+        "energy": 250.1
+      },
+      {
+        "agent_id": "Agent_02",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 407.78,
+        "energy": 233.0
+      },
+      {
+        "agent_id": "Agent_03",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 328.27,
+        "energy": 146.3
+      },
+      {
+        "agent_id": "Agent_04",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 430.07,
+        "energy": 239.7
+      },
+      {
+        "agent_id": "Agent_06",
+        "choice": "Abundant Food",
+        "reward": 11.95,
+        "fitness": 450.6,
+        "energy": 261.6
+      },
+      {
+        "agent_id": "Agent_05",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 322.45,
+        "energy": 126.3
+      },
+      {
+        "agent_id": "Agent_08",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 310.66,
+        "energy": 94.4
+      },
+      {
+        "agent_id": "Agent_09",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 289.5,
+        "energy": 72.8
+      },
+      {
+        "agent_id": "Agent_10",
+        "choice": "Competition",
+        "reward": 7.74,
+        "fitness": 353.2,
+        "energy": 150.2
+      },
+      {
+        "agent_id": "Agent_07",
+        "choice": "Scarce Food",
+        "reward": 7.52,
+        "fitness": 332.07,
+        "energy": 141.9
+      }
+    ]
+  }
+]
