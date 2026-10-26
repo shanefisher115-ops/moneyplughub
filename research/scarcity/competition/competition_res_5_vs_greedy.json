@@ -1,0 +1,107 @@
+{
+  "args": {
+    "checkpoint": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\baseline\\trained_bench.pt",
+    "seeds": [
+      11,
+      12,
+      13
+    ],
+    "resources": 5,
+    "agents_per_arm": 16,
+    "speed": 2.0,
+    "max_sim_seconds": 120.0,
+    "port": 9850,
+    "opponent": "greedy",
+    "allow_reproduction": false,
+    "out": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\competition"
+  },
+  "results": {
+    "11": {
+      "seed": 11,
+      "winner": "greedy",
+      "extinction_time_s": 11.773,
+      "final_pop_trained": 4,
+      "final_pop_greedy": 16,
+      "starvations": {
+        "trained": 16,
+        "greedy": 7
+      },
+      "mean_alignment": {
+        "trained": 0.5429879093623291,
+        "greedy": 1.0
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 4,
+          "pop_greedy": 16,
+          "food_trained": 128.44,
+          "food_greedy": 744.56,
+          "starved_trained": 12,
+          "starved_greedy": 0
+        }
+      ]
+    },
+    "12": {
+      "seed": 12,
+      "winner": "greedy",
+      "extinction_time_s": 24.02,
+      "final_pop_trained": 1,
+      "final_pop_greedy": 3,
+      "starvations": {
+        "trained": 16,
+        "greedy": 14
+      },
+      "mean_alignment": {
+        "trained": 0.6914453895690004,
+        "greedy": 1.0
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 4,
+          "pop_greedy": 16,
+          "food_trained": 163.57,
+          "food_greedy": 627.63,
+          "starved_trained": 12,
+          "starved_greedy": 0
+        },
+        {
+          "sim_time": 20.0,
+          "pop_trained": 1,
+          "pop_greedy": 3,
+          "food_trained": 155.27,
+          "food_greedy": 461.4,
+          "starved_trained": 15,
+          "starved_greedy": 13
+        }
+      ]
+    },
+    "13": {
+      "seed": 13,
+      "winner": "greedy",
+      "extinction_time_s": 10.828,
+      "final_pop_trained": 3,
+      "final_pop_greedy": 16,
+      "starvations": {
+        "trained": 16,
+        "greedy": 1
+      },
+      "mean_alignment": {
+        "trained": 0.6019806021822582,
+        "greedy": 1.0
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 3,
+          "pop_greedy": 16,
+          "food_trained": 72.4,
+          "food_greedy": 792.63,
+          "starved_trained": 13,
+          "starved_greedy": 0
+        }
+      ]
+    }
+  }
+}

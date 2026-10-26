@@ -1,0 +1,98 @@
+{
+  "args": {
+    "checkpoint": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\baseline\\trained_bench.pt",
+    "seeds": [
+      11,
+      12,
+      13
+    ],
+    "resources": 5,
+    "agents_per_arm": 16,
+    "speed": 2.0,
+    "max_sim_seconds": 120.0,
+    "port": 9850,
+    "opponent": "random",
+    "allow_reproduction": false,
+    "out": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\competition"
+  },
+  "results": {
+    "11": {
+      "seed": 11,
+      "winner": "trained",
+      "extinction_time_s": 13.873,
+      "final_pop_trained": 14,
+      "final_pop_random": 10,
+      "starvations": {
+        "trained": 10,
+        "random": 16
+      },
+      "mean_alignment": {
+        "trained": 0.4755708196317644,
+        "random": -0.008939589552283274
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 14,
+          "pop_random": 10,
+          "food_trained": 784.9,
+          "food_random": 162.63,
+          "starved_trained": 2,
+          "starved_random": 6
+        }
+      ]
+    },
+    "12": {
+      "seed": 12,
+      "winner": "trained",
+      "extinction_time_s": 11.936,
+      "final_pop_trained": 16,
+      "final_pop_random": 9,
+      "starvations": {
+        "trained": 7,
+        "random": 16
+      },
+      "mean_alignment": {
+        "trained": 0.6059635230200595,
+        "random": -0.011025072115839054
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 16,
+          "pop_random": 9,
+          "food_trained": 791.81,
+          "food_random": 106.4,
+          "starved_trained": 0,
+          "starved_random": 7
+        }
+      ]
+    },
+    "13": {
+      "seed": 13,
+      "winner": "trained",
+      "extinction_time_s": 14.286,
+      "final_pop_trained": 16,
+      "final_pop_random": 13,
+      "starvations": {
+        "trained": 13,
+        "random": 16
+      },
+      "mean_alignment": {
+        "trained": 0.5511591322333219,
+        "random": 0.0083470360988374
+      },
+      "history": [
+        {
+          "sim_time": 10.0,
+          "pop_trained": 16,
+          "pop_random": 13,
+          "food_trained": 772.79,
+          "food_random": 225.11,
+          "starved_trained": 0,
+          "starved_random": 3
+        }
+      ]
+    }
+  }
+}

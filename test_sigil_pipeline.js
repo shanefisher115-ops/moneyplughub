@@ -4,12 +4,10 @@ const attachSigilMiddleware = require('./sigil_middleware');
 
 console.log('🔮 [Sigil Test] Starting Cryptographic Referral Sigil Integration Test...\n');
 
-// 1. Generate & Test Sigil Generation Directly
 const userHandle = 'AnnMarie_Shane_Core';
 const sigil = sigilEngine.generateSigil(userHandle);
 console.log(`🔑 Generated Sigil for [${userHandle}]: ${sigil}`);
 
-// 2. Mock a Task Payload and Run Through Middleware
 let rawTaskPayload = {
     user: userHandle,
     action: 'WRITE_FILE',
@@ -25,13 +23,12 @@ attachSigilMiddleware({ body: rawTaskPayload }, {}, () => {});
 console.log('\n📄 Transformed Task Payload with Injected Sigil Metadata:');
 console.log(JSON.stringify(rawTaskPayload, null, 2));
 
-// 3. Dispatch the Signed Task directly to the PrimordiaOS API Queue (Port 3005)
 async function dispatchToQueue(task) {
     return new Promise((resolve, reject) => {
         const data = JSON.stringify(task);
         const req = http.request({
             hostname: 'localhost',
-            port: 3005,
+            port: 3010,
             path: '/api/twin/task',
             method: 'POST',
             headers: {
@@ -57,11 +54,12 @@ async function dispatchToQueue(task) {
 
 (async () => {
     try {
-        console.log('\n🚀 Dispatching cryptographically signed task to PrimordiaOS API Queue on port 3005...');
+        console.log('\n🚀 Dispatching cryptographically signed task to PrimordiaOS API Queue on port 3009...');
         const response = await dispatchToQueue(rawTaskPayload);
         console.log('✅ API Queue Response:', response);
         console.log('\n✨ Sigil integration test completed successfully!');
     } catch (err) {
-        console.error('❌ Failed to connect to API Server. Ensure API Server is running on port 3005:', err.message);
+        console.error('❌ Failed to connect to API Server:', err.message);
     }
 })();
+

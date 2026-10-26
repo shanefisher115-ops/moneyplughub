@@ -1,0 +1,398 @@
+{
+  "args": {
+    "checkpoint": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\baseline\\trained_bench.pt",
+    "seeds": [
+      11,
+      12,
+      13
+    ],
+    "densities": [
+      40,
+      5
+    ],
+    "foragers_per_arm": 16,
+    "predators": 4,
+    "speed": 4.0,
+    "max_sim_seconds": 100.0,
+    "port": 9860,
+    "out": "c:\\Users\\Shane\\moneyplughub\\research\\scarcity\\predators"
+  },
+  "results": {
+    "40": {
+      "11": {
+        "density": 40,
+        "seed": 11,
+        "extinction_events": {
+          "trained": 9.647,
+          "random": 10.668
+        },
+        "deaths": {
+          "trained": {
+            "predation": 16,
+            "starvation": 0,
+            "other": 0
+          },
+          "random": {
+            "predation": 16,
+            "starvation": 0,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 1,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.3358561379945816,
+          "random": -0.004121489722383773
+        },
+        "history": [
+          {
+            "sim_time": 10.0,
+            "pop_trained": 0,
+            "pop_random": 1,
+            "pop_predators": 3,
+            "deaths_trained": {
+              "predation": 16,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 15,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 0,
+            "food_random": 107.4
+          }
+        ]
+      },
+      "12": {
+        "density": 40,
+        "seed": 12,
+        "extinction_events": {
+          "trained": 8.971,
+          "random": 10.723
+        },
+        "deaths": {
+          "trained": {
+            "predation": 16,
+            "starvation": 0,
+            "other": 0
+          },
+          "random": {
+            "predation": 14,
+            "starvation": 1,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 0,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.32693474096255243,
+          "random": -0.00782143271398757
+        },
+        "history": [
+          {
+            "sim_time": 10.0,
+            "pop_trained": 0,
+            "pop_random": 3,
+            "pop_predators": 4,
+            "deaths_trained": {
+              "predation": 16,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 11,
+              "starvation": 1,
+              "other": 0
+            },
+            "food_trained": 0,
+            "food_random": 377.1
+          }
+        ]
+      },
+      "13": {
+        "density": 40,
+        "seed": 13,
+        "extinction_events": {},
+        "deaths": {
+          "trained": {
+            "predation": 0,
+            "starvation": 4,
+            "other": 0
+          },
+          "random": {
+            "predation": 3,
+            "starvation": 0,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 4,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.4785211011111959,
+          "random": 0.0025455800733541496
+        },
+        "history": [
+          {
+            "sim_time": 10.0,
+            "pop_trained": 16,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 2598.0,
+            "food_random": 1778.8
+          },
+          {
+            "sim_time": 20.0,
+            "pop_trained": 16,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 5831.4,
+            "food_random": 3618.2
+          },
+          {
+            "sim_time": 30.0,
+            "pop_trained": 16,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 8723.1,
+            "food_random": 5610.3
+          },
+          {
+            "sim_time": 40.0,
+            "pop_trained": 16,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 0,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 11971.5,
+            "food_random": 7779.2
+          },
+          {
+            "sim_time": 50.0,
+            "pop_trained": 15,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 1,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 14316.3,
+            "food_random": 9857.0
+          },
+          {
+            "sim_time": 60.0,
+            "pop_trained": 15,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 1,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 17263.7,
+            "food_random": 11767.6
+          },
+          {
+            "sim_time": 70.1,
+            "pop_trained": 15,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 1,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 20356.4,
+            "food_random": 13894.2
+          },
+          {
+            "sim_time": 80.1,
+            "pop_trained": 14,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 2,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 21801.6,
+            "food_random": 15970.5
+          },
+          {
+            "sim_time": 90.1,
+            "pop_trained": 12,
+            "pop_random": 13,
+            "pop_predators": 0,
+            "deaths_trained": {
+              "predation": 0,
+              "starvation": 4,
+              "other": 0
+            },
+            "deaths_random": {
+              "predation": 3,
+              "starvation": 0,
+              "other": 0
+            },
+            "food_trained": 21119.5,
+            "food_random": 17987.4
+          }
+        ]
+      }
+    },
+    "5": {
+      "11": {
+        "density": 5,
+        "seed": 11,
+        "extinction_events": {
+          "random": 7.461,
+          "trained": 9.626
+        },
+        "deaths": {
+          "trained": {
+            "predation": 14,
+            "starvation": 2,
+            "other": 0
+          },
+          "random": {
+            "predation": 12,
+            "starvation": 4,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 1,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.32074957149339767,
+          "random": -0.0016950330134762298
+        },
+        "history": []
+      },
+      "12": {
+        "density": 5,
+        "seed": 12,
+        "extinction_events": {
+          "trained": 7.354,
+          "random": 7.527
+        },
+        "deaths": {
+          "trained": {
+            "predation": 16,
+            "starvation": 0,
+            "other": 0
+          },
+          "random": {
+            "predation": 10,
+            "starvation": 5,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 0,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.30055239994637173,
+          "random": -0.0026106170268892616
+        },
+        "history": []
+      },
+      "13": {
+        "density": 5,
+        "seed": 13,
+        "extinction_events": {
+          "trained": 8.253,
+          "random": 8.61
+        },
+        "deaths": {
+          "trained": {
+            "predation": 15,
+            "starvation": 1,
+            "other": 0
+          },
+          "random": {
+            "predation": 11,
+            "starvation": 5,
+            "other": 0
+          },
+          "predator": {
+            "starvation": 1,
+            "other": 0
+          }
+        },
+        "mean_alignment": {
+          "trained": 0.30314445871984375,
+          "random": 0.009675765067937613
+        },
+        "history": []
+      }
+    }
+  }
+}
