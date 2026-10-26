@@ -1,0 +1,488 @@
+{
+ "args": {
+  "checkpoint": "C:\\Users\\Shane\\AppData\\Local\\Temp\\claude\\C--Users-Shane-Documents-dev-primordiaos-core-workspace-primordia-spellwright\\e971e507-bc50-4a79-9f39-643ffe49d377\\scratchpad\\bench\\trained_bench.pt",
+  "seeds": [
+   11,
+   12,
+   13
+  ],
+  "updates": 20,
+  "rollout": 256,
+  "window": 4,
+  "agents": 16,
+  "speed": 2.0,
+  "max_seconds": 1200,
+  "out": "C:\\Users\\Shane\\AppData\\Local\\Temp\\claude\\C--Users-Shane-Documents-dev-primordiaos-core-workspace-primordia-spellwright\\e971e507-bc50-4a79-9f39-643ffe49d377\\scratchpad\\scarcity\\d20",
+  "base_port": 9801,
+  "realm_args": "--species LumenSeed --agents 32 --pool 32 --resources 20 --respawn-below 32 --bridge '{\"maturity_s\": 1e9, \"resource_regen_per_s\": 4}'",
+  "trainer_args": "--no-breed --brains 1",
+  "arms": [
+   "trained",
+   "random",
+   "greedy"
+  ]
+ },
+ "per_seed": {
+  "11": {
+   "trained": {
+    "food_alignment": 0.125075,
+    "food_per_agent_s": 1.5800999999999998,
+    "xp_per_agent_s": 3.2976,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   },
+   "random": {
+    "food_alignment": 0.001525,
+    "food_per_agent_s": 1.3902,
+    "xp_per_agent_s": 2.52535,
+    "starved_per_agent_h": 15.521250000000002,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 262.4,
+    "windows": 4,
+    "mean_population": 31.915,
+    "immigrants": 15,
+    "pop_cv": 0.012847638790952473
+   },
+   "greedy": {
+    "food_alignment": 1.0,
+    "food_per_agent_s": 1.7095,
+    "xp_per_agent_s": 3.428025,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   }
+  },
+  "12": {
+   "trained": {
+    "food_alignment": 0.17020000000000002,
+    "food_per_agent_s": 1.630675,
+    "xp_per_agent_s": 3.363725,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   },
+   "random": {
+    "food_alignment": 0.0016250000000000001,
+    "food_per_agent_s": 1.2953,
+    "xp_per_agent_s": 2.40515,
+    "starved_per_agent_h": 20.08575,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 246.635,
+    "windows": 4,
+    "mean_population": 31.9275,
+    "immigrants": 19,
+    "pop_cv": 0.014680969887589114
+   },
+   "greedy": {
+    "food_alignment": 1.0,
+    "food_per_agent_s": 1.7497,
+    "xp_per_agent_s": 3.468925,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   }
+  },
+  "13": {
+   "trained": {
+    "food_alignment": 0.16465,
+    "food_per_agent_s": 1.635575,
+    "xp_per_agent_s": 3.3800749999999997,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   },
+   "random": {
+    "food_alignment": -0.00115,
+    "food_per_agent_s": 1.302475,
+    "xp_per_agent_s": 2.391425,
+    "starved_per_agent_h": 19.729,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 256.3375,
+    "windows": 4,
+    "mean_population": 31.96,
+    "immigrants": 19,
+    "pop_cv": 0.0
+   },
+   "greedy": {
+    "food_alignment": 1.0,
+    "food_per_agent_s": 1.74425,
+    "xp_per_agent_s": 3.489,
+    "starved_per_agent_h": 0.0,
+    "births_per_agent_h": 0.0,
+    "mean_death_age_s": 0.0,
+    "windows": 4,
+    "mean_population": 32.0,
+    "immigrants": 0,
+    "pop_cv": 0.0
+   }
+  }
+ },
+ "summary": {
+  "food_alignment": {
+   "trained": {
+    "mean": 0.15330833333333335,
+    "sd": 0.024607751996745534,
+    "per_seed": [
+     0.125075,
+     0.17020000000000002,
+     0.16465
+    ]
+   },
+   "random": {
+    "mean": 0.0006666666666666666,
+    "sd": 0.0015740738017428959,
+    "per_seed": [
+     0.001525,
+     0.0016250000000000001,
+     -0.00115
+    ]
+   },
+   "greedy": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "food_per_agent_s": {
+   "trained": {
+    "mean": 1.61545,
+    "sd": 0.03071187677430357,
+    "per_seed": [
+     1.5800999999999998,
+     1.630675,
+     1.635575
+    ]
+   },
+   "random": {
+    "mean": 1.329325,
+    "sd": 0.05284121852304324,
+    "per_seed": [
+     1.3902,
+     1.2953,
+     1.302475
+    ]
+   },
+   "greedy": {
+    "mean": 1.7344833333333334,
+    "sd": 0.021807128039550143,
+    "per_seed": [
+     1.7095,
+     1.7497,
+     1.74425
+    ]
+   }
+  },
+  "xp_per_agent_s": {
+   "trained": {
+    "mean": 3.3471333333333333,
+    "sd": 0.0436691419463827,
+    "per_seed": [
+     3.2976,
+     3.363725,
+     3.3800749999999997
+    ]
+   },
+   "random": {
+    "mean": 2.4406416666666666,
+    "sd": 0.07367984940493119,
+    "per_seed": [
+     2.52535,
+     2.40515,
+     2.391425
+    ]
+   },
+   "greedy": {
+    "mean": 3.461983333333333,
+    "sd": 0.031074550814667208,
+    "per_seed": [
+     3.428025,
+     3.468925,
+     3.489
+    ]
+   }
+  },
+  "starved_per_agent_h": {
+   "trained": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "random": {
+    "mean": 18.445333333333334,
+    "sd": 2.538604960570535,
+    "per_seed": [
+     15.521250000000002,
+     20.08575,
+     19.729
+    ]
+   },
+   "greedy": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "pop_cv": {
+   "trained": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "random": {
+    "mean": 0.009176202892847195,
+    "sd": 0.007999518758993985,
+    "per_seed": [
+     0.012847638790952473,
+     0.014680969887589114,
+     0.0
+    ]
+   },
+   "greedy": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "births_per_agent_h": {
+   "trained": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "random": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "greedy": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "mean_death_age_s": {
+   "trained": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "random": {
+    "mean": 255.12416666666664,
+    "sd": 7.9522285922459,
+    "per_seed": [
+     262.4,
+     246.635,
+     256.3375
+    ]
+   },
+   "greedy": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  }
+ },
+ "comparisons": {
+  "food_alignment vs random": {
+   "diffs": [
+    0.12355,
+    0.16857500000000003,
+    0.1658
+   ],
+   "t": 10.477963683366628,
+   "wins": 3,
+   "relative": 228.96250000000003
+  },
+  "food_per_agent_s vs random": {
+   "diffs": [
+    0.18989999999999974,
+    0.3353750000000002,
+    0.33309999999999995
+   ],
+   "t": 5.9464452675882855,
+   "wins": 3,
+   "relative": 0.21524081770823533
+  },
+  "xp_per_agent_s vs random": {
+   "diffs": [
+    0.7722500000000001,
+    0.9585750000000002,
+    0.9886499999999998
+   ],
+   "t": 13.393790371720966,
+   "wins": 3,
+   "relative": 0.3714153040354825
+  },
+  "starved_per_agent_h vs random": {
+   "diffs": [
+    -15.521250000000002,
+    -20.08575,
+    -19.729
+   ],
+   "t": -12.584964967805377,
+   "wins": 3,
+   "relative": -1.0
+  },
+  "pop_cv vs random": {
+   "diffs": [
+    -0.012847638790952473,
+    -0.014680969887589114,
+    0.0
+   ],
+   "t": -1.9868257216226126,
+   "wins": 2,
+   "relative": -1.0
+  },
+  "births_per_agent_h vs random": {
+   "diffs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "t": Infinity,
+   "wins": 0,
+   "relative": 0.0
+  },
+  "mean_death_age_s vs random": {
+   "diffs": [
+    -262.4,
+    -246.635,
+    -256.3375
+   ],
+   "t": -55.56782149550067,
+   "wins": 0,
+   "relative": -1.0
+  },
+  "food_alignment vs greedy": {
+   "diffs": [
+    -0.874925,
+    -0.8298,
+    -0.83535
+   ],
+   "t": -59.595569120080235,
+   "wins": 0,
+   "relative": -0.8466916666666666
+  },
+  "food_per_agent_s vs greedy": {
+   "diffs": [
+    -0.12940000000000018,
+    -0.11902499999999994,
+    -0.10867500000000008
+   ],
+   "t": -19.895945102799367,
+   "wins": 0,
+   "relative": -0.06862754518636677
+  },
+  "xp_per_agent_s vs greedy": {
+   "diffs": [
+    -0.1304249999999998,
+    -0.10519999999999996,
+    -0.10892500000000016
+   ],
+   "t": -14.60937503360321,
+   "wins": 0,
+   "relative": -0.0331746253351884
+  },
+  "starved_per_agent_h vs greedy": {
+   "diffs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "t": Infinity,
+   "wins": 0,
+   "relative": 0.0
+  },
+  "pop_cv vs greedy": {
+   "diffs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "t": Infinity,
+   "wins": 0,
+   "relative": 0.0
+  },
+  "births_per_agent_h vs greedy": {
+   "diffs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "t": Infinity,
+   "wins": 0,
+   "relative": 0.0
+  },
+  "mean_death_age_s vs greedy": {
+   "diffs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "t": Infinity,
+   "wins": 0,
+   "relative": 0.0
+  }
+ }
+}

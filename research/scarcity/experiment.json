@@ -1,7 +1,27 @@
 {
-  "experiment":"scarcity-world",
-  "parent":"ppo-foraging-win",
-  "hypothesis":"intelligence becomes more valuable when food is scarce",
-  "status":"pending",
-  "created":"'"$(Get-Date -Format s)"'"
+ "experiment": "scarcity-world",
+ "parent": "ppo-foraging-win",
+ "hypothesis": "intelligence becomes more valuable when food is scarce",
+ "prediction": "Greedy > PPO > Random; the PPO-Random gap grows as food density falls",
+ "status": "complete",
+ "created": "2026-10-26T04:16:07",
+ "completed": "2026-10-26T04:47:07",
+ "densities": [
+  40,
+  20,
+  10,
+  5
+ ],
+ "seeds": [
+  11,
+  12,
+  13
+ ],
+ "checkpoint_commit": "f4c285d5",
+ "trained_vs_random_food_gap": {
+  "40": 0.0911,
+  "20": 0.2153,
+  "10": 0.4848,
+  "5": 0.7157
+ }
 }

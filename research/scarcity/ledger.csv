@@ -1,1 +1,13 @@
 timestamp,experiment,foodDensity,alignment,foodPerSecond,starvation,notes
+2026-10-26T04:24:06,scarcity-world,40,0.1588,1.5717,0.0,"arm=trained; seeds=11/12/13; nodes=40; regen=4/s; checkpoint=f4c285d5; food vs random +9% (t=5.21, better 3/3); food vs greedy -7% (t=-9.13, better 0/3)"
+2026-10-26T04:24:06,scarcity-world,40,0.0014,1.4405,7.146,arm=random; seeds=11/12/13; nodes=40; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:24:06,scarcity-world,40,1.0,1.6819,0.0,arm=greedy; seeds=11/12/13; nodes=40; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:31:43,scarcity-world,20,0.1533,1.6155,0.0,"arm=trained; seeds=11/12/13; nodes=20; regen=4/s; checkpoint=f4c285d5; food vs random +22% (t=5.95, better 3/3); food vs greedy -7% (t=-19.90, better 0/3)"
+2026-10-26T04:31:43,scarcity-world,20,0.0007,1.3293,18.445,arm=random; seeds=11/12/13; nodes=20; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:31:43,scarcity-world,20,1.0,1.7345,0.0,arm=greedy; seeds=11/12/13; nodes=20; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:39:03,scarcity-world,10,0.3101,1.6919,0.325,"arm=trained; seeds=11/12/13; nodes=10; regen=4/s; checkpoint=f4c285d5; food vs random +48% (t=10.69, better 3/3); food vs greedy -3% (t=-5.72, better 0/3)"
+2026-10-26T04:39:03,scarcity-world,10,-0.0014,1.1395,30.198,arm=random; seeds=11/12/13; nodes=10; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:39:03,scarcity-world,10,1.0,1.7476,1.756,arm=greedy; seeds=11/12/13; nodes=10; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:47:07,scarcity-world,5,0.5483,1.4724,7.482,"arm=trained; seeds=11/12/13; nodes=5; regen=4/s; checkpoint=f4c285d5; food vs random +72% (t=9.99, better 3/3); food vs greedy +3% (t=0.58, better 2/3)"
+2026-10-26T04:47:07,scarcity-world,5,-0.0018,0.8582,43.629,arm=random; seeds=11/12/13; nodes=5; regen=4/s; checkpoint=f4c285d5
+2026-10-26T04:47:07,scarcity-world,5,1.0,1.4297,12.452,arm=greedy; seeds=11/12/13; nodes=5; regen=4/s; checkpoint=f4c285d5

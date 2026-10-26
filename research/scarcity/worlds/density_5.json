@@ -1,0 +1,14 @@
+{
+ "species": "LumenSeed",
+ "agents": 32,
+ "pool": 32,
+ "resources": 5,
+ "respawn_below": 32,
+ "resource_regen_per_s": 4,
+ "maturity_s": 1000000000.0,
+ "world_radius_cm": 3000,
+ "speed": 2.0,
+ "food_supply_per_s": 20,
+ "trained_on": "40 nodes",
+ "checkpoint_commit": "f4c285d5"
+}
