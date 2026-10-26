@@ -15,25 +15,50 @@ def save_registry(data):
     with open(REGISTRY_PATH, "w") as f:
         json.dump(data, f, indent=2)
 
-def register_cash_flow_target(campaign_name, target_url, payout_tier, keywords):
+def seed_multi_offer_campaigns():
     registry = load_registry()
-    campaign = {
-        "id": f"camp_{int(datetime.utcnow().timestamp())}",
-        "name": campaign_name,
-        "target_url": target_url,
-        "payout_tier": payout_tier,
-        "keywords": keywords,
-        "status": "active"
-    }
-    registry["active_campaigns"].append(campaign)
+    
+    # Portfolio of high-yielding affiliate & monetization targets
+    offers = [
+        {
+            "id": "camp_ai_suite",
+            "name": "AI Automation SaaS Suite",
+            "target_url": "https://moneyplughub.com/go/ai-suite?ref=primordia",
+            "payout_tier": "$45 recurring / sale",
+            "keywords": ["ai automation", "workflow builder", "make.com alternative", "node.js backend tools"],
+            "status": "active"
+        },
+        {
+            "id": "camp_cloud_infra",
+            "name": "High-Performance Cloud Run & Edge Hosting",
+            "target_url": "https://moneyplughub.com/go/cloud-host?ref=primordia",
+            "payout_tier": "$60 CPA + 20% lifetime",
+            "keywords": ["cloud run", "serverless", "deployment", "docker container", "cloudflare worker"],
+            "status": "active"
+        },
+        {
+            "id": "camp_db_sync",
+            "name": "Enterprise Supabase & PostgreSQL Scaling Kit",
+            "target_url": "https://moneyplughub.com/go/db-scale?ref=primordia",
+            "payout_tier": "$35 recurring / sale",
+            "keywords": ["database", "supabase", "postgres", "sql migration", "row level security"],
+            "status": "active"
+        },
+        {
+            "id": "camp_dev_agents",
+            "name": "Autonomous Code Agent Pipeline",
+            "target_url": "https://moneyplughub.com/go/dev-agents?ref=primordia",
+            "payout_tier": "$100 CPA / sale",
+            "keywords": ["coding assistant", "ai developer", "python script", "typescript automation"],
+            "status": "active"
+        }
+    ]
+
+    # Merge or replace active campaigns
+    registry["active_campaigns"] = offers
     save_registry(registry)
-    print(f"?? [Spellwright Loader] Injected high-yield cash target: {campaign_name}")
+    print(f"?? [Spellwright Loader] Successfully seeded {len(offers)} high-yield multi-offer cash campaigns.")
 
 if __name__ == "__main__":
-    register_cash_flow_target(
-        campaign_name="AI Automation SaaS Suite",
-        target_url="https://moneyplughub.com/go/ai-suite?ref=primordia",
-        payout_tier="$45 recurring / sale",
-        keywords=["ai automation", "workflow builder", "make.com alternative", "node.js backend tools"]
-    )
+    seed_multi_offer_campaigns()
 

@@ -1,7 +1,7 @@
 {
   "active_campaigns": [
     {
-      "id": "camp_1700000000",
+      "id": "camp_ai_suite",
       "name": "AI Automation SaaS Suite",
       "target_url": "https://moneyplughub.com/go/ai-suite?ref=primordia",
       "payout_tier": "$45 recurring / sale",
@@ -12,7 +12,48 @@
         "node.js backend tools"
       ],
       "status": "active"
+    },
+    {
+      "id": "camp_cloud_infra",
+      "name": "High-Performance Cloud Run & Edge Hosting",
+      "target_url": "https://moneyplughub.com/go/cloud-host?ref=primordia",
+      "payout_tier": "$60 CPA + 20% lifetime",
+      "keywords": [
+        "cloud run",
+        "serverless",
+        "deployment",
+        "docker container",
+        "cloudflare worker"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "camp_db_sync",
+      "name": "Enterprise Supabase & PostgreSQL Scaling Kit",
+      "target_url": "https://moneyplughub.com/go/db-scale?ref=primordia",
+      "payout_tier": "$35 recurring / sale",
+      "keywords": [
+        "database",
+        "supabase",
+        "postgres",
+        "sql migration",
+        "row level security"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "camp_dev_agents",
+      "name": "Autonomous Code Agent Pipeline",
+      "target_url": "https://moneyplughub.com/go/dev-agents?ref=primordia",
+      "payout_tier": "$100 CPA / sale",
+      "keywords": [
+        "coding assistant",
+        "ai developer",
+        "python script",
+        "typescript automation"
+      ],
+      "status": "active"
     }
   ],
-  "last_sync": "2026-10-26T15:30:00.000Z"
+  "last_sync": "2026-10-26T22:40:09.838366"
 }
