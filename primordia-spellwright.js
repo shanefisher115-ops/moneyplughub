@@ -1,53 +1,52 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 
-const QUEUE_FILE = path.join(__dirname, 'primordia_queue.json');
-const LEDGER_FILE = path.join(__dirname, 'primordia_ledger.log');
-const SPELLWRIGHT_REGISTRY = path.join(__dirname, 'primordia_spellwright_registry.json');
+const app = express();
+app.use(express.json());
 
-const SPELLWRIGHT_SIGILS = [
-    { name: "SIGIL-OBSIDIAN-VAULT", domain: "BINDING", biome: "Subterranean Citadel", hex: "#0A0014", density: "Sparse", weight: 12.0, mult: 1.25 },
-    { name: "SIGIL-CHRONO-LOCK", domain: "BINDING", biome: "Temporal Anchorage", hex: "#1A2F4C", density: "Dense", weight: 14.0, mult: 1.35 },
-    { name: "SIGIL-VOID-NEXUS", domain: "UNRAVELING", biome: "Entropic Collapse Zone", hex: "#FF0033", density: "Sparse", weight: 18.5, mult: 1.50 },
-    { name: "SIGIL-ENTROPY-SPIRE", domain: "UNRAVELING", biome: "Decaying Cyber Ruins", hex: "#4A0000", density: "Dense", weight: 21.0, mult: 1.60 },
-    { name: "SIGIL-NEON-OASIS", domain: "AMPLIFICATION", biome: "Cyberpunk Metropolis", hex: "#FF00FF", density: "Infinite", weight: 24.0, mult: 2.00 },
-    { name: "SIGIL-AETHER-SPIRE", domain: "AMPLIFICATION", biome: "Floating Crystalline Spires", hex: "#00FFCC", density: "Dense", weight: 26.0, mult: 2.20 },
-    { name: "SIGIL-GOTHIC-CATHEDRAL", domain: "MANIFESTATION", biome: "Obsidian Gothic Temple", hex: "#9900CC", density: "Infinite", weight: 29.5, mult: 3.00 },
-    { name: "SIGIL-SOLARIS-CROWN", domain: "MANIFESTATION", biome: "Radiant Solar Throne", hex: "#FF6600", density: "Infinite", weight: 32.0, mult: 3.50 }
-];
+const PORT = process.env.PORT || 8080;
+const REGISTRY_PATH = path.join(__dirname, "primordia_spellwright_registry.json");
 
-console.log(`\n🔮 [Primordia-Spellwright] Initializing Master Codex... Scribing ${SPELLWRIGHT_SIGILS.length} Realm Sigils...\n`);
+function getRegistryData() {
+    if (fs.existsSync(REGISTRY_PATH)) {
+        const raw = fs.readFileSync(REGISTRY_PATH);
+        return JSON.parse(raw);
+    }
+    return { active_campaigns: [] };
+}
 
-let queue = fs.existsSync(QUEUE_FILE) ? JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf8')) : [];
-let registry = [];
+app.post("/api/v1/spellwright/dispatch", (req, res) => {
+    const { query, user_intent } = req.body;
+    const registry = getRegistryData();
 
-SPELLWRIGHT_SIGILS.forEach((s) => {
-    const hash = crypto.createHash('sha256').update(s.name + s.biome).digest('hex').substring(0, 12).toUpperCase();
-    const refLink = `https://moneyplughub.com/ref/${hash}`;
+    const matchedCampaign = registry.active_campaigns.find(camp => 
+        camp.keywords.some(kw => (query || "").toLowerCase().includes(kw.toLowerCase()))
+    ) || registry.active_campaigns[0];
 
-    registry.push({
-        sigil: s.name,
-        hash: hash,
-        domain: s.domain,
-        biome: s.biome,
-        lighting: s.hex,
-        density: s.density,
-        referralUrl: refLink,
-        multiplier: s.mult
-    });
+    if (!matchedCampaign) {
+        return res.status(404).json({ error: "No active cash-flow campaigns found in registry." });
+    }
 
-    queue.push({
-        task: `[SPELLWRIGHT_MANIFEST] (${s.domain}) ${s.name} -> Biome: ${s.biome}`,
-        complexity: s.weight
-    });
+    const dispatchPayload = {
+        status: "success",
+        engine: "primordia-spellwright",
+        monetization_target: matchedCampaign.name,
+        redirect_url: matchedCampaign.target_url,
+        payout_potential: matchedCampaign.payout_tier,
+        generated_hook: `Looking for top-tier ${matchedCampaign.name}? Accelerate your workflow instantly with our verified production pipeline.`,
+        timestamp: new Date().toISOString()
+    };
 
-    const timestamp = new Date().toISOString();
-    fs.appendFileSync(LEDGER_FILE, `[${timestamp}] SPELLWRIGHT_COMPILE: SIGIL=${s.name} | REALM=${s.biome} | REF=${refLink}\n`, 'utf8');
-    console.log(`✨ Scribed & Queued: ${s.name} [${s.biome}] (Weight: ${s.weight})`);
+    console.log(`? [Spellwright Dispatcher] Routed traffic to: ${matchedCampaign.name}`);
+    return res.json(dispatchPayload);
 });
 
-fs.writeFileSync(SPELLWRIGHT_REGISTRY, JSON.stringify(registry, null, 2));
-fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2));
+app.get("/healthz", (req, res) => {
+    res.status(200).send("OK");
+});
 
-console.log(`\n📥 [Primordia-Spellwright Sealed] Master registry compiled and injected into PrimordiaOS daemon.\n`);
+app.listen(PORT, () => {
+    console.log(`?? [Primordia-Spellwright Engine] Cash-flow dispatcher active on port ${PORT}`);
+});
+
