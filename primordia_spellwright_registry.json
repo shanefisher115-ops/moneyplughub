@@ -3,6 +3,21 @@
   "engine": "primordia-spellwright",
   "active_campaigns": [
     {
+      "id": "maxbounty-affiliate-network",
+      "name": "MaxBounty CPA Network Referral",
+      "keywords": [
+        "maxbounty",
+        "cpa network",
+        "affiliate network",
+        "cpa marketing",
+        "high payout affiliate",
+        "cost per action"
+      ],
+      "target_url": "https://affiliates.maxbounty.com/register?referrer=799713",
+      "payout_tier": "5% Referral Bonus Tier",
+      "active": true
+    },
+    {
       "id": "bolt-new-user-referral",
       "name": "Bolt.new AI App Builder",
       "keywords": [
