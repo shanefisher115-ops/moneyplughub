@@ -1,70 +1,45 @@
-﻿import http from 'http';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+﻿const express = require('express');
+const crypto = require('crypto');
+const fs = require('fs');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const app = express();
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-const server = http.createServer((req, res) => {
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
-    : [process.env.APP_URL || 'http://localhost:3000'];
-  const origin = req.headers.origin;
+app.post('/webhook/telemetry', (req, res) => {
+    try {
+        const { payload, signature, algorithm, agent_id } = req.body;
+        if (!payload || !signature || algorithm !== 'Ed25519' || !agent_id) {
+            return res.status(400).json({ error: 'Malformed swarm payload' });
+        }
 
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
-  }
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        const pubKeyPath = `keys/${agent_id}_public.pem`;
+        if (!fs.existsSync(pubKeyPath)) {
+            console.log(`[SECURITY] REJECTED: Unknown agent ID [${agent_id}]`);
+            return res.status(401).json({ error: 'Unauthorized agent identity' });
+        }
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ status: "OK" }));
-  }
+        const publicKey = fs.readFileSync(pubKeyPath, 'utf8');
+        const pubKeyObj = crypto.createPublicKey(publicKey);
+        const data = JSON.stringify(payload);
+        const signatureBuffer = Buffer.from(signature, 'hex');
 
-  const cleanUrl = req.url.split('?')[0].replace(/\/$/, '') || '/';
+        const isValid = crypto.verify(null, Buffer.from(data), pubKeyObj, signatureBuffer);
+        if (!isValid) {
+            console.log(`[SECURITY] REJECTED: Invalid cryptographic signature for [${agent_id}].`);
+            return res.status(401).json({ status: 'rejected', reason: 'Invalid signature' });
+        }
 
-  // Handle all /api/* requests with 200 JSON
-  if (cleanUrl.startsWith('/api/')) {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+        console.log(`[VERIFY] SUCCESS: Validated telemetry from swarm agent [${agent_id}]`);
+        fs.appendFileSync('swarm_audit.log', JSON.stringify({ receivedAt: new Date().toISOString(), agent_id, payload }) + '\n');
 
-    if (cleanUrl.includes('peersignal')) {
-      return res.end(JSON.stringify({ success: true, emitted: true, peerId: "peer_admin" }));
+        return res.status(200).json({ status: 'accepted', verified: true, swarm_node: agent_id });
+    } catch (err) {
+        console.error('[ERROR] Swarm ingestion failure:', err.message);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-    if (cleanUrl.includes('track-action')) {
-      return res.end(JSON.stringify({ success: true, logged: true, xpEarned: 250 }));
-    }
-    if (cleanUrl.includes('rag/search')) {
-      return res.end(JSON.stringify({ success: true, results: [] }));
-    }
-    if (cleanUrl.includes('unreal/camera')) {
-      return res.end(JSON.stringify({ success: true, camera: { x: 0, y: 0, z: 1 } }));
-    }
-    if (cleanUrl.includes('boardroom')) {
-      return res.end(JSON.stringify({ success: true, messages: [] }));
-    }
-
-    return res.end(JSON.stringify({ success: true, status: "OK", endpoint: cleanUrl }));
-  }
-
-  // Serve Frontend HTML
-  let filePath = path.join(__dirname, 'index.html');
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end(`Error: ${err.message}`);
-    } else {
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(content, 'utf-8');
-    }
-  });
 });
 
-server.listen(PORT, () => {
-  console.log(`🌌 Daemon active on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`[SWARM GRID] PrimordiaOS Multi-Agent Ingress active on port ${PORT}`);
 });
