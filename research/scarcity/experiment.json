@@ -1,0 +1,7 @@
+{
+  "experiment":"scarcity-world",
+  "parent":"ppo-foraging-win",
+  "hypothesis":"intelligence becomes more valuable when food is scarce",
+  "status":"pending",
+  "created":"'"$(Get-Date -Format s)"'"
+}

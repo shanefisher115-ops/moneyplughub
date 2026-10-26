@@ -1,0 +1,242 @@
+[
+  {
+    "generation": 1,
+    "catastrophe_active": false,
+    "best_fitness": 99.54,
+    "avg_fitness": 69.51,
+    "best_weights": {
+      "Abundant Food": 0.8661774495442854,
+      "Scarce Food": 1.221516938106821,
+      "Competition": 1.207193366370463,
+      "Predators": 0.8977250164369702
+    }
+  },
+  {
+    "generation": 2,
+    "catastrophe_active": false,
+    "best_fitness": 104.81,
+    "avg_fitness": 70.71,
+    "best_weights": {
+      "Abundant Food": 1.0055355056006583,
+      "Scarce Food": 1.3193755338329556,
+      "Competition": 1.2957179588046388,
+      "Predators": 0.5889773062743132
+    }
+  },
+  {
+    "generation": 3,
+    "catastrophe_active": false,
+    "best_fitness": 91.27,
+    "avg_fitness": 73.61,
+    "best_weights": {
+      "Abundant Food": 0.37510440331613276,
+      "Scarce Food": 0.368910645917515,
+      "Competition": 1.1030656395426732,
+      "Predators": 0.5661902949960104
+    }
+  },
+  {
+    "generation": 4,
+    "catastrophe_active": false,
+    "best_fitness": 121.61,
+    "avg_fitness": 83.53,
+    "best_weights": {
+      "Abundant Food": 0.60934800731684,
+      "Scarce Food": 0.6658350792646313,
+      "Competition": 0.6374926983777065,
+      "Predators": 0.3091306125842268
+    }
+  },
+  {
+    "generation": 5,
+    "catastrophe_active": false,
+    "best_fitness": 103.97,
+    "avg_fitness": 74.48,
+    "best_weights": {
+      "Abundant Food": 0.60934800731684,
+      "Scarce Food": 0.6658350792646313,
+      "Competition": 0.6374926983777065,
+      "Predators": 0.3091306125842268
+    }
+  },
+  {
+    "generation": 6,
+    "catastrophe_active": false,
+    "best_fitness": 114.07,
+    "avg_fitness": 75.93,
+    "best_weights": {
+      "Abundant Food": 0.60934800731684,
+      "Scarce Food": 0.6658350792646313,
+      "Competition": 0.6374926983777065,
+      "Predators": 0.3091306125842268
+    }
+  },
+  {
+    "generation": 7,
+    "catastrophe_active": false,
+    "best_fitness": 98.88,
+    "avg_fitness": 72.61,
+    "best_weights": {
+      "Abundant Food": 1.6755558984282246,
+      "Scarce Food": 1.3193755338329556,
+      "Competition": 1.2957179588046388,
+      "Predators": 0.5889773062743132
+    }
+  },
+  {
+    "generation": 8,
+    "catastrophe_active": false,
+    "best_fitness": 108.07,
+    "avg_fitness": 84.94,
+    "best_weights": {
+      "Abundant Food": 0.60934800731684,
+      "Scarce Food": 0.6658350792646313,
+      "Competition": 0.6374926983777065,
+      "Predators": 0.3091306125842268
+    }
+  },
+  {
+    "generation": 9,
+    "catastrophe_active": false,
+    "best_fitness": 104.59,
+    "avg_fitness": 82.8,
+    "best_weights": {
+      "Abundant Food": 0.7049291813256212,
+      "Scarce Food": 0.5496251809614342,
+      "Competition": 1.1144590540668051,
+      "Predators": 0.472009548523756
+    }
+  },
+  {
+    "generation": 10,
+    "catastrophe_active": true,
+    "best_fitness": 42.15,
+    "avg_fitness": -2.27,
+    "best_weights": {
+      "Abundant Food": 0.6162798996124922,
+      "Scarce Food": 0.8776392059303693,
+      "Competition": 1.1144590540668051,
+      "Predators": 0.472009548523756
+    }
+  },
+  {
+    "generation": 11,
+    "catastrophe_active": true,
+    "best_fitness": 29.4,
+    "avg_fitness": -3.71,
+    "best_weights": {
+      "Abundant Food": 1.6755558984282246,
+      "Scarce Food": 1.3193755338329556,
+      "Competition": 1.2957179588046388,
+      "Predators": 0.5889773062743132
+    }
+  },
+  {
+    "generation": 12,
+    "catastrophe_active": true,
+    "best_fitness": 21.9,
+    "avg_fitness": 2.86,
+    "best_weights": {
+      "Abundant Food": 1.272438332501462,
+      "Scarce Food": 1.1330131237544299,
+      "Competition": 1.0903999670333264,
+      "Predators": 0.4816255769727655
+    }
+  },
+  {
+    "generation": 13,
+    "catastrophe_active": true,
+    "best_fitness": 33.0,
+    "avg_fitness": 13.47,
+    "best_weights": {
+      "Abundant Food": 1.1738406007113245,
+      "Scarce Food": 1.101672688221236,
+      "Competition": 1.6012360475833578,
+      "Predators": 0.16245231077799238
+    }
+  },
+  {
+    "generation": 14,
+    "catastrophe_active": true,
+    "best_fitness": 40.75,
+    "avg_fitness": 10.81,
+    "best_weights": {
+      "Abundant Food": 0.8167885263482535,
+      "Scarce Food": 1.2626745964398691,
+      "Competition": 1.6012360475833578,
+      "Predators": 0.16245231077799238
+    }
+  },
+  {
+    "generation": 15,
+    "catastrophe_active": true,
+    "best_fitness": 35.15,
+    "avg_fitness": 7.58,
+    "best_weights": {
+      "Abundant Food": 0.5213639919866236,
+      "Scarce Food": 1.5227941097971502,
+      "Competition": 1.6012360475833578,
+      "Predators": 0.1
+    }
+  },
+  {
+    "generation": 16,
+    "catastrophe_active": true,
+    "best_fitness": 32.05,
+    "avg_fitness": 12.6,
+    "best_weights": {
+      "Abundant Food": 0.8167885263482535,
+      "Scarce Food": 1.2626745964398691,
+      "Competition": 1.6012360475833578,
+      "Predators": 0.16245231077799238
+    }
+  },
+  {
+    "generation": 17,
+    "catastrophe_active": true,
+    "best_fitness": 38.7,
+    "avg_fitness": 11.91,
+    "best_weights": {
+      "Abundant Food": 0.6162798996124922,
+      "Scarce Food": 0.5496251809614342,
+      "Competition": 1.1144590540668051,
+      "Predators": 0.472009548523756
+    }
+  },
+  {
+    "generation": 18,
+    "catastrophe_active": true,
+    "best_fitness": 30.05,
+    "avg_fitness": 16.96,
+    "best_weights": {
+      "Abundant Food": 0.9846679287035964,
+      "Scarce Food": 0.7393339902075161,
+      "Competition": 1.1144590540668051,
+      "Predators": 0.902394140895358
+    }
+  },
+  {
+    "generation": 19,
+    "catastrophe_active": true,
+    "best_fitness": 33.45,
+    "avg_fitness": 5.28,
+    "best_weights": {
+      "Abundant Food": 0.5213639919866236,
+      "Scarce Food": 1.5227941097971502,
+      "Competition": 1.6012360475833578,
+      "Predators": 0.1
+    }
+  },
+  {
+    "generation": 20,
+    "catastrophe_active": true,
+    "best_fitness": 15.23,
+    "avg_fitness": -1.59,
+    "best_weights": {
+      "Abundant Food": 0.7749768997172235,
+      "Scarce Food": 0.6569643142753744,
+      "Competition": 1.3334318809270613,
+      "Predators": 0.21139538528800444
+    }
+  }
+]

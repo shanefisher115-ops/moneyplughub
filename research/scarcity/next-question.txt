@@ -1,0 +1,11 @@
+Question:
+
+Does learned behavior become more valuable
+when resources become scarce?
+
+Prediction:
+
+Greedy > PPO > Random
+
+The gap between PPO and Random should increase
+as food density decreases.

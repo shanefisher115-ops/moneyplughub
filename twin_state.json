@@ -1,0 +1,34 @@
+[
+  {
+    "timestamp": "2026-10-26T07:25:08.438447",
+    "agent_id": "PPO_FORAGING_SUCCESS_f4c285d5",
+    "environment": "Abundant Food",
+    "energy": 104.5,
+    "fitness": 14.0,
+    "risk_level": 0.1
+  },
+  {
+    "timestamp": "2026-10-26T07:25:08.439757",
+    "agent_id": "PPO_FORAGING_SUCCESS_f4c285d5",
+    "environment": "Scarce Food",
+    "energy": 103.3,
+    "fitness": 19.6,
+    "risk_level": 0.4
+  },
+  {
+    "timestamp": "2026-10-26T07:25:08.450063",
+    "agent_id": "PPO_FORAGING_SUCCESS_f4c285d5",
+    "environment": "Competition",
+    "energy": 101.5,
+    "fitness": 26.0,
+    "risk_level": 0.7
+  },
+  {
+    "timestamp": "2026-10-26T07:25:08.458651",
+    "agent_id": "PPO_FORAGING_SUCCESS_f4c285d5",
+    "environment": "Predators",
+    "energy": 99.5,
+    "fitness": 26.0,
+    "risk_level": 0.9
+  }
+]

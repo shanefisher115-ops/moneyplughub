@@ -1,3 +1,4 @@
+﻿import { VoiceOSHUD } from './components/VoiceOSHUD';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
@@ -101,7 +102,7 @@ class ChamberErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <div className="max-w-3xl mx-auto px-4 py-16 text-center font-sans">
           <div className="p-8 rounded-3xl bg-slate-900/90 border border-emerald-500/40 shadow-2xl space-y-4">
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center text-2xl font-black">
-              🤖
+              ðŸ¤–
             </div>
             <h2 className="text-2xl font-black text-white">MoneyOS Ready for Command</h2>
             <p className="text-sm text-slate-300">
@@ -115,7 +116,7 @@ class ChamberErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               }}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
             >
-              ✨ Reload MoneyOS Interface
+              âœ¨ Reload MoneyOS Interface
             </button>
           </div>
         </div>
@@ -130,7 +131,7 @@ export const App: React.FC = () => {
   const { trackAction } = useAdaptiveProfile();
   const { emitSignal } = usePeerSignal();
   const { wealthMotto, primaryAccent, palette } = useGenerativeDesign();
-  const [currentTab, setCurrentTab] = useState<string>('overview');
+  const [currentTab, setCurrentTab] = useState<string>('moneyos');
   const [initialRefCode, setInitialRefCode] = useState<string>('');
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
   const [showXpConversion, setShowXpConversion] = useState<boolean>(false);
@@ -174,9 +175,7 @@ export const App: React.FC = () => {
       setCurrentTab('register');
     } else if (path.startsWith('/passport')) {
       setCurrentTab('passport');
-    } else if (!user && path === '/') {
-      setCurrentTab('landing');
-    }
+    } setCurrentTab('moneyos');
   }, [user]);
 
   const handleNavigate = (tab: string) => {
@@ -274,7 +273,7 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Creator Money OS Boot Screen — First thing users see */}
+      {/* Creator Money OS Boot Screen â€” First thing users see */}
       {!hasBooted && <BootScreen onBootComplete={onBootComplete} />}
 
       {/* Real-Time Floating XP Particle Layer & Combo Engine */}
@@ -344,7 +343,7 @@ export const App: React.FC = () => {
         ) : currentTab === 'pricing' ? (
           <PricingPage onNavigate={handleNavigate} />
         ) : currentTab === 'moneyos' || currentTab === 'chat' ? (
-          <MoneyOSPage />
+          <VoiceOSHUD onNavigate={handleNavigate} />
         ) : currentTab === 'v5' || currentTab === 'plugin-os-v5' ? (
           user && !isChamberUnlocked('v5', user.level || 1, user.role || 'user') ? (
             <ChamberProgressionGate tabId="v5" onNavigate={handleNavigate} />
@@ -522,3 +521,5 @@ export const App: React.FC = () => {
     </>
   );
 };
+
+

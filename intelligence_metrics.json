@@ -1,0 +1,602 @@
+[
+  {
+    "epoch": 1,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 14.9,
+    "weights": {
+      "Abundant Food": 2.49,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 2,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 29.8,
+    "weights": {
+      "Abundant Food": 3.9800000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 3,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 44.7,
+    "weights": {
+      "Abundant Food": 5.470000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 4,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 59.6,
+    "weights": {
+      "Abundant Food": 6.960000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 5,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 74.5,
+    "weights": {
+      "Abundant Food": 8.450000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 6,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 89.4,
+    "weights": {
+      "Abundant Food": 9.940000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 7,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 104.3,
+    "weights": {
+      "Abundant Food": 11.430000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 8,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 119.2,
+    "weights": {
+      "Abundant Food": 12.920000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 9,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 134.1,
+    "weights": {
+      "Abundant Food": 14.410000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 10,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 149.0,
+    "weights": {
+      "Abundant Food": 15.900000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 11,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 163.9,
+    "weights": {
+      "Abundant Food": 17.39,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 12,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 178.8,
+    "weights": {
+      "Abundant Food": 18.880000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 13,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 193.7,
+    "weights": {
+      "Abundant Food": 20.370000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 14,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 208.6,
+    "weights": {
+      "Abundant Food": 21.860000000000007,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 15,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 223.5,
+    "weights": {
+      "Abundant Food": 23.35000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 16,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 238.4,
+    "weights": {
+      "Abundant Food": 24.84000000000001,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 17,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 253.3,
+    "weights": {
+      "Abundant Food": 26.330000000000013,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 18,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 268.2,
+    "weights": {
+      "Abundant Food": 27.820000000000014,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 19,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 283.1,
+    "weights": {
+      "Abundant Food": 29.310000000000016,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 20,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 298.0,
+    "weights": {
+      "Abundant Food": 30.80000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 21,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 312.9,
+    "weights": {
+      "Abundant Food": 32.29000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 22,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 327.8,
+    "weights": {
+      "Abundant Food": 33.78000000000002,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 23,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 342.7,
+    "weights": {
+      "Abundant Food": 35.270000000000024,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 24,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 357.6,
+    "weights": {
+      "Abundant Food": 36.760000000000026,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 25,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 372.5,
+    "weights": {
+      "Abundant Food": 38.25000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 26,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 387.4,
+    "weights": {
+      "Abundant Food": 39.74000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 27,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 402.3,
+    "weights": {
+      "Abundant Food": 41.23000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 28,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 417.2,
+    "weights": {
+      "Abundant Food": 42.720000000000034,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 29,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 432.1,
+    "weights": {
+      "Abundant Food": 44.210000000000036,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 30,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 447.0,
+    "weights": {
+      "Abundant Food": 45.70000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 31,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 461.9,
+    "weights": {
+      "Abundant Food": 47.19000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 32,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 476.8,
+    "weights": {
+      "Abundant Food": 48.68000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 33,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 491.7,
+    "weights": {
+      "Abundant Food": 50.170000000000044,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 34,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 506.6,
+    "weights": {
+      "Abundant Food": 51.660000000000046,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 35,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 521.5,
+    "weights": {
+      "Abundant Food": 53.15000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 36,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 536.4,
+    "weights": {
+      "Abundant Food": 54.64000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 37,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 551.3,
+    "weights": {
+      "Abundant Food": 56.13000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 38,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 566.2,
+    "weights": {
+      "Abundant Food": 57.620000000000054,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 39,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 581.1,
+    "weights": {
+      "Abundant Food": 59.110000000000056,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 40,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 596.0,
+    "weights": {
+      "Abundant Food": 60.60000000000006,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 41,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 610.9,
+    "weights": {
+      "Abundant Food": 62.09000000000006,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 42,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 625.8,
+    "weights": {
+      "Abundant Food": 63.58000000000006,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 43,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 640.7,
+    "weights": {
+      "Abundant Food": 65.07000000000006,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 44,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 655.6,
+    "weights": {
+      "Abundant Food": 66.56000000000006,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 45,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 670.5,
+    "weights": {
+      "Abundant Food": 68.05000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 46,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 685.4,
+    "weights": {
+      "Abundant Food": 69.54000000000005,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 47,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 700.3,
+    "weights": {
+      "Abundant Food": 71.03000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 48,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 715.2,
+    "weights": {
+      "Abundant Food": 72.52000000000004,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 49,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 730.1,
+    "weights": {
+      "Abundant Food": 74.01000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  },
+  {
+    "epoch": 50,
+    "environment": "Abundant Food",
+    "reward": 14.9,
+    "cumulative_fitness": 745.0,
+    "weights": {
+      "Abundant Food": 75.50000000000003,
+      "Scarce Food": 1.0,
+      "Competition": 1.0,
+      "Predators": 1.0
+    }
+  }
+]

@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+﻿import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -165,7 +165,7 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.json({
     status: 'healthy',
-    system: 'Plug In OS v5.0 — Sellable AI Orchestrator SaaS Engine Active',
+    system: 'Plug In OS v5.0 â€” Sellable AI Orchestrator SaaS Engine Active',
     commission_rate_usd: config.commissionAmountUsd,
     environment: config.nodeEnv,
     timestamp: new Date().toISOString()
@@ -219,7 +219,7 @@ app.use((err: Error & { status?: number }, req: Request, res: Response, next: Ne
   });
 });
 
-// Start Server on Port 3001
+// Start Server on Port (process.env.PORT ? parseInt(process.env.PORT) : 3001)
 const server = http.createServer(app);
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
@@ -227,8 +227,8 @@ setupVoiceWebSocket(server);
 setupSyndicateWebSocket(server);
 unrealBridge.init(server);
 
-server.listen(3001, () => {
-  console.log(`⚡ Plug In OS v5.0 Server running on port 3001`);
+server.listen((process.env.PORT ? parseInt(process.env.PORT) : 3001), () => {
+  console.log(`âš¡ Plug In OS v5.0 Server running on port (process.env.PORT ? parseInt(process.env.PORT) : 3001)`);
 });
 
 // Also start secondary listener on Port 3000 to catch legacy 3000 tunnel routes
@@ -239,10 +239,10 @@ setupVoiceWebSocket(server3000);
 setupSyndicateWebSocket(server3000);
 
 server3000.listen(3000, () => {
-  console.log(`⚡ Plug In OS v5.0 Dual Listener running on port 3000`);
+  console.log(`âš¡ Plug In OS v5.0 Dual Listener running on port 3000`);
 }).on('error', (err: any) => {
   if (err.code === 'EADDRINUSE') {
-    console.log('Port 3000 already bound; primary 3001 is active.');
+    console.log('Port 3000 already bound; primary (process.env.PORT ? parseInt(process.env.PORT) : 3001) is active.');
   }
 });
 
@@ -262,3 +262,4 @@ process.on('SIGINT', handleShutdown);
 process.on('SIGTERM', handleShutdown);
 
 export default app;
+
