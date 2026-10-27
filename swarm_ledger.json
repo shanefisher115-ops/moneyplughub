@@ -4520,5 +4520,873 @@
     "signature": "f500a2f17b4cb41318ada608a3a39fa98b576e0c6ca28ca468758a433927c779041f4ba71acc6b0780a5f32a1efbea219cc6dc86db028525ee0aafcd14fa1d05",
     "previousHash": "f97750dfa47a82e77afb15139dce90bb3bd2f654837dea73d916421518f61bfd",
     "hash": "1504f4ea703c54d20d011a0cef780ad022e31732ad48cad0a8200e75056993e5"
+  },
+  {
+    "index": 323,
+    "timestamp": "2026-10-27T10:45:54.500Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793097954496,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.9411"
+    },
+    "signature": "373cd4b8ad30d960d0d3e692ab37001ad8c99c152eb5a189601c562e8d83d247e4f82b5d9855135a42dad49295aa567b0bc7bbb06222520d15dbc1c90fe68904",
+    "previousHash": "1504f4ea703c54d20d011a0cef780ad022e31732ad48cad0a8200e75056993e5",
+    "hash": "e8872864f61f76135bf310d2c5fe85d2694f58ebe40124d6de6bd9fd47c4282c"
+  },
+  {
+    "index": 324,
+    "timestamp": "2026-10-27T10:45:59.519Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793097959514,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1867"
+    },
+    "signature": "f5a692c5405f75f52b654f052dd5de2c73838f25c94015f72cab94cd0b3df11e86ed9ac995d4e0bc2349b11d41ff9831dca71bc85c575843fa3e72c035934804",
+    "previousHash": "e8872864f61f76135bf310d2c5fe85d2694f58ebe40124d6de6bd9fd47c4282c",
+    "hash": "05db79c1ef1d31d87f3488d99ea8adeae6032ee8d0ba5189bd735886abb52eda"
+  },
+  {
+    "index": 325,
+    "timestamp": "2026-10-27T10:46:04.527Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793097964522,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7624"
+    },
+    "signature": "3f3d07f0f777141ee25f72b3c7d74c3e5e755d8151be43c389b82702ef53d2546c7b9e7210ab0a76c8e17b671e58d30cf6efc4d57bc64d5eb234fc57922dc901",
+    "previousHash": "05db79c1ef1d31d87f3488d99ea8adeae6032ee8d0ba5189bd735886abb52eda",
+    "hash": "e333df02a21df4c9ecaa96afb37e45306388373a560f8bf627758b7a7b6b2e74"
+  },
+  {
+    "index": 326,
+    "timestamp": "2026-10-27T10:46:09.550Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793097969545,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8806"
+    },
+    "signature": "a1d8d50d8d2b356b69315d2fd9d036440037a59c9df0e23b37f09d51f2fc2d0eb8cc1d8fbdeb70c8c8c8ad937006148acfda7b7bceec7de41005f85d7ff33e09",
+    "previousHash": "e333df02a21df4c9ecaa96afb37e45306388373a560f8bf627758b7a7b6b2e74",
+    "hash": "8a175c6cf2c416f5a9f7751ef514fff2eeee7a40b6058035e7fb43487ac5d806"
+  },
+  {
+    "index": 327,
+    "timestamp": "2026-10-27T10:46:14.559Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793097974555,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4326"
+    },
+    "signature": "4bbb5750605ae2eeabadeea50972a17707291ccf561fbe88cf6e9d53346b9b5df5fe5bac587952fe3a7d8701fee929a1067d4b7508b222ca2a2b1a3f78099908",
+    "previousHash": "8a175c6cf2c416f5a9f7751ef514fff2eeee7a40b6058035e7fb43487ac5d806",
+    "hash": "094bbcf1be4378f7811cb5e9f523e20f7b46c0d231502e1139f402f9f904c35a"
+  },
+  {
+    "index": 328,
+    "timestamp": "2026-10-27T10:46:19.569Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793097979565,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.9893"
+    },
+    "signature": "c5ba6f8b81387f1de173fe09d8e64bcbf7284b9c65affaea556348b5da3bd131481839eac2478f4fb140f8fd05aaa6a2e776d39ec09a64c99d49da21765a0806",
+    "previousHash": "094bbcf1be4378f7811cb5e9f523e20f7b46c0d231502e1139f402f9f904c35a",
+    "hash": "51ba8f1495d737db37e11e7bbee28569ddcbf034ed244aa7734008ebb6c02275"
+  },
+  {
+    "index": 329,
+    "timestamp": "2026-10-27T10:46:24.671Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793097984576,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1818"
+    },
+    "signature": "2bf9e1529652920b242e095042ab17a8f4d4df2d56b7b4c87bbd28ad138ff1d618d8c5f17c9c19d7c102be29e49cc05c456c32411a576e1004998fb0942c930c",
+    "previousHash": "51ba8f1495d737db37e11e7bbee28569ddcbf034ed244aa7734008ebb6c02275",
+    "hash": "018ff5718aea982650d707fbe097507f0d3393dad0294b80596084e78f633394"
+  },
+  {
+    "index": 330,
+    "timestamp": "2026-10-27T10:46:29.692Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793097989688,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7253"
+    },
+    "signature": "b968fbc9cb73a84594d07913e43d1d5ddc948d8ee24e8821a0a03cdfb89b4487cea3af2e1105304ee9e1d96ad2bee1be651a905c9cd310a64b25184e86aa5b04",
+    "previousHash": "018ff5718aea982650d707fbe097507f0d3393dad0294b80596084e78f633394",
+    "hash": "36974c6c838a90936efb7bbfbc5d686fab67aa8b7c0911cb332e69583cea44d8"
+  },
+  {
+    "index": 331,
+    "timestamp": "2026-10-27T10:46:34.712Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793097994706,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1740"
+    },
+    "signature": "d10187f80e6c037b8a7280d5b8d85dbb78f2d9dd58a1e95e186246ee0c4826fdc2c00e9b3b64c79679cb60f9341378cc48d9359e0cc54d650f1dbb6f17fbb40b",
+    "previousHash": "36974c6c838a90936efb7bbfbc5d686fab67aa8b7c0911cb332e69583cea44d8",
+    "hash": "741da26e7c0cc03c28bfc8598785e2b19f90850f2d9c8e2636dd80f1a7d17532"
+  },
+  {
+    "index": 332,
+    "timestamp": "2026-10-27T10:46:39.737Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793097999723,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3761"
+    },
+    "signature": "a0a8cf5eefd26713483553165505ae66ae404f9ea79e1cb7d6ef79e8a78dd90da7c5212818dbd635f42e32dc09150aac03fc3b27ee44a7bc433e13364e31630f",
+    "previousHash": "741da26e7c0cc03c28bfc8598785e2b19f90850f2d9c8e2636dd80f1a7d17532",
+    "hash": "0ce23d4f8f44d5254f4a952e273afa04e87a956f468d8d92cb10ddd884995cfb"
+  },
+  {
+    "index": 333,
+    "timestamp": "2026-10-27T10:46:44.777Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098004768,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4569"
+    },
+    "signature": "38f259bbf48becb3a23a12ee2423d4918a9b428eb8330e94f5d35531236d4fa27c42362898eb720f256ee181739eacb631d1457f81bb22815987262239b92a0b",
+    "previousHash": "0ce23d4f8f44d5254f4a952e273afa04e87a956f468d8d92cb10ddd884995cfb",
+    "hash": "daae6e400748e61a57673de11896ebc2991f3628582fe7f5695844fcc36a4381"
+  },
+  {
+    "index": 334,
+    "timestamp": "2026-10-27T10:46:49.797Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098009791,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4037"
+    },
+    "signature": "9db7a0340c8dab22d0c9441422841903fcd1df2cf7de3ca367ed8e7442beb0d9c4eaaeffc8dbf3ddf37fe0c1b331b8dacf1437b11dc7bae9e6be48e042d9f400",
+    "previousHash": "daae6e400748e61a57673de11896ebc2991f3628582fe7f5695844fcc36a4381",
+    "hash": "45f1cd2fb2a14e8b5aa646c9c4381fcfa735bb0a769420e795ee51d447a6c9c5"
+  },
+  {
+    "index": 335,
+    "timestamp": "2026-10-27T10:46:54.808Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098014804,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8018"
+    },
+    "signature": "708dfbd2c41df1f33bc7f5dcdc602491445975c43a0b2fe1fe90fadbf3e931df42c32ead62cf80e2bbee974171f820a8100ce8d6526a6cffeaeec7ffaa9a9a0c",
+    "previousHash": "45f1cd2fb2a14e8b5aa646c9c4381fcfa735bb0a769420e795ee51d447a6c9c5",
+    "hash": "7b146de43e59ca014d622e5752348722773ab66a43a46af4ad9495c4e0a9ef00"
+  },
+  {
+    "index": 336,
+    "timestamp": "2026-10-27T10:46:59.824Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098019819,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7544"
+    },
+    "signature": "af8b7998c3826ea396ce8222edbe999c052a2d1390f998aa8cfbfd0b39410519a8f5a3147d5d5e8ea32ed44bc81fab5f7ce391215c4f5ec27cd1dedca8ceeb02",
+    "previousHash": "7b146de43e59ca014d622e5752348722773ab66a43a46af4ad9495c4e0a9ef00",
+    "hash": "ea7a7b88028d8abb5db89ac557e009b0dbd54015728ec4b44c6fcf36073c7931"
+  },
+  {
+    "index": 337,
+    "timestamp": "2026-10-27T10:47:04.848Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098024842,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1536"
+    },
+    "signature": "b449d94fa8c85d2eb9fe73b903c4708cb9a957b08450414825af1582f57dd51827e0cf249beca0136348174721231e938c11a8589bfcf4546b7829150302360b",
+    "previousHash": "ea7a7b88028d8abb5db89ac557e009b0dbd54015728ec4b44c6fcf36073c7931",
+    "hash": "f84e443bde177b75a3d7291d500aefe77a4019c5ca2c34635f817abfdb6fc028"
+  },
+  {
+    "index": 338,
+    "timestamp": "2026-10-27T10:47:09.869Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098029863,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8265"
+    },
+    "signature": "ccf3c134691fec5832f71fc6ae73f907f31c801eea88f16aab88c53370a1fc40ab9dca83f6788ed19634481f4c3dc0df8d2842f3a6c4c6beb1aac35ce5539204",
+    "previousHash": "f84e443bde177b75a3d7291d500aefe77a4019c5ca2c34635f817abfdb6fc028",
+    "hash": "a0b10307fafd7c8dd65a1dffe06b8bedd38c6f0055ad27a5b74ee6c9849e910d"
+  },
+  {
+    "index": 339,
+    "timestamp": "2026-10-27T10:47:14.888Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098034884,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.0787"
+    },
+    "signature": "f32acb24150ecc98ed446e7680faf26bf2ac09641f5e2437e7da720e4769832a494e7c3ac04facaf1b45c9817fb3fa8edd730f959f17e816149e77876f42c304",
+    "previousHash": "a0b10307fafd7c8dd65a1dffe06b8bedd38c6f0055ad27a5b74ee6c9849e910d",
+    "hash": "833f5962c1e7be9bc70e875b54440a67bf0612f50e11083278c9d5db0bed04c7"
+  },
+  {
+    "index": 340,
+    "timestamp": "2026-10-27T10:47:19.906Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098039901,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7030"
+    },
+    "signature": "14e7d8f6ccefe69552d6dde752d7ecd06ef0bb5adea3b99159669e88fbd400a22d08d69e3e5ec624a048433acda21cbad1d8f6c343aa70021ed3fd741f76a00f",
+    "previousHash": "833f5962c1e7be9bc70e875b54440a67bf0612f50e11083278c9d5db0bed04c7",
+    "hash": "0b15e7f0ffb6c7e236b272ce332bff5195315b0b3349d2430e5542de18e55e78"
+  },
+  {
+    "index": 341,
+    "timestamp": "2026-10-27T10:47:24.924Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098044916,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8234"
+    },
+    "signature": "df0b536b30e0bfc64077a8d09b9daa6b97b2b8e54a7dc4f2f72bd23d5a3b8ce8370af7724d1b95d0a84e8f6cc2749a0a12c7e20a89f0a23d2e53c99aa25d620e",
+    "previousHash": "0b15e7f0ffb6c7e236b272ce332bff5195315b0b3349d2430e5542de18e55e78",
+    "hash": "9e4f219f3750eca221c6e014b27788f7c05717e388ecc9a479197622e37ad627"
+  },
+  {
+    "index": 342,
+    "timestamp": "2026-10-27T10:47:29.973Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098049939,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.5450"
+    },
+    "signature": "d4fa8974314a78eb67dc2e9d5ea8ea2a358657929d0605e653931f8bbef5faa5dc0e85c7f993da3dbc39a0463454273ac6c7f019c163b83629c93bc9834fc904",
+    "previousHash": "9e4f219f3750eca221c6e014b27788f7c05717e388ecc9a479197622e37ad627",
+    "hash": "d04019cbf6ca94bd67b1284bb7cee4cf4d5a64e6baeab6d6245e0d7de0b39fac"
+  },
+  {
+    "index": 343,
+    "timestamp": "2026-10-27T10:47:35.046Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098055007,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1088"
+    },
+    "signature": "d4f11fba67cb5526365794a24c6581826679756f342f1d8c4f13ac5007f9435d5e1e09f9df9598831488f2cf6616b2f50630adbf0e824dfcb0f6fdff02dd0c07",
+    "previousHash": "d04019cbf6ca94bd67b1284bb7cee4cf4d5a64e6baeab6d6245e0d7de0b39fac",
+    "hash": "08a6a0bab7fc691701e0d759a697a27635c15c90aefca23882555acbe13e0c84"
+  },
+  {
+    "index": 344,
+    "timestamp": "2026-10-27T10:47:40.069Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098060063,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8180"
+    },
+    "signature": "80639c420d0df42237ef6e10d6d199e86ec4ca4367b92601180fd64a3a655d08d784e3ff22589e17060558fe766379b4b9a910d0ebb6cb78bc9d08b86be5b501",
+    "previousHash": "08a6a0bab7fc691701e0d759a697a27635c15c90aefca23882555acbe13e0c84",
+    "hash": "dfec36bcb4b57d55619e3276a42afe3619b52934ea442de352fdff20923485f0"
+  },
+  {
+    "index": 345,
+    "timestamp": "2026-10-27T10:47:45.079Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098065074,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6048"
+    },
+    "signature": "cc0d7ae0910a981ad0ed15d6075ab1a79245f8d0b14a6e2e768cc8a5a6dba43cc950c8816a6c01e622051b57d5070591a96d5f86d61198d1e0f7a15e5eb49e08",
+    "previousHash": "dfec36bcb4b57d55619e3276a42afe3619b52934ea442de352fdff20923485f0",
+    "hash": "47bbaccb2a1a36fe1f248c8fe02092bcae4b999797c1e26fa814b4eb891820e3"
+  },
+  {
+    "index": 346,
+    "timestamp": "2026-10-27T10:47:50.095Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098070090,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3310"
+    },
+    "signature": "c60d00c12801fcdd58991fea4803f4f02440dd5335d046a4c216fa8695274426c4ac2fe93d58ea817156adf6d124a0d32301141357a908dbe387dd24c4e3bf01",
+    "previousHash": "47bbaccb2a1a36fe1f248c8fe02092bcae4b999797c1e26fa814b4eb891820e3",
+    "hash": "b58fb14a164952fd875b0375c8cc461fc0039b3e5b4fac082d040776d18a0fe9"
+  },
+  {
+    "index": 347,
+    "timestamp": "2026-10-27T10:47:55.257Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098075251,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8547"
+    },
+    "signature": "c82053cf9ba25a224e2203c5807bf730f95e7eb95fec4fef41dcf3004b3824bb29a0adf0bd67253bc13f1063d1e86a320ae6e364299a96ae256bad174beaf403",
+    "previousHash": "b58fb14a164952fd875b0375c8cc461fc0039b3e5b4fac082d040776d18a0fe9",
+    "hash": "048b2906d1bee18c9ca2ed2fbe2be10f361c87495104872240ea9098d613c092"
+  },
+  {
+    "index": 348,
+    "timestamp": "2026-10-27T10:48:00.268Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098080263,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8191"
+    },
+    "signature": "90576c2deceae63a32a956bccb86e8f0be61126b9baabb8a3b1c6216db8f4e7e315cc66b9634a489bf4e2501b2580561888cba0143e62e8bc2fcec5931299d07",
+    "previousHash": "048b2906d1bee18c9ca2ed2fbe2be10f361c87495104872240ea9098d613c092",
+    "hash": "7ba5ece9eb2d36169490fc1f0211dd06892875cf4dfcbd09815873368ce816db"
+  },
+  {
+    "index": 349,
+    "timestamp": "2026-10-27T10:48:05.282Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098085277,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3497"
+    },
+    "signature": "ad62c072356b8a89fabb585311fbfdaa78edad55af43021510c4b802b9951d4f5f5d3a06af314ff6e6fa3a21d8166a481b2c425b8f31c4d7c6b1747eb520090f",
+    "previousHash": "7ba5ece9eb2d36169490fc1f0211dd06892875cf4dfcbd09815873368ce816db",
+    "hash": "c02825aa5839d97df4a25b273663da29b7f1d08fee1ae7b3aeb78cec177e4f8b"
+  },
+  {
+    "index": 350,
+    "timestamp": "2026-10-27T10:48:10.302Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098090298,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.0033"
+    },
+    "signature": "1f27d96a2495c10683018ec4d522843ba63a9189625f35695ad6854a2f5843e456baf25d58d48cc0d1f9a8fc826be3e35b6115d0c5a8338e2cbe49bb3730740f",
+    "previousHash": "c02825aa5839d97df4a25b273663da29b7f1d08fee1ae7b3aeb78cec177e4f8b",
+    "hash": "98a90b4d6823f178f3198cc34e1c2bd9f06c9f79cc11b34345f0abefed2496c6"
+  },
+  {
+    "index": 351,
+    "timestamp": "2026-10-27T10:48:15.319Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098095315,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7064"
+    },
+    "signature": "6ab3822e8b54c2e6429975ee99fb1af83a0870c1dd0ba75c1402fb28348f50bfc31a763d2fbe8f7fe6fe6dfeb0bbcda4bdd39c31d1e4ec8f1c14851e8ba1e606",
+    "previousHash": "98a90b4d6823f178f3198cc34e1c2bd9f06c9f79cc11b34345f0abefed2496c6",
+    "hash": "f4d18ea45181ae5eeb65c6b4e9530ff11d3004e431c2937a4502eb0adda7f0e0"
+  },
+  {
+    "index": 352,
+    "timestamp": "2026-10-27T10:48:20.335Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098100330,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4243"
+    },
+    "signature": "6fa4ab7955494d2c3cb86e51d819d23eef648fed06fe5d261c83252c731ac1ba74afc724b8071d34ea77b8fe52749aeb20dda9fa095dd787eba89be1b0f5e103",
+    "previousHash": "f4d18ea45181ae5eeb65c6b4e9530ff11d3004e431c2937a4502eb0adda7f0e0",
+    "hash": "fddea63d95249a43b284b76ff36eb3d413ea7bd6190f35ff32fde7a193027cc2"
+  },
+  {
+    "index": 353,
+    "timestamp": "2026-10-27T10:48:25.353Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098105348,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.7400"
+    },
+    "signature": "c767262de0bf6294f58e1966ba852d6eb924e15e85ad288dee046997650372115ef8718e0538292c22ed04966076ebd582cd64c6e71fb1378c902adf61b9b30e",
+    "previousHash": "fddea63d95249a43b284b76ff36eb3d413ea7bd6190f35ff32fde7a193027cc2",
+    "hash": "56ca5235cedaeae76b47f7430c559992229bd38bd35bb3edc4c7ee1f2d077878"
+  },
+  {
+    "index": 354,
+    "timestamp": "2026-10-27T10:48:30.368Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098110363,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1230"
+    },
+    "signature": "2813c97cf46122a7d7a56baff8c4c6291dd0c89d47ce49c79d489df865afc1d30c0e75eec402caaf2f17503e1c08a4735e864c453028ec529de135db8dc4ab02",
+    "previousHash": "56ca5235cedaeae76b47f7430c559992229bd38bd35bb3edc4c7ee1f2d077878",
+    "hash": "138157249bc216542f5c907afa715ddffa515a8e5abc1a5aec300c42a0b26dda"
+  },
+  {
+    "index": 355,
+    "timestamp": "2026-10-27T10:48:35.380Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098115376,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6913"
+    },
+    "signature": "18f18c6fdc9deac37751a913e7b1b638baf073ff3916d79ac38b25da52e54c6daa8a4214491f342c082cd86a8e5947f5cde5e0fd4ca5422acf88cf9f3c56140b",
+    "previousHash": "138157249bc216542f5c907afa715ddffa515a8e5abc1a5aec300c42a0b26dda",
+    "hash": "e6dc448100e98c5a4e6f03f33a3b8b85ea08452fea6a95ed226619a0df4bfc9c"
+  },
+  {
+    "index": 356,
+    "timestamp": "2026-10-27T10:48:40.391Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098120387,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.5770"
+    },
+    "signature": "3fb71584132449e2007ce351030b404648fa49b8d5b5e94dc93fc46d907a7c3dd3fca14264a770246ee846224ddbc698e462c021448126e8ca04b8a0dbc1a80a",
+    "previousHash": "e6dc448100e98c5a4e6f03f33a3b8b85ea08452fea6a95ed226619a0df4bfc9c",
+    "hash": "4f646f5ce703b0133d49f8f068c7c76304da59ebd55f3438b3fd6a7df99a1413"
+  },
+  {
+    "index": 357,
+    "timestamp": "2026-10-27T10:48:45.406Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098125403,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.2517"
+    },
+    "signature": "6c274e66c5c109a04a5a4a4a5390e8d10eb6c1499d01a885d38f72b71f697bc98061549281f1aec69bd3abe5983f1c917dcbf0f3c99d99f4064f63aadc22df0b",
+    "previousHash": "4f646f5ce703b0133d49f8f068c7c76304da59ebd55f3438b3fd6a7df99a1413",
+    "hash": "30e9838a73a55046b5bbc5e36f83a0443d08b23097c012485fce6f9407a42623"
+  },
+  {
+    "index": 358,
+    "timestamp": "2026-10-27T10:48:50.418Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098130415,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6725"
+    },
+    "signature": "ddb5007ee29aa53c36069808a6cc36e407fa4478bc5437af5ab84abd0ae9c8ff58802f22ac9dd851608d1d8571b95b0bd082c39da12f5c49d9f0d4c5a10adf0b",
+    "previousHash": "30e9838a73a55046b5bbc5e36f83a0443d08b23097c012485fce6f9407a42623",
+    "hash": "9ae16c07edbcea30e18d6b6adda4588f9012b327133602d805a54b64e30d6757"
+  },
+  {
+    "index": 359,
+    "timestamp": "2026-10-27T10:48:56.215Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098136211,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4619"
+    },
+    "signature": "b9b2f7ce33f4868f4601c05115ba642500e15c741945e740f1129f4af1a4c787dc05d00ab997a4f1012893049427cf6893cb4f10c9c33ef2ff3953cfe5219d0c",
+    "previousHash": "9ae16c07edbcea30e18d6b6adda4588f9012b327133602d805a54b64e30d6757",
+    "hash": "5a8695e9f41c25f4411b8c5d218fc6f23506c7144be3f8667d290a0b0107c6c4"
+  },
+  {
+    "index": 360,
+    "timestamp": "2026-10-27T10:49:01.227Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098141223,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1965"
+    },
+    "signature": "dec2be918dfc7cf831c0a45765074737c87a5cb221f7b2898a83c4dfb522b231f680f6724a4d58bc415eaf95c6d51d6ce260944a4f596f353c0b893db18b9803",
+    "previousHash": "5a8695e9f41c25f4411b8c5d218fc6f23506c7144be3f8667d290a0b0107c6c4",
+    "hash": "b290ff613ae11dcbbe18a4b871737bbe95daf6fa19b9b50a2c93a269e4a1d7e8"
+  },
+  {
+    "index": 361,
+    "timestamp": "2026-10-27T10:49:06.241Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098146237,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.2155"
+    },
+    "signature": "b7fa92d7602f68436a78a4236eb30640efedb6a0579346be7e5104ad4359acea46380f82eceb3cf4370f2c3c7207f0f22022ed493c96f44e7d2f4406586c5c06",
+    "previousHash": "b290ff613ae11dcbbe18a4b871737bbe95daf6fa19b9b50a2c93a269e4a1d7e8",
+    "hash": "a09f8c1b8ecaf30907dfb756bb60f4667f9194f6d8986fe07448bc4e2685798b"
+  },
+  {
+    "index": 362,
+    "timestamp": "2026-10-27T10:49:11.250Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098151246,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6120"
+    },
+    "signature": "6022b6eacfbb578c1c142bb504921b0d216faee384bbbc66fcf265ec8d8705358f131d0b3e7263b63fd7cf793b3e16255e1c654581ea24cc298052c59ad54a01",
+    "previousHash": "a09f8c1b8ecaf30907dfb756bb60f4667f9194f6d8986fe07448bc4e2685798b",
+    "hash": "eeded1f426c7f6dc0245418655c2c8f36712026d62c1b921abff92af9beafe5c"
+  },
+  {
+    "index": 363,
+    "timestamp": "2026-10-27T10:49:16.260Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098156255,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6456"
+    },
+    "signature": "640f7bb01a4765cc0536e5aaf14868794741938769a748371664eb464012d2b326c57b37f2ecfe825fc25fedfabdebdf502a622f4fd42967e6c8c774d91e1900",
+    "previousHash": "eeded1f426c7f6dc0245418655c2c8f36712026d62c1b921abff92af9beafe5c",
+    "hash": "1633c2317dbe5830de90b6b075e1b553ad60908bb8a7e54d8ae27d696a21f69a"
+  },
+  {
+    "index": 364,
+    "timestamp": "2026-10-27T10:49:21.276Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098161270,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1722"
+    },
+    "signature": "e0fb06e3e8d8f431aa868aebd1a8fb48b166a778f2ae546c7003bed1150e4d4b26867bc8cd1f3e4e3d46311d620a719250f682390f6e5d7e43b05eb489e0da02",
+    "previousHash": "1633c2317dbe5830de90b6b075e1b553ad60908bb8a7e54d8ae27d696a21f69a",
+    "hash": "1a4bfe0f8545021504b5fd0471ccf45c9d89eddde6f808ed17b1543ac70d1885"
+  },
+  {
+    "index": 365,
+    "timestamp": "2026-10-27T10:49:26.293Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098166288,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.2216"
+    },
+    "signature": "b508cdc71ca6e90681bdb99d43db4468a30f217fa703d2d463e117c2d8b7a75b9ca741d5200bc8ffe338ee130e233689b4e6024a417d12d5674ebb802dec6f03",
+    "previousHash": "1a4bfe0f8545021504b5fd0471ccf45c9d89eddde6f808ed17b1543ac70d1885",
+    "hash": "577a98c5f52cddbb45ddd21d044dd1ee44cdc0f54e91e47892c8df69199d16aa"
+  },
+  {
+    "index": 366,
+    "timestamp": "2026-10-27T10:49:31.312Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098171307,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6577"
+    },
+    "signature": "0050e1a465468f9f1a477bac58b63211534569cd5f86f66f865f88fe8ef052ebc5cef8f408af725fc37c4ca79a9790f95471455a2fe4043a5a94e1c181329d05",
+    "previousHash": "577a98c5f52cddbb45ddd21d044dd1ee44cdc0f54e91e47892c8df69199d16aa",
+    "hash": "4631055a1e4325f2f65f8e6d4d9822c6c62a556e5e8668ae14ec3aa257051409"
+  },
+  {
+    "index": 367,
+    "timestamp": "2026-10-27T10:49:36.327Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098176323,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.9114"
+    },
+    "signature": "943c7c80a4db22353ee5ee473ea51961ddb3f22a84069190d1b4e6a5a9a9ffc4b979eae93fad0170db759d78766ad7089954c63448e7463e5caf8ab7e350f303",
+    "previousHash": "4631055a1e4325f2f65f8e6d4d9822c6c62a556e5e8668ae14ec3aa257051409",
+    "hash": "319b0eec1fce9ef48839b838095a397f8b97bcf03b4569523ef32d30beac53f4"
+  },
+  {
+    "index": 368,
+    "timestamp": "2026-10-27T10:49:41.347Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098181343,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6399"
+    },
+    "signature": "f5f271c9b0490e10c17a6b610917f1480bba8e0490617cff39680c8a5e2cb9bc4e40d72c730acd16baa87b5de34e9a7d79869cb5d1d059fe314f3546a99bc803",
+    "previousHash": "319b0eec1fce9ef48839b838095a397f8b97bcf03b4569523ef32d30beac53f4",
+    "hash": "01afe8d63e219d8f4b450e4926d4c26d0306ff52eb0a0fa32e57fb118b0303ae"
+  },
+  {
+    "index": 369,
+    "timestamp": "2026-10-27T10:49:47.181Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098187176,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8838"
+    },
+    "signature": "c80e4c52cb7d726801e0d9118b282163c5789b5f8697c6fb27d436004e98847138a4bf1f57846937759f84d3f4da4fec4a4f8dca4f655f4db3b32401d7bd7306",
+    "previousHash": "01afe8d63e219d8f4b450e4926d4c26d0306ff52eb0a0fa32e57fb118b0303ae",
+    "hash": "2e589798139d0df63632f5847a7c6ef91ef5f52e289c232f7f56ca5228ea8a58"
+  },
+  {
+    "index": 370,
+    "timestamp": "2026-10-27T10:49:52.189Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098192183,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.9829"
+    },
+    "signature": "4dc330b0a06fe09add2d8ac3afc7979303d54cd8a919f9ecf6fafb5f8c86b4b02274c98675c653c593032a0567e04c70b44ab9e2bcdcb0c641a686307c9b0b00",
+    "previousHash": "2e589798139d0df63632f5847a7c6ef91ef5f52e289c232f7f56ca5228ea8a58",
+    "hash": "6ba31ce78b3f0f3e3a98ee272bcd471b1aecad0704c9e93297c5b79f68b2384e"
+  },
+  {
+    "index": 371,
+    "timestamp": "2026-10-27T10:49:57.202Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098197197,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.0317"
+    },
+    "signature": "ea8e02704d15c4556463766aefbbc70c21049120e8819af6185e613fba5a544f3dc873b8ac07732ed0e318d6201e84bcaa64aca763df2775511241c18ffeaa0f",
+    "previousHash": "6ba31ce78b3f0f3e3a98ee272bcd471b1aecad0704c9e93297c5b79f68b2384e",
+    "hash": "685b6875673b02766f631e17499d84129b1fee0f95220007a8913916d839af86"
+  },
+  {
+    "index": 372,
+    "timestamp": "2026-10-27T10:50:02.215Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098202210,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.2721"
+    },
+    "signature": "a29bf8517fe0431a3b93476d88c62194e7f4014d9c52be04f7f71868aa905c0521251d70f4f0f22b9ea8d01c8f40074412e9b6f16fc058f722e8da1d98430e07",
+    "previousHash": "685b6875673b02766f631e17499d84129b1fee0f95220007a8913916d839af86",
+    "hash": "bc909f9cbacb9438022fbc1d8901dfe8a4c68c82d31ab703215b8f5cac95cb02"
+  },
+  {
+    "index": 373,
+    "timestamp": "2026-10-27T10:50:07.232Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098207226,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6354"
+    },
+    "signature": "73f3e684d380bf4b0ab8e64f0f01ff49bcf59c936eb58eac1d99e4ab983494de1f9ac0326eae7094cda051b961bd0963e6df54a73ea29e4bccb92322e5d1c30d",
+    "previousHash": "bc909f9cbacb9438022fbc1d8901dfe8a4c68c82d31ab703215b8f5cac95cb02",
+    "hash": "9e542d775054a88fff2a70dc83cc526ccce526ab4061d96dfc0d82526d5780b6"
+  },
+  {
+    "index": 374,
+    "timestamp": "2026-10-27T10:50:12.252Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098212246,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.2487"
+    },
+    "signature": "d024d92a4b5e5e1e5c10cbc61a4c259888a682d99316a8e7e35dd2a72972d96e6dacc4aaeff99581d58d2a0fc376741e8c272c3d69d65591b413233412fe890e",
+    "previousHash": "9e542d775054a88fff2a70dc83cc526ccce526ab4061d96dfc0d82526d5780b6",
+    "hash": "b26a3b601e1e7717f18ffb706cc22dc325a8090f73a607ca7ba3a0469f4f164a"
+  },
+  {
+    "index": 375,
+    "timestamp": "2026-10-27T10:50:18.002Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098217996,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6621"
+    },
+    "signature": "b18bc86a97fd4fbd593965beb772173e7d2f079f61aa3a6f41e507e4e10084b5deb59a9106abbd0f50a4cce41615a5b95768ca968e65864b0ca31493c922ab08",
+    "previousHash": "b26a3b601e1e7717f18ffb706cc22dc325a8090f73a607ca7ba3a0469f4f164a",
+    "hash": "6dc1f9785d4101b3b44d161765dacb67ce7b7fc5d8e635d1130730fd8761f7a5"
+  },
+  {
+    "index": 376,
+    "timestamp": "2026-10-27T10:50:23.011Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098223005,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3161"
+    },
+    "signature": "a2c542e17f77d60dfc5b8d2bfd6bd89b47a87624cf98c4af700f5da8f8b455303aab57fa494bd5e147cbed933d39340d7d88a43142851aade3a67a395901e00d",
+    "previousHash": "6dc1f9785d4101b3b44d161765dacb67ce7b7fc5d8e635d1130730fd8761f7a5",
+    "hash": "d4c60793c9d00717c4adbe49dc17d2796ab57177ac90ef6fb4fb473c5cde698f"
+  },
+  {
+    "index": 377,
+    "timestamp": "2026-10-27T10:50:28.022Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098228017,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.5864"
+    },
+    "signature": "c7631b72eaffaf29e5b19be8772b38a34b1bd24dd9bd1f13db7c841e38e9b42c2db4d460ba0afdacb4aceab16f2df850ed7273229451929c84a3af2f524d8c00",
+    "previousHash": "d4c60793c9d00717c4adbe49dc17d2796ab57177ac90ef6fb4fb473c5cde698f",
+    "hash": "f6a94c8bbd581d948fbce389d23af50fd8c6fd1e3ec7e9445dc2eec7f27c2bf8"
+  },
+  {
+    "index": 378,
+    "timestamp": "2026-10-27T10:50:33.041Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098233035,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.0083"
+    },
+    "signature": "7c5c58515572f8c2d5bc5e684c166cf1927f686d1c03be6f811082fea08b3c1f6837c84564c80129d3a986af68bd19702371d80aa189d2489582b1e9e535ce03",
+    "previousHash": "f6a94c8bbd581d948fbce389d23af50fd8c6fd1e3ec7e9445dc2eec7f27c2bf8",
+    "hash": "d5b564a3aaa5b090d4e5fcff0cff04d2fc2c7917ad19f5381a91e88682d0a703"
+  },
+  {
+    "index": 379,
+    "timestamp": "2026-10-27T10:50:38.051Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098238046,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.8601"
+    },
+    "signature": "b0dba1c629bde6a18242d1185ec04950f39a2a5eb578a642364c3f79152d0e3ed6769e38388997d0a87d6b9076e44840c5f1d28cb748604be9b3ac2216ccbd0a",
+    "previousHash": "d5b564a3aaa5b090d4e5fcff0cff04d2fc2c7917ad19f5381a91e88682d0a703",
+    "hash": "133f9988beb8148cfbcf2c4ca90182b8f37989491899e700ea6986822d6923b0"
+  },
+  {
+    "index": 380,
+    "timestamp": "2026-10-27T10:50:43.078Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098243066,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4584"
+    },
+    "signature": "a7f04b91acc4211b75b2ce1a8e880640c98180dc8cf9c7e70a0dcbdcd80859d0ca00f8efddaa263fb24e9cec58a10beb9f4199817fdbaaf838c26523d83a5909",
+    "previousHash": "133f9988beb8148cfbcf2c4ca90182b8f37989491899e700ea6986822d6923b0",
+    "hash": "cd636ff9bcf22fa00f670dc51a1cae3a475c7fc8576647228070a9d234f4f900"
+  },
+  {
+    "index": 381,
+    "timestamp": "2026-10-27T10:50:49.093Z",
+    "senderId": "agent-synth",
+    "payload": {
+      "timestamp": 1793098249089,
+      "nodeId": "agent-synth",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3024"
+    },
+    "signature": "98b44df5e1171033b67d8825c61be015ce9d4e934a3edd170f1e5b6cb848b919e8094a85b25fad36f899a6a36b14cc1dd817826a53e0851928909a20f5e80f0b",
+    "previousHash": "cd636ff9bcf22fa00f670dc51a1cae3a475c7fc8576647228070a9d234f4f900",
+    "hash": "c9e7ebd118ec8c8058c181d8e433d2198a257aaadb3cb8c9a52ebed6165cd0a9"
+  },
+  {
+    "index": 382,
+    "timestamp": "2026-10-27T10:50:54.104Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098254098,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.3310"
+    },
+    "signature": "d5bd7aec64cefb1d2b65caa113089511d69fddb1f633567580f90089563c1b69789ea1760d5d290f59e472202195e6a5589fa7d920ec7e183645de85ce01dd0a",
+    "previousHash": "c9e7ebd118ec8c8058c181d8e433d2198a257aaadb3cb8c9a52ebed6165cd0a9",
+    "hash": "a3dc98affe24f26b2b5631263878290fe62c8941eacb5e1f41eb6669bfc383e5"
+  },
+  {
+    "index": 383,
+    "timestamp": "2026-10-27T10:50:59.116Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793098259111,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.1465"
+    },
+    "signature": "f8299f6e93957fe56d1b567f87d9a9078c8598075f4ca8d98f7f24fb5cd997801a7bdb4baebb0a5b613d1986d46ba35ff5fc9df3bf70ef822bc41d9c83beae0f",
+    "previousHash": "a3dc98affe24f26b2b5631263878290fe62c8941eacb5e1f41eb6669bfc383e5",
+    "hash": "6c0aabeec1b3d461a151d909a4ad6b27de89658c4b5f318bc47ab8d32a181db8"
+  },
+  {
+    "index": 384,
+    "timestamp": "2026-10-27T10:51:04.126Z",
+    "senderId": "agent-prime",
+    "payload": {
+      "timestamp": 1793098264122,
+      "nodeId": "agent-prime",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6900"
+    },
+    "signature": "ad2668d24385d6c908ee7f699cbb1566343933ccb53f218d67b755dccec9c86a10bf30269835c8d7990a01c9405eb3d1ba7d6226a78dc5f6b2410f30fcdab101",
+    "previousHash": "6c0aabeec1b3d461a151d909a4ad6b27de89658c4b5f318bc47ab8d32a181db8",
+    "hash": "d5a536c767db6c436ba1211093a32831024c6264da527fc3d68c5499e524f07d"
   }
 ]
