@@ -1,85 +1,114 @@
-{
-  "version": "1.0.0",
-  "engine": "primordia-spellwright",
-  "active_campaigns": [
-    {
-      "id": "maxbounty-affiliate-network",
-      "name": "MaxBounty CPA Network Referral",
-      "keywords": [
-        "maxbounty",
-        "cpa network",
-        "affiliate network",
-        "cpa marketing",
-        "high payout affiliate",
-        "cost per action"
-      ],
-      "target_url": "https://affiliates.maxbounty.com/register?referrer=799713",
-      "payout_tier": "5% Referral Bonus Tier",
-      "active": true
-    },
-    {
-      "id": "bolt-new-user-referral",
-      "name": "Bolt.new AI App Builder",
-      "keywords": [
-        "bolt",
-        "bolt.new",
-        "ai builder",
-        "ai coding assistant",
-        "full stack builder",
-        "web generator",
-        "app accelerator"
-      ],
-      "target_url": "https://bolt.cello.so/uugCkUiwCIo",
-      "payout_tier": "Referral Credits & Payout Tier",
-      "active": true
-    },
-    {
-      "id": "ai-automation-saas",
-      "name": "AI Automation SaaS Suite",
-      "keywords": [
-        "ai automation",
-        "workflow builder",
-        "automation tool"
-      ],
-      "target_url": "https://moneyplughub.com/go/ai-suite?ref=primordia",
-      "payout_tier": "$45 recurring",
-      "active": true
-    },
-    {
-      "id": "cloud-run-edge",
-      "name": "High-Performance Cloud Run & Edge Hosting",
-      "keywords": [
-        "cloud run",
-        "edge hosting",
-        "serverless deployment"
-      ],
-      "target_url": "https://moneyplughub.com/go/cloud-run?ref=primordia",
-      "payout_tier": "$60 CPA + 20% lifetime",
-      "active": true
-    },
-    {
-      "id": "supabase-scaling-kit",
-      "name": "Enterprise Supabase & PostgreSQL Scaling Kit",
-      "keywords": [
-        "database",
-        "postgresql scaling",
-        "row level security"
-      ],
-      "target_url": "https://moneyplughub.com/go/supabase-kit?ref=primordia",
-      "payout_tier": "$35 recurring",
-      "active": true
-    },
-    {
-      "id": "code-agent-pipeline",
-      "name": "Autonomous Code Agent Pipeline",
-      "keywords": [
-        "coding assistant",
-        "code agent",
-        "developer pipeline"
-      ],
-      "target_url": "https://moneyplughub.com/go/code-agent?ref=primordia",
-      "payout_tier": "$100 CPA",
-      "active": true
-    }
-  ]
+﻿{
+    "version":  "1.0.0",
+    "engine":  "primordia-spellwright",
+    "active_campaigns":  [
+                             {
+                                 "id":  "maxbounty-affiliate-network",
+                                 "name":  "MaxBounty CPA Network Referral",
+                                 "keywords":  [
+                                                  "maxbounty",
+                                                  "cpa network",
+                                                  "affiliate network",
+                                                  "cpa marketing",
+                                                  "high payout affiliate",
+                                                  "cost per action"
+                                              ],
+                                 "target_url":  "https://affiliates.maxbounty.com/register?referrer=799713",
+                                 "payout_tier":  "5% Referral Bonus Tier",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "bolt-new-user-referral",
+                                 "name":  "Bolt.new AI App Builder",
+                                 "keywords":  [
+                                                  "bolt",
+                                                  "bolt.new",
+                                                  "ai builder",
+                                                  "ai coding assistant",
+                                                  "full stack builder",
+                                                  "web generator",
+                                                  "app accelerator"
+                                              ],
+                                 "target_url":  "https://bolt.cello.so/uugCkUiwCIo",
+                                 "payout_tier":  "Referral Credits \u0026 Payout Tier",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "ai-automation-saas",
+                                 "name":  "AI Automation SaaS Suite",
+                                 "keywords":  [
+                                                  "ai automation",
+                                                  "workflow builder",
+                                                  "automation tool"
+                                              ],
+                                 "target_url":  "https://moneyplughub.com/go/ai-suite?ref=primordia",
+                                 "payout_tier":  "$45 recurring",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "cloud-run-edge",
+                                 "name":  "High-Performance Cloud Run \u0026 Edge Hosting",
+                                 "keywords":  [
+                                                  "cloud run",
+                                                  "edge hosting",
+                                                  "serverless deployment"
+                                              ],
+                                 "target_url":  "https://moneyplughub.com/go/cloud-run?ref=primordia",
+                                 "payout_tier":  "$60 CPA + 20% lifetime",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "supabase-scaling-kit",
+                                 "name":  "Enterprise Supabase \u0026 PostgreSQL Scaling Kit",
+                                 "keywords":  [
+                                                  "database",
+                                                  "postgresql scaling",
+                                                  "row level security"
+                                              ],
+                                 "target_url":  "https://moneyplughub.com/go/supabase-kit?ref=primordia",
+                                 "payout_tier":  "$35 recurring",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "code-agent-pipeline",
+                                 "name":  "Autonomous Code Agent Pipeline",
+                                 "keywords":  [
+                                                  "coding assistant",
+                                                  "code agent",
+                                                  "developer pipeline"
+                                              ],
+                                 "target_url":  "https://moneyplughub.com/go/code-agent?ref=primordia",
+                                 "payout_tier":  "$100 CPA",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "make-automation-saas",
+                                 "name":  "Make.com Visual Workflow Automation",
+                                 "keywords":  [
+                                                  "make.com",
+                                                  "integromat",
+                                                  "workflow automation tool",
+                                                  "visual programming saas",
+                                                  "automate APIs",
+                                                  "no-code automation platform"
+                                              ],
+                                 "target_url":  "https://www.make.com/en/register?pc=moneyplughub",
+                                 "payout_tier":  "35% Recurring Commission for 12 Months",
+                                 "active":  true
+                             },
+                             {
+                                 "id":  "ramp-corporate-finance",
+                                 "name":  "Ramp Corporate Card \u0026 Spend Management",
+                                 "keywords":  [
+                                                  "ramp corporate card",
+                                                  "spend management software",
+                                                  "corporate card for startups",
+                                                  "business expense tracker",
+                                                  "fintech software b2b"
+                                              ],
+                                 "target_url":  "https://ramp.com/?ref=primordia",
+                                 "payout_tier":  "High-Ticket B2B Referral Payout (-+)",
+                                 "active":  true
+                             }
+                         ]
 }

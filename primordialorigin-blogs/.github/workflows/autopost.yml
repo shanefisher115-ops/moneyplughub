@@ -1,0 +1,32 @@
+﻿name: Primordialorigin Auto-Blog Spawner
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  spawn-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Programmatic Post
+        run: |
+          TIMESTAMP=$(date +%s)
+          FILENAME="content/post-$TIMESTAMP.md"
+          
+          echo "---" > $FILENAME
+          echo "title: \"Automated Insights $TIMESTAMP\"" >> $FILENAME
+          echo "date: \"$(date -u +"%Y-%m-%d")\"" >> $FILENAME
+          echo "---" >> $FILENAME
+          echo "" >> $FILENAME
+          echo "# Primordialorigin Automated Node $TIMESTAMP" >> $FILENAME
+          echo "This article was autonomously generated and deployed via the Primordialorigin network infrastructure." >> $FILENAME
+          
+          git config --global user.name "PrimordiaBot"
+          git config --global user.email "bot@primordia.os"
+          git add $FILENAME
+          git commit -m "Auto-spawned blog post $TIMESTAMP for Primordialorigin"
+          git push
