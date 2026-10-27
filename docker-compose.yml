@@ -1,0 +1,21 @@
+﻿version: '3.8'
+services:
+  primordia-guardian:
+    build: .
+    container_name: primordia-guardian
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./swarm_ledger.json:/app/swarm_ledger.json
+      - ./keys:/app/keys
+    restart: always
+  
+  primordia-supervisor:
+    build: .
+    container_name: primordia-supervisor
+    depends_on:
+      - primordia-guardian
+    volumes:
+      - ./keys:/app/keys
+    command: ["node", "swarm-supervisor.js"]
+    restart: always
