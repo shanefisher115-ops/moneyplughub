@@ -4142,5 +4142,47 @@
     "signature": "d1346dd0e0f478f9bf792c823b380474ea6596700729f963aef5749e8988826c0c2a25f76985fe7dd834a494082cee616069076c5f67c5b78a013f74cc6a3309",
     "previousHash": "d66db8eb76c0b1285f2a018d5796c5c1775188241b369463286d95cc6684fbea",
     "hash": "93fa1c29e77d3bb583b8ebd3685d7bae58087155c8bfec3ddbb7ed399a521c25"
+  },
+  {
+    "index": 296,
+    "timestamp": "2026-10-27T10:43:18.867Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793097798853,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6370"
+    },
+    "signature": "4324070775fa1a14a6d625c07337e5bfce55919fb473082fed024e628685bb32082a7062d6076d79175a3203622ae9c01bd4b4f53c131c556c388544c46c9c05",
+    "previousHash": "93fa1c29e77d3bb583b8ebd3685d7bae58087155c8bfec3ddbb7ed399a521c25",
+    "hash": "fae0776ed8c66d912890a5fa60961a4053f3b51353f7dc9fd38215ee355ba118"
+  },
+  {
+    "index": 297,
+    "timestamp": "2026-10-27T10:43:23.887Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793097803883,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.6931"
+    },
+    "signature": "9d2b7135fb581db40206ff42e41988023785e8ce271e3d5916abde92df0058dfdf008c938125fedbde89f151d934ca527f36d5ca7788ab2cbb848df0f63f2500",
+    "previousHash": "fae0776ed8c66d912890a5fa60961a4053f3b51353f7dc9fd38215ee355ba118",
+    "hash": "3ed90833b82d48d2a4714b3f47cdf857a4e84c9622d01111f54846b17ce3872d"
+  },
+  {
+    "index": 298,
+    "timestamp": "2026-10-27T10:43:28.896Z",
+    "senderId": "agent-omega",
+    "payload": {
+      "timestamp": 1793097808891,
+      "nodeId": "agent-omega",
+      "status": "ACTIVE_SUPERVISION",
+      "entropy": "0.4237"
+    },
+    "signature": "2dc0f62165d9119242dacc59eeeee00460a4cbe907a318a1bdfdad94b88684094f06928c7168f9e98c9731be0983cca432067a00ef54f208c399b33e0398f802",
+    "previousHash": "3ed90833b82d48d2a4714b3f47cdf857a4e84c9622d01111f54846b17ce3872d",
+    "hash": "0d99787015cbfca2c0e2003ce25a226fa4b4779a82e1377fe565590cdc36b513"
   }
 ]
