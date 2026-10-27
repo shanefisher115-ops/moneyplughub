@@ -1,0 +1,13 @@
+{
+  "payload": {
+    "agent_id": "primordia-core-agent",
+    "timestamp": 1793094844,
+    "action": "deploy_telemetry_verifiable_proof",
+    "metrics": {
+      "status": "success",
+      "trust_tier": "signed"
+    }
+  },
+  "signature": "f9fca2fe96ce0a3e93d0fe34061bc4338f229e9b098c71f71a588a318ef10e63db5a8f9e4236829c983cc1167183b01d61e6a0b28c2812e8768b9dbb63ff000f",
+  "algorithm": "Ed25519"
+}
