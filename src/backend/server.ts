@@ -171,6 +171,41 @@ app.get('/api/health', (req: Request, res: Response) => {
     timestamp: new Date().toISOString()
   });
 });
+// ============================================================================
+// PrimordiaBridge Injected Telemetry & Health Endpoints
+// ============================================================================
+
+// Unreal-friendly health endpoint (non-API)
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'online',
+        system: 'MoneyPlugHub',
+        timestamp: Date.now(),
+        node: process.version
+    });
+});
+
+// Unreal-friendly GET telemetry probe
+app.get('/telemetry', (req, res) => {
+    res.json({
+        realm: 'Singularity',
+        status: 'active',
+        nodeVersion: process.version,
+        timestamp: Date.now()
+    });
+});
+
+// Unreal → Node telemetry ingestion
+app.post('/telemetry', (req, res) => {
+    console.log('[PrimordiaBridge] Received Unreal Telemetry Payload:', req.body);
+
+    res.json({
+        status: 'received',
+        payload: req.body,
+        timestamp: Date.now()
+    });
+});
+
 
 // Production SPA Static File Serving with Aggressive Caching
 const possibleDistPaths = [

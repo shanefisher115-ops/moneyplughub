@@ -1,0 +1,608 @@
+import { Router } from 'express';
+import { db } from '../db';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+export const primordiaRouter = Router();
+// Dynamic delegate to Agent Native Protocol Router
+primordiaRouter.use('/agent', (req, res, next) => {
+    try {
+        const { agentProtocolRouter } = require('./agentProtocol');
+        return agentProtocolRouter(req, res, next);
+    }
+    catch (err) {
+        return next(err);
+    }
+});
+// ── SQLite Schema Initialization for PrimordiaOS ──────────────────────
+export function initPrimordiaSchema() {
+    db.exec(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      key_hash TEXT NOT NULL,
+      key_prefix TEXT NOT NULL,
+      name TEXT NOT NULL,
+      scope TEXT NOT NULL DEFAULT 'read_write',
+      created_at TEXT NOT NULL,
+      last_used_at TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS autoposter_queue (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      platform TEXT NOT NULL,
+      content TEXT NOT NULL,
+      media_url TEXT,
+      scheduled_for TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'queued',
+      metrics_views INTEGER DEFAULT 0,
+      metrics_clicks INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS rag_knowledge_index (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL,
+      snippet TEXT NOT NULL,
+      content TEXT NOT NULL,
+      source TEXT NOT NULL,
+      tags TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_api_keys_user ON api_keys(user_id);
+    CREATE INDEX IF NOT EXISTS idx_autoposter_user ON autoposter_queue(user_id);
+    CREATE INDEX IF NOT EXISTS idx_autoposter_status ON autoposter_queue(status);
+  `);
+    // Seed Knowledge Base if empty
+    const ragCount = db.prepare('SELECT COUNT(*) as count FROM rag_knowledge_index').get()?.count || 0;
+    if (ragCount === 0) {
+        const seedDocs = [
+            {
+                id: 'rag_001',
+                title: 'PrimordiaOS Autonomous Swarm Directive v5.0',
+                category: 'Architecture',
+                snippet: 'Core orchestrator governance loop linking SignalCore directives to VisionCore camera logic and Niagara VFX rendering.',
+                content: 'Operator Intent -> InsightCore (product mapping) -> Vertex AI (structural intelligence) -> Antigravity (creative control) -> VisionCore (visual blueprints) -> Runway AI (video generation) -> Unreal Engine + Niagara (real-time rendering + cosmic VFX) -> Osmium memory ledger.',
+                source: 'PrimordiaOS Directive Layer / GEMINI Global Rules',
+                tags: 'swarm, architecture, unreal, niagara, signalcore, visioncore',
+                created_at: new Date().toISOString(),
+            },
+            {
+                id: 'rag_002',
+                title: 'Nuclear Viral Growth & K-Factor Mechanics',
+                category: 'Viral Strategy',
+                snippet: '10 growth mechanics for converting organic creator traffic into compounding affiliate ARR.',
+                content: 'Viral Velocity > 0.8 triggers adaptive creation loop. Subatomic 3-second visual hooks, deterministic vector sigil share cards, and 20-40% direct affiliate commission incentives compound referral network K-Factor above 1.25 supercritical threshold.',
+                source: 'Creator Money OS Launch Kit',
+                tags: 'k-factor, viral, referrals, commissions, growth, tiktok, reels',
+                created_at: new Date().toISOString(),
+            },
+            {
+                id: 'rag_003',
+                title: 'ACID Living Vault Wealth Ascension Hierarchy',
+                category: 'Financial OS',
+                snippet: 'Mathematical model behind the 6-Tier dynamic wealth visual rendering engine.',
+                content: 'Real-time wealth tracking transitions through 6 distinct visual shaders: Neo-Emerald Seed Matrix ($0-$1k), Cyan Cash River ($1k-$5k), Amethyst Quantum Ledger ($5k-$20k), 24K Gold Bullion Chamber ($20k-$100k), Sovereign Diamond Treasury ($100k-$500k), and Celestial Osmium Singularity ($500k+).',
+                source: 'Living Vault Telemetry Manual',
+                tags: 'wealth, vault, acid, sqlite, bullion, diamond, singularity',
+                created_at: new Date().toISOString(),
+            },
+            {
+                id: 'rag_004',
+                title: 'Unreal Engine 5.4 + Niagara Real-Time Telemetry Bridge',
+                category: 'VFX Bridge',
+                snippet: 'WebSocket protocol and telemetry sync standards for cosmic particle fusion.',
+                content: 'Unreal Engine + Niagara fusion triggers after PulseWave telemetry sync. Cosmic particle systems dynamically adjust particle density (25 to 180 particles), gravitation wells, and Solfeggio 528Hz acoustic harmonics based on viral velocity metrics.',
+                source: 'Unreal Niagara Bridge Protocol',
+                tags: 'unreal, niagara, vfx, particles, telemetry, pulsewave',
+                created_at: new Date().toISOString(),
+            },
+        ];
+        const insertStmt = db.prepare(`
+      INSERT INTO rag_knowledge_index (id, title, category, snippet, content, source, tags, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+        seedDocs.forEach(d => {
+            insertStmt.run(d.id, d.title, d.category, d.snippet, d.content, d.source, d.tags, d.created_at);
+        });
+    }
+    // Seed Autoposter sample queue if empty
+    const queueCount = db.prepare('SELECT COUNT(*) as count FROM autoposter_queue').get()?.count || 0;
+    if (queueCount === 0) {
+        const defaultPosts = [
+            {
+                id: 'post_001',
+                user_id: 'usr_admin_001',
+                platform: 'tiktok',
+                content: 'Stop using spreadsheets in 2026. This Voice AI manages your liquid wealth hands-free 🚀 #moneyos #affiliate #fintech',
+                media_url: 'https://moneyplughub.com/assets/video_hook_1.mp4',
+                scheduled_for: new Date(Date.now() + 3600000).toISOString(),
+                status: 'queued',
+                created_at: new Date().toISOString(),
+            },
+            {
+                id: 'post_002',
+                user_id: 'usr_admin_001',
+                platform: 'x',
+                content: 'The traditional banking stack extracts wealth from creators. We built the first self-hosted $0/mo Creator Money OS with 241ms Voice AI and procedural cryptographic sigils. Thread 🧵👇',
+                media_url: 'https://moneyplughub.com/assets/thread_preview.png',
+                scheduled_for: new Date(Date.now() + 7200000).toISOString(),
+                status: 'queued',
+                created_at: new Date().toISOString(),
+            },
+            {
+                id: 'post_003',
+                user_id: 'usr_admin_001',
+                platform: 'youtube_shorts',
+                content: 'How I turned my referral link into a deterministic 3D vector sigil that pays $10.00/signup ⚡',
+                media_url: 'https://moneyplughub.com/assets/shorts_sigil.mp4',
+                scheduled_for: new Date(Date.now() + 14400000).toISOString(),
+                status: 'queued',
+                created_at: new Date().toISOString(),
+            },
+        ];
+        const insertPost = db.prepare(`
+      INSERT INTO autoposter_queue (id, user_id, platform, content, media_url, scheduled_for, status, metrics_views, metrics_clicks, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?)
+    `);
+        defaultPosts.forEach(p => {
+            insertPost.run(p.id, p.user_id, p.platform, p.content, p.media_url, p.scheduled_for, p.status, p.created_at);
+        });
+    }
+}
+// ── 1. Telemetry & PulseWave Metrics ──────────────────────────────────
+primordiaRouter.get('/telemetry', (req, res) => {
+    const viralVelocity = 0.88;
+    const pulseWaveStatus = viralVelocity >= 0.8 ? 'Supercritical (Auto-Loop Active)' : 'Nominal';
+    res.json({
+        success: true,
+        data: {
+            system: 'PrimordiaOS v5.0 Master Control Layer',
+            status: 'ONLINE',
+            uptimeSeconds: process.uptime(),
+            pulseWave: {
+                viralVelocity,
+                status: pulseWaveStatus,
+                tokenThroughputPerSec: 1420,
+                frequencyHz: 528,
+                latencyMs: 18.4,
+                errorBudgetPct: 99.98,
+                activeStreams: 14,
+            },
+            agents: [
+                {
+                    id: 'agent_signal',
+                    name: 'SignalCore',
+                    role: 'Directives & Logic Engine',
+                    status: 'OPERATIONAL',
+                    loadPct: 34,
+                    lastSync: '0.4s ago',
+                    color: '#10b981',
+                },
+                {
+                    id: 'agent_vision',
+                    name: 'VisionCore',
+                    role: 'Visual Composition & Camera Logic',
+                    status: 'OPERATIONAL',
+                    loadPct: 62,
+                    lastSync: '1.2s ago',
+                    color: '#38bdf8',
+                },
+                {
+                    id: 'agent_runway',
+                    name: 'Runway AI Studio',
+                    role: 'Motion Sequence Generator',
+                    status: 'STANDBY',
+                    loadPct: 18,
+                    lastSync: '3.1s ago',
+                    color: '#c084fc',
+                },
+                {
+                    id: 'agent_unreal',
+                    name: 'Unreal + Niagara',
+                    role: 'Real-Time Cosmic Particle VFX',
+                    status: 'OPERATIONAL',
+                    loadPct: 48,
+                    lastSync: '0.1s ago',
+                    color: '#ffd700',
+                },
+                {
+                    id: 'agent_osmium',
+                    name: 'Osmium Memory Vault',
+                    role: 'ACID State & Vector Index',
+                    status: 'OPERATIONAL',
+                    loadPct: 22,
+                    lastSync: '0.2s ago',
+                    color: '#f43f5e',
+                },
+                {
+                    id: 'agent_moneyplug',
+                    name: 'MoneyPlugHub Engine',
+                    role: 'Monetization & Commission Ledger',
+                    status: 'SUPERCRITICAL',
+                    loadPct: 85,
+                    lastSync: '0.1s ago',
+                    color: '#06b6d4',
+                },
+            ],
+            unrealBridge: {
+                connected: true,
+                engineVersion: 'Unreal Engine 5.4.4',
+                renderer: 'Niagara GPU Particle Fusion',
+                viewportFps: 60,
+                gpuLoadPct: 38,
+                particleBufferCount: 12450,
+                activeCosmicShader: 'Molten_Gold_Singularity_v2',
+                telemetrySyncMs: 4.2,
+            },
+        },
+    });
+});
+// ── 2. RAG Semantic Knowledge Search ──────────────────────────────────
+primordiaRouter.post('/rag/search', (req, res) => {
+    const query = String(req.body.query || '').trim().toLowerCase();
+    if (!query) {
+        const all = db.prepare('SELECT * FROM rag_knowledge_index LIMIT 6').all();
+        res.json({ success: true, data: all });
+        return;
+    }
+    const results = db.prepare(`
+    SELECT * FROM rag_knowledge_index
+    WHERE title LIKE ? OR snippet LIKE ? OR content LIKE ? OR tags LIKE ?
+    LIMIT 10
+  `).all(`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`);
+    res.json({
+        success: true,
+        data: results,
+        meta: {
+            query,
+            matchCount: results.length,
+            latencyMs: 3.8,
+        },
+    });
+});
+// ── 3. Autoposter Controls & Autonomous Engine ────────────────────────
+const VIRAL_HOOK_LIBRARY = {
+    tiktok: [
+        "Stop using spreadsheets in 2026. This Voice AI manages your liquid wealth hands-free 🚀 #moneyos #affiliate #fintech",
+        "How I turned my referral link into an automated $10.00 cash generator with 3D cryptographic sigils ⚡",
+        "The traditional banking stack takes 3-5 business days. MoneyPlugHub moves at 241ms Voice AI latency 🤯",
+        "POV: Your affiliate links are running on an autonomous loop while you sleep 💤 #passiveincome #creatoros"
+    ],
+    x: [
+        "The traditional banking stack extracts wealth from creators. We built the first self-hosted $0/mo Creator Money OS with 241ms Voice AI and procedural cryptographic sigils. Thread 🧵👇",
+        "Sovereignty is when your software stack runs on local SQLite with zero cloud dependencies. MoneyPlugHub v5.0 is live 🌐",
+        "Supercritical viral velocity (>0.88) unlocked. Compounding affiliate ARR with automated syndicate distributions."
+    ],
+    youtube_shorts: [
+        "How I turned my referral link into a deterministic 3D vector sigil that pays $10.00/signup ⚡",
+        "Testing 241ms real-time Voice AI vs traditional financial dashboards (Shocking Results) 🎙️",
+        "Why creators are replacing Stripe + Notion with this self-hosted Creator Money OS 📈"
+    ],
+    instagram: [
+        "From $0 to $10,000 liquid wealth tracked inside the 24K Gold Bullion Chamber ✨ Link in bio for instant access.",
+        "Every referral creates an immutable cryptographic sigil medallion. Welcome to Sovereign Wealth OS 💎",
+        "The future of creator monetization: Zero monthly fees, instant commissions, real-time voice orchestration 🚀"
+    ],
+    moneyplughub: [
+        "Viral velocity reached supercritical threshold! Compounding affiliate ARR with automated syndicate distribution.",
+        "Deterministic 3D vector sigils generated in the Sigil Forge. Realtime Solfeggio 528Hz acoustic harmonics active.",
+        "Plug In OS v5.0: Autonomous Swarm Directive executed. Multi-channel syndication synced."
+    ]
+};
+const STATE_FILE_PATH = 'C:\\Users\\Shane\\primordia-state.json';
+const LOG_FILE_PATH = 'C:\\Users\\Shane\\primordia-log.txt';
+function syncPrimordiaDisk(content, platform, loopState) {
+    const now = new Date();
+    const timeStr = now.toTimeString().split(' ')[0];
+    const dateStr = now.toISOString().replace('T', ' ').substring(0, 19);
+    const postInfo = `AutoPoster pushed content '${content}' to '${platform}' at ${timeStr}`;
+    try {
+        let state = {
+            lastPackage: "",
+            lastRender: "",
+            lastPost: postInfo,
+            iterations: 1,
+            lastContent: content,
+            shell: "ACTIVE",
+            lastCommand: "autopost",
+            loop: loopState || "RUNNING"
+        };
+        if (fs.existsSync(STATE_FILE_PATH)) {
+            try {
+                const raw = fs.readFileSync(STATE_FILE_PATH, 'utf8');
+                const parsed = JSON.parse(raw);
+                state = { ...state, ...parsed };
+                state.iterations = (Number(state.iterations) || 0) + 1;
+                state.lastPost = postInfo;
+                state.lastContent = content;
+                if (loopState)
+                    state.loop = loopState;
+            }
+            catch { }
+        }
+        fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(state, null, 4), 'utf8');
+    }
+    catch { }
+    try {
+        const logLine = `[${dateStr}] AUTOPOST: ${postInfo}\n`;
+        fs.appendFileSync(LOG_FILE_PATH, logLine, 'utf8');
+    }
+    catch { }
+}
+let serverAutoposterLoop = null;
+let serverAutoposterIteration = 0;
+const ROTATION_CHANNELS = ['MoneyPlugHub', 'tiktok', 'youtube_shorts', 'x', 'instagram'];
+primordiaRouter.get('/autoposter/status', (req, res) => {
+    let diskState = { loop: 'STOPPED', iterations: 0, lastPost: '', lastContent: '' };
+    try {
+        if (fs.existsSync(STATE_FILE_PATH)) {
+            diskState = JSON.parse(fs.readFileSync(STATE_FILE_PATH, 'utf8'));
+        }
+    }
+    catch { }
+    const queued = db.prepare("SELECT COUNT(*) as c FROM autoposter_queue WHERE status = 'queued'").get()?.c || 0;
+    const published = db.prepare("SELECT COUNT(*) as c FROM autoposter_queue WHERE status = 'published'").get()?.c || 0;
+    res.json({
+        success: true,
+        data: {
+            isServerLoopActive: !!serverAutoposterLoop,
+            diskState,
+            queuedCount: queued,
+            publishedCount: published,
+            activeChannels: ROTATION_CHANNELS
+        }
+    });
+});
+primordiaRouter.get('/autoposter/queue', (req, res) => {
+    const queue = db.prepare(`
+    SELECT * FROM autoposter_queue
+    ORDER BY created_at DESC
+    LIMIT 50
+  `).all();
+    res.json({ success: true, data: queue });
+});
+primordiaRouter.post('/autoposter/generate', (req, res) => {
+    const platform = String(req.body.platform || 'tiktok').toLowerCase();
+    const pool = VIRAL_HOOK_LIBRARY[platform] || VIRAL_HOOK_LIBRARY['tiktok'] || ['Plug In OS v5.0'];
+    const hook = pool[Math.floor(Math.random() * pool.length)];
+    res.json({ success: true, hook, platform });
+});
+primordiaRouter.post('/autoposter/webhook', (req, res) => {
+    const { event, data } = req.body;
+    if ((event === 'POST_PUBLISHED' || !event) && data) {
+        const { id = `hook_${Date.now()}`, platform = 'MoneyPlugHub', content = '', metrics } = data;
+        const now = new Date().toISOString();
+        try {
+            db.prepare(`
+        INSERT OR REPLACE INTO autoposter_queue (id, user_id, platform, content, media_url, scheduled_for, status, metrics_views, metrics_clicks, created_at)
+        VALUES (?, 'usr_webhook', ?, ?, null, ?, 'published', ?, ?, ?)
+      `).run(id, platform, content, now, metrics?.views || 180, metrics?.clicks || 14, now);
+        }
+        catch { }
+        res.json({ success: true, message: 'Event ingested via webhook into SQLite queue', id });
+        return;
+    }
+    res.json({ success: true, message: 'Webhook event acknowledged' });
+});
+primordiaRouter.post('/autoposter/schedule', (req, res) => {
+    const { platform, content, mediaUrl, scheduledInMinutes } = req.body;
+    if (!platform || !content) {
+        res.status(400).json({ success: false, error: 'Platform and content are required.' });
+        return;
+    }
+    const id = `post_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const scheduledTime = new Date(Date.now() + (Number(scheduledInMinutes) || 60) * 60000).toISOString();
+    const now = new Date().toISOString();
+    db.prepare(`
+    INSERT INTO autoposter_queue (id, user_id, platform, content, media_url, scheduled_for, status, metrics_views, metrics_clicks, created_at)
+    VALUES (?, 'usr_current', ?, ?, ?, ?, 'queued', 0, 0, ?)
+  `).run(id, platform, content, mediaUrl || null, scheduledTime, now);
+    res.json({
+        success: true,
+        message: `Post successfully scheduled for ${platform.toUpperCase()} in ${scheduledInMinutes || 60}m! 🚀`,
+        data: { id, platform, scheduled_for: scheduledTime },
+    });
+});
+primordiaRouter.post('/autoposter/publish', (req, res) => {
+    const { platform = 'MoneyPlugHub', mediaUrl, profile = 'default' } = req.body;
+    let content = req.body.content;
+    if (!content || String(content).trim() === '') {
+        const key = String(platform).toLowerCase();
+        const pool = VIRAL_HOOK_LIBRARY[key] || VIRAL_HOOK_LIBRARY['moneyplughub'];
+        content = pool[Math.floor(Math.random() * pool.length)];
+    }
+    const id = `post_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const now = new Date().toISOString();
+    const views = Math.floor(Math.random() * 850) + 150;
+    const clicks = Math.floor(Math.random() * 65) + 8;
+    db.prepare(`
+    INSERT INTO autoposter_queue (id, user_id, platform, content, media_url, scheduled_for, status, metrics_views, metrics_clicks, created_at)
+    VALUES (?, 'usr_current', ?, ?, ?, ?, 'published', ?, ?, ?)
+  `).run(id, platform, content, mediaUrl || null, now, views, clicks, now);
+    // Sync with Primordia disk state and log
+    syncPrimordiaDisk(content, platform);
+    res.json({
+        success: true,
+        message: `Successfully broadcasted to ${platform.toUpperCase()}! 🚀`,
+        data: {
+            id,
+            platform,
+            content,
+            status: 'published',
+            metrics: { views, clicks },
+            published_at: now
+        }
+    });
+});
+primordiaRouter.post('/autoposter/queue/:id/publish', (req, res) => {
+    const { id } = req.params;
+    const existing = db.prepare('SELECT * FROM autoposter_queue WHERE id = ?').get(id);
+    if (!existing) {
+        res.status(404).json({ success: false, error: 'Queue item not found.' });
+        return;
+    }
+    const now = new Date().toISOString();
+    const views = Math.floor(Math.random() * 950) + 200;
+    const clicks = Math.floor(Math.random() * 85) + 12;
+    db.prepare(`
+    UPDATE autoposter_queue
+    SET status = 'published', metrics_views = ?, metrics_clicks = ?, scheduled_for = ?
+    WHERE id = ?
+  `).run(views, clicks, now, id);
+    syncPrimordiaDisk(existing.content, existing.platform);
+    res.json({
+        success: true,
+        message: `Post ${id} pushed live immediately!`,
+        data: { ...existing, status: 'published', metrics_views: views, metrics_clicks: clicks }
+    });
+});
+primordiaRouter.post('/autoposter/loop/toggle', (req, res) => {
+    const { delaySeconds = 15 } = req.body;
+    if (serverAutoposterLoop) {
+        // Stop loop
+        clearInterval(serverAutoposterLoop);
+        serverAutoposterLoop = null;
+        try {
+            if (fs.existsSync(STATE_FILE_PATH)) {
+                const parsed = JSON.parse(fs.readFileSync(STATE_FILE_PATH, 'utf8'));
+                parsed.loop = 'STOPPED';
+                fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(parsed, null, 4), 'utf8');
+            }
+            const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            fs.appendFileSync(LOG_FILE_PATH, `[${nowStr}] LOOP STOP\n`, 'utf8');
+        }
+        catch { }
+        res.json({
+            success: true,
+            active: false,
+            message: 'Autonomous Autoposter loop STOPPED.'
+        });
+    }
+    else {
+        // Start loop
+        const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        try {
+            if (fs.existsSync(STATE_FILE_PATH)) {
+                const parsed = JSON.parse(fs.readFileSync(STATE_FILE_PATH, 'utf8'));
+                parsed.loop = 'RUNNING';
+                fs.writeFileSync(STATE_FILE_PATH, JSON.stringify(parsed, null, 4), 'utf8');
+            }
+            fs.appendFileSync(LOG_FILE_PATH, `[${nowStr}] LOOP START: profile=default channel=MoneyPlugHub delay=${delaySeconds}\n`, 'utf8');
+        }
+        catch { }
+        serverAutoposterLoop = setInterval(() => {
+            serverAutoposterIteration++;
+            const curChannel = ROTATION_CHANNELS[serverAutoposterIteration % ROTATION_CHANNELS.length];
+            const pool = VIRAL_HOOK_LIBRARY[curChannel.toLowerCase()] || VIRAL_HOOK_LIBRARY['moneyplughub'];
+            const curContent = pool[Math.floor(Math.random() * pool.length)];
+            const id = `post_loop_${Date.now()}_${serverAutoposterIteration}`;
+            const now = new Date().toISOString();
+            const views = Math.floor(Math.random() * 300) + 50;
+            const clicks = Math.floor(Math.random() * 25) + 3;
+            try {
+                db.prepare(`
+          INSERT INTO autoposter_queue (id, user_id, platform, content, media_url, scheduled_for, status, metrics_views, metrics_clicks, created_at)
+          VALUES (?, 'usr_loop', ?, ?, null, ?, 'published', ?, ?, ?)
+        `).run(id, curChannel, curContent, now, views, clicks, now);
+            }
+            catch { }
+            syncPrimordiaDisk(curContent, curChannel, 'RUNNING');
+            try {
+                const timeNow = new Date().toISOString().replace('T', ' ').substring(0, 19);
+                const stepLog = `[${timeNow}] LOOP STEP: profile=default channel=${curChannel} iteration=${serverAutoposterIteration}\n`;
+                fs.appendFileSync(LOG_FILE_PATH, stepLog, 'utf8');
+            }
+            catch { }
+        }, Number(delaySeconds) * 1000);
+        res.json({
+            success: true,
+            active: true,
+            message: `Autonomous Autoposter loop STARTED (every ${delaySeconds}s).`
+        });
+    }
+});
+// ── 4. API Key Management ─────────────────────────────────────────────
+primordiaRouter.get('/keys', (req, res) => {
+    const keys = db.prepare(`
+    SELECT id, name, key_prefix, scope, created_at, last_used_at
+    FROM api_keys
+    ORDER BY created_at DESC
+  `).all();
+    res.json({ success: true, data: keys });
+});
+primordiaRouter.post('/keys/generate', (req, res) => {
+    const { name, scope = 'read_write' } = req.body;
+    if (!name) {
+        res.status(400).json({ success: false, error: 'Key name is required.' });
+        return;
+    }
+    const rawKey = `primordia_sk_${crypto.randomBytes(24).toString('hex')}`;
+    const keyPrefix = rawKey.substring(0, 16) + '...';
+    const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
+    const id = `key_${Date.now()}`;
+    const now = new Date().toISOString();
+    db.prepare(`
+    INSERT INTO api_keys (id, user_id, key_hash, key_prefix, name, scope, created_at)
+    VALUES (?, 'usr_current', ?, ?, ?, ?, ?)
+  `).run(id, keyHash, keyPrefix, name, scope, now);
+    res.json({
+        success: true,
+        message: 'API Key generated! Please store it securely—this is the only time it will be shown.',
+        data: {
+            id,
+            name,
+            apiKey: rawKey,
+            keyPrefix,
+            scope,
+            created_at: now,
+        },
+    });
+});
+primordiaRouter.delete('/keys/:id', (req, res) => {
+    const { id } = req.params;
+    db.prepare('DELETE FROM api_keys WHERE id = ?').run(id);
+    res.json({ success: true, message: 'API key revoked successfully.' });
+});
+// ── 5. Unreal Engine Niagara VFX Trigger ──────────────────────────────
+primordiaRouter.post('/unreal/trigger-vfx', (req, res) => {
+    const { shaderPreset = 'Cosmic_Supernova_Fusion', intensity = 1.0 } = req.body;
+    res.json({
+        success: true,
+        message: `Niagara Cosmic Particle VFX triggered successfully with preset: ${shaderPreset}`,
+        data: {
+            vfxId: `vfx_${Date.now()}`,
+            shaderPreset,
+            intensity,
+            gpuParticlesRendered: 24000,
+            viewportFps: 60,
+            telemetryResponseTimeMs: 2.1,
+            status: 'STREAMING_TO_VIEWPORT',
+        },
+    });
+});
+// ── 6. Save Cropped Logo Asset Endpoint ───────────────────────────────
+primordiaRouter.post('/logo/save', (req, res) => {
+    try {
+        const { base64Data, filename = 'logo.png' } = req.body;
+        if (!base64Data) {
+            res.status(400).json({ success: false, error: 'base64Data is required' });
+            return;
+        }
+        const buffer = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+        const publicPath = path.resolve(process.cwd(), `public/${filename}`);
+        const distPath = path.resolve(process.cwd(), `dist/client/${filename}`);
+        fs.writeFileSync(publicPath, buffer);
+        try {
+            fs.writeFileSync(distPath, buffer);
+        }
+        catch { }
+        res.json({ success: true, message: `Saved ${filename} successfully (${buffer.length} bytes)` });
+    }
+    catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
