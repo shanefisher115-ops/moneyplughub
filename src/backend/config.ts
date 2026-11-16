@@ -5,6 +5,13 @@ dotenv.config({ override: true });
 
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
+  cors: {
+    // APP_URL is always allowed so the deployed frontend keeps working without extra config
+    allowedOrigins: Array.from(new Set([
+      ...(process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',').map(o => o.trim()).filter(Boolean),
+      process.env.APP_URL || 'http://localhost:3000',
+    ])),
+  },
   nodeEnv: process.env.NODE_ENV || 'development',
   isProd: process.env.NODE_ENV === 'production',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
